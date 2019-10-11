@@ -24,5 +24,6 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::any('password','AdminController@password');
 
     Route::resource('admin','AdminController');
+    Route::resource('category','CategoryController');
 
 });
