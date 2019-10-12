@@ -27,9 +27,8 @@ class CategoryController extends Controller
     {
         //创建操作
         $category = (new Category())->tree();
-        //$type = Type::get();
-        //return view('erp.category.create',compact('category','type'));
-        return view('erp.category.create',compact('category'));
+        $type = Type::get();
+        return view('erp.category.create',compact('category','type'));
     }
 
     /**

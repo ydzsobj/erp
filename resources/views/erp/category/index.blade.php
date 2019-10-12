@@ -3,7 +3,7 @@
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="category_show('添加分类','{{url("admins/category/create")}}',2,'500px','400px');">添加分类</button>
+                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加分类','{{url("admins/category/create")}}',2,'500px','400px');">添加分类</button>
             </div>
             <div class="layui-card-body">
                 <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
@@ -52,14 +52,13 @@
                     ,{field: 'category_code', title: '分类编码', width:100}
                     ,{field: 'parent_id', title: '父级ID', width:80, sort: true}
                     ,{field: 'type_id', title: '类别ID', width:80}
-                    ,{field: 'type_name', title: '类别名称', width: 180}
                     ,{field: 'sort', title: '排序', width: 80, sort: true}
                     ,{field: 'button', title: '操作', toolbar:'#button'}
                 ]]
             });
 
 
-            category_show = function category_show(title,url,type,w,h) {
+            create_show = function create_show(title,url,type,w,h) {
                 if(layui.device().android||layui.device().ios){
                     layer.open({
                         skin:'layui-layer-nobg',
