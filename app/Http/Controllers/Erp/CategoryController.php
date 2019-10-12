@@ -27,8 +27,9 @@ class CategoryController extends Controller
     {
         //创建操作
         $category = (new Category())->tree();
-        $type = Type::get();
-        return view('erp.category.create',compact('category','type'));
+        //$type = Type::get();
+        //return view('erp.category.create',compact('category','type'));
+        return view('erp.category.create',compact('category'));
     }
 
     /**
@@ -39,11 +40,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //创建操作
-        $category = (new Category())->tree();
-        //$type = Type::get();
-        //return view('erp.category.create',compact('category','type'));
-        return view('erp.category.create',compact('category'));
+
     }
 
     /**
