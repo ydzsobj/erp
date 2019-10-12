@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
+use App\Models\Category;
+use App\Models\Type;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -37,9 +40,18 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-
+        //存储表单信息
+        $result = Category::insert([
+            'category_name'=>$request->category_name,
+            'parent_id'=>$request->parent_id,
+            'type_id'=>$request->type_id,
+            'category_code'=>$request->category_code,
+            'category_sort'=>$request->category_sort,
+            'created_at' => date('Y-m-d H:i:s', time()),
+        ]);
+        return $result ? '0' : '1';
     }
 
     /**
@@ -61,7 +73,11 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        //编辑操作
+        $category = (new Category())->tree();
+        $data = Category::find($id);
+        $type = Type::get();
+        return view('erp.category.edit',compact('data','category','type'));
     }
 
     /**
@@ -73,7 +89,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //更新操作
+        $result = Category::find($id);
+        $result->category_name = $request->category_name;
+        $result->parent_id = $request->parent_id;
+        $result->category_code = $request->category_code;
+        $result->type_id = $request->type_id;
+        $result->category_sort = $request->category_sort;
+        return $result->save()?'0':'1';
     }
 
     /**

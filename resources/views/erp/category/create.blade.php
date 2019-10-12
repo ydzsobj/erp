@@ -8,6 +8,7 @@
                 <div class="layui-input-inline">
                     <input type="text" name="category_name" lay-verify="required" lay-reqtext="分类名称不能为空" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
                 </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">父级分类</label>
@@ -15,7 +16,7 @@
                     <select name="parent_id" lay-filter="aihao">
                         <option value="0">顶级分类</option>
                         @foreach($category as $value)
-                        <option value="{{$value->id}}">{{$value->category_name}}</option>
+                            <option value="{{$value->id}}">{{$value->category_name}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -34,13 +35,14 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">分类编码</label>
                 <div class="layui-input-inline" style="width: 100px;">
-                    <input type="text" name="category_code" value="0" autocomplete="off" class="layui-input" maxlength="2">
+                    <input type="text" name="category_code" value="" lay-verify="required" autocomplete="off" class="layui-input" maxlength="2">
                 </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">排序</label>
                 <div class="layui-input-inline" style="width: 50px;">
-                    <input type="text" name="sort" value="0" autocomplete="off" class="layui-input">
+                    <input type="text" name="category_sort" value="0" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -85,8 +87,13 @@
                             layer.msg('添加失败！',{icon:2,time:2000});
                         }
                     },
-                    error: function(XmlHttpRequest, textStatus, errorThrown){
-                        layer.msg('error!',{icon:2,time:2000});
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
                     }
                 });
                 return false;

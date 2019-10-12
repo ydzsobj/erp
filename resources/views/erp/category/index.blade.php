@@ -45,7 +45,13 @@
                 ,height: 500
                 ,url: "{{url('api/category')}}" //数据接口
                 ,id: 'listReload'
+                ,toolbar: '#toolbar'
+                ,defaultToolbar: ['filter', 'exports', 'print']
+                ,title: '分类数据表'
                 ,page: true //开启分页
+                ,count: 10000
+                ,limit: 10
+                ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
                     ,{field: 'category_name', title: '分类名称', width:180}
