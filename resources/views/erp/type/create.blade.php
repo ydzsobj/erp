@@ -72,9 +72,12 @@
                         }
                     },
                     error: function(data){
-                        //layer.msg('error!',{icon:2,time:2000});
-                        console.log(data.responseText);
-                        layer.msg(data.responseText.errors,{icon:2,time:2000});
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                            layer.msg(msg,{icon:2,time:2000});
                     }
                 });
                 return false;
