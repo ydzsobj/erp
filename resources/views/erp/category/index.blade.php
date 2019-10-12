@@ -1,5 +1,8 @@
 @extends('erp.father.father')
 @section('content')
+    <script type="text/html" id="type_name">
+        @{{  d.category_name }}
+    </script>
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
@@ -55,10 +58,10 @@
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
                     ,{field: 'category_name', title: '分类名称', width:180}
-                    ,{field: 'category_code', title: '分类编码', width:100}
-                    ,{field: 'parent_id', title: '父级ID', width:80, sort: true}
-                    ,{field: 'type_id', title: '类别ID', width:80}
-                    ,{field: 'sort', title: '排序', width: 80, sort: true}
+                    ,{field: 'category_code', title: '分类编码', width:110, sort: true}
+                    ,{field: 'parent_id', title: '父级ID', width:80}
+                    ,{ title: '类别名称', width:130,templet:'#type_name'}
+                    ,{field: 'category_sort', title: '排序', width: 80, sort: true}
                     ,{field: 'button', title: '操作', toolbar:'#button'}
                 ]]
             });

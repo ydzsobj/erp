@@ -25,7 +25,7 @@ class CategoryController extends Controller
             })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
         }else{
             $count = Category::count();
-            $data = Category::orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
+            $data = Category::with('type')->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
         }
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);

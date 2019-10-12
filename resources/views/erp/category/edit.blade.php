@@ -95,8 +95,13 @@
                             layer.msg('修改失败！',{icon:2,time:2000});
                         }
                     },
-                    error: function(XmlHttpRequest, textStatus, errorThrown){
-                        layer.msg('error!',{icon:2,time:2000});
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
                     }
                 });
                 return false;
