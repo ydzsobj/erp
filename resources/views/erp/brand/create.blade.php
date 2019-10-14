@@ -12,8 +12,8 @@
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">品牌简介</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="brand_profile" placeholder="请输入品牌简介" autocomplete="off" class="layui-input">
+                <div class="layui-input-block">
+                    <textarea name="brand_profile" placeholder="请输入品牌简介" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -125,8 +125,13 @@
                             layer.msg('添加失败！',{icon:2,time:2000});
                         }
                     },
-                    error: function(XmlHttpRequest, textStatus, errorThrown){
-                        layer.msg('error!',{icon:2,time:2000});
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
                     }
                 });
                 return false;
