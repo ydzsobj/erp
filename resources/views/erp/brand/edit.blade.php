@@ -8,6 +8,7 @@
                 <div class="layui-input-inline">
                     <input type="text" name="brand_name" lay-verify="required" lay-reqtext="品牌名称不能为空" placeholder="请输入品牌名称" autocomplete="off" class="layui-input">
                 </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">品牌简介</label>

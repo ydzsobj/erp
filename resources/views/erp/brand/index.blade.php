@@ -9,7 +9,7 @@
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="category_show('添加品牌','{{url("admins/brand/create")}}',2,'500px','700px');">添加品牌</button>
+                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="category_show('添加品牌','{{url("admins/brand/create")}}',2,'700px','700px');">添加品牌</button>
             </div>
             <div class="layui-card-body">
                 <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
@@ -158,7 +158,7 @@
                         skin:'layui-layer-nobg',
                         type:2,
                         title:'编辑信息',
-                        area:['500px','400px'],
+                        area:['700px','700px'],
                         fixed:false,
                         maxmin:true,
                         content:"{{url('admins/brand/')}}/"+data.id+"/edit"
