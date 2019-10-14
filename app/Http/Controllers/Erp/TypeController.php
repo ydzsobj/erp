@@ -105,6 +105,8 @@ class TypeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //删除操作
+        $result = Type::find($id);
+        return $result->delete()?'0':'1';
     }
 }

@@ -8,12 +8,14 @@
                 <div class="layui-input-inline">
                     <input type="text" name="type_name" lay-verify="required" lay-reqtext="类型名称不能为空" placeholder="请输入类型名称" autocomplete="off" class="layui-input">
                 </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">英文名称</label>
                 <div class="layui-input-inline">
                     <input type="text" name="type_english" lay-verify="required" lay-reqtext="英文名称不能为空" placeholder="请输入英文名称" autocomplete="off" class="layui-input">
                 </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item" lay-filter="component-form-element">
                 <label class="layui-form-label">属性名称</label>
