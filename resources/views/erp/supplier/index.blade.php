@@ -3,7 +3,7 @@
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="show('添加供应商','{{url("admins/supplier/create")}}',2,'800px','600px');">添加供应商</button>
+                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加供应商','{{url("admins/supplier/create")}}',2,'800px','600px');">添加供应商</button>
             </div>
             <div class="layui-card-body">
                 <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
@@ -47,7 +47,7 @@
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
-                ,title: '分类数据表'
+                ,title: '供应商数据表'
                 ,page: true //开启分页
                 ,count: 10000
                 ,limit: 10
@@ -65,7 +65,7 @@
             });
 
 
-            show = function show(title,url,type,w,h) {
+            create_show = function create_show(title,url,type,w,h) {
                 if(layui.device().android||layui.device().ios){
                     layer.open({
                         skin:'layui-layer-nobg',
