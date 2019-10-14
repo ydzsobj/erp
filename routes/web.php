@@ -27,6 +27,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('category','CategoryController');
     Route::resource('type','TypeController');
     Route::resource('brand','BrandController');
+    Route::resource('product_unit','ProductUnitController');
 
 
 
