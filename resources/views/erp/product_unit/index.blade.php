@@ -47,7 +47,7 @@
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
-                ,title: '分类数据表'
+                ,title: '计量单位数据表'
                 ,page: true //开启分页
                 ,count: 10000
                 ,limit: 10
