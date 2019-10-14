@@ -3,7 +3,7 @@
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="show('添加单位','{{url("admins/product_unit/create")}}',2,'500px','400px');">添加单位</button>
+                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加单位','{{url("admins/product_unit/create")}}',2,'500px','400px');">添加单位</button>
             </div>
             <div class="layui-card-body">
                 <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
@@ -21,7 +21,7 @@
             </div>
             <button class="layui-btn" data-type="reload">搜索</button>
         </div>
-        <table id="category_list" lay-filter="list"></table>
+        <table id="data_list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="button" >
         <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看</a>
@@ -41,7 +41,7 @@
 
             //渲染实例
             table.render({
-                elem: '#category_list'
+                elem: '#data_list'
                 ,height: 500
                 ,url: "{{url('api/product_unit')}}" //数据接口
                 ,id: 'listReload'
@@ -64,7 +64,7 @@
             });
 
 
-            show = function show(title,url,type,w,h) {
+            create_show = function create_show(title,url,type,w,h) {
                 if(layui.device().android||layui.device().ios){
                     layer.open({
                         skin:'layui-layer-nobg',
