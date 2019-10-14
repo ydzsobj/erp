@@ -34,6 +34,7 @@ $api->version('v1', function ($api) {
         $api->resource('/brand','BrandController', ['only' => ['index']]);
         $api->resource('/product_unit','ProductUnitController', ['only' => ['index']]);
         $api->resource('/supplier','SupplierController', ['only' => ['index']]);
+        $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
 
     });
 

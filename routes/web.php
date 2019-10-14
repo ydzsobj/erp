@@ -29,6 +29,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('brand','BrandController');
     Route::resource('product_unit','ProductUnitController');
     Route::resource('supplier','SupplierController');
+    Route::resource('warehouse','WarehouseController');
 
 
 
