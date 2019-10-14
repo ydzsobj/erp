@@ -24,7 +24,7 @@
             </div>
             <button class="layui-btn" data-type="reload">搜索</button>
         </div>
-        <table id="category_list" lay-filter="list"></table>
+        <table id="data_list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="button" >
         <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看</a>
@@ -44,7 +44,7 @@
 
             //渲染实例
             table.render({
-                elem: '#category_list'
+                elem: '#data_list'
                 ,height: 500
                 ,url: "{{url('api/category')}}" //数据接口
                 ,id: 'listReload'
