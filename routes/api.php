@@ -31,6 +31,7 @@ $api->version('v1', function ($api) {
 
         $api->resource('/category','CategoryController', ['only' => ['index']]);
         $api->resource('/type','TypeController', ['only' => ['index']]);
+        $api->resource('/brand','BrandController', ['only' => ['index']]);
 
     });
 
