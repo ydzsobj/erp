@@ -8,8 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-    //
+    //绑定数据库
     use Notifiable;
+
     protected $table = 'admin';
     protected $dates = ['deleted_at'];
 

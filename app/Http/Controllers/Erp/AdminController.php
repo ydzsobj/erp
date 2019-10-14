@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminRequest;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,8 @@ class AdminController extends CommonController
      */
     public function index()
     {
-        //
+        //首页列表
+        return view('erp.admin.index');
     }
 
     /**
@@ -30,7 +32,8 @@ class AdminController extends CommonController
      */
     public function create()
     {
-        //
+        //创建操作
+        return view('erp.admin.create');
     }
 
     /**
@@ -39,9 +42,16 @@ class AdminController extends CommonController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AdminRequest $request)
     {
-        //
+        //存储表单信息
+        $result = Admin::insert([
+            'username'=>$request->username,
+            'admin_name'=>$request->admin_name,
+            'password'=>bcrypt($request->password),
+            'status'=>$request->status,
+        ]);
+        return $result ? '0' : '1';
     }
 
     /**
@@ -64,8 +74,9 @@ class AdminController extends CommonController
      */
     public function edit($id)
     {
-        //
-        return view('erp.admin.edit');
+        //编辑操作
+        $data = Admin::find($id);
+        return view('erp.admin.edit',compact('data'));
     }
 
     /**
@@ -75,9 +86,16 @@ class AdminController extends CommonController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(AdminRequest $request, $id)
     {
-        //
+        //更新操作
+        $result = Admin::find($id);
+        if($request->password!=''){
+            $result->password = bcrypt($request->password);
+        }
+        $result->admin_name = $request->admin_name;
+        $result->status = $request->status;
+        return $result->save()?'0':'1';
     }
 
     /**
@@ -88,7 +106,9 @@ class AdminController extends CommonController
      */
     public function destroy($id)
     {
-        //
+        //删除操作
+        $result = Admin::find($id);
+        return $result->delete()?'0':'1';
     }
 
     /**

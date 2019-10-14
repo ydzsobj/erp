@@ -33,6 +33,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
 
 
 
+    Route::get('data/get_admin','DataController@get_admin');
     Route::post('uploader/pic_upload','UploaderController@picUpload');  //图片异步上传
 
 });
