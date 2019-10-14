@@ -87,7 +87,7 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
         //更新操作
         $result = Category::find($id);
@@ -107,6 +107,8 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //删除操作
+        $result = Category::find($id);
+        return $result->delete()?'0':'1';
     }
 }
