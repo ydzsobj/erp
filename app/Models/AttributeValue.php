@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends Authenticatable
+class AttributeValue extends Model
 {
     //绑定数据库
     use Notifiable;
 
-    protected $table = 'admin';
+    protected $table = 'attribute_value';
     protected $dates = ['deleted_at'];
 
+    protected $guarded = ['LAY_TABLE_INDEX','tempId'];
 
 }

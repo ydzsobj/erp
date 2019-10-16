@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CategoryRequest;
-use App\Models\Category;
+use App\Http\Requests\AttributeRequest;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Type;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class AttributeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +19,7 @@ class CategoryController extends Controller
     public function index()
     {
         //首页列表
-        return view('erp.category.index');
+        return view('erp.attribute.index');
     }
 
     /**
@@ -29,9 +30,8 @@ class CategoryController extends Controller
     public function create()
     {
         //创建操作
-        $category = (new Category())->tree();
-        $type = Type::get();
-        return view('erp.category.create',compact('category','type'));
+        $type = Type::orderByDesc('id')->get();
+        return view('erp.attribute.create',compact('type'));
     }
 
     /**
@@ -40,15 +40,15 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoryRequest $request)
+    public function store(AttributeRequest $request)
     {
         //存储表单信息
-        $result = Category::insert([
-            'category_name'=>$request->category_name,
-            'parent_id'=>$request->parent_id,
+        $result = Attribute::insert([
+            'attr_name'=>$request->attr_name,
+            'attr_english'=>$request->attr_english,
             'type_id'=>$request->type_id,
-            'category_code'=>$request->category_code,
-            'category_sort'=>$request->category_sort,
+            'attr_value_ids'=>'',
+            'attr_status'=>$request->attr_status,
             'created_at' => date('Y-m-d H:i:s', time()),
         ]);
         return $result ? '0' : '1';
@@ -74,10 +74,11 @@ class CategoryController extends Controller
     public function edit($id)
     {
         //编辑操作
-        $category = (new Category())->tree();
-        $data = Category::find($id);
         $type = Type::get();
-        return view('erp.category.edit',compact('data','category','type'));
+        $attribute_value = AttributeValue::where('attr_id',$id)->get();
+        $data = Attribute::find($id);
+        $dataArray = explode(',',$data->attr_value_ids);
+        return view('erp.attribute.edit', compact('data','type','attribute_value','dataArray'));
     }
 
     /**
@@ -87,15 +88,21 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoryRequest $request, $id)
+    public function update(AttributeRequest $request, $id)
     {
+        $table = $request->table;  //获取信息
+
         //更新操作
-        $result = Category::find($id);
-        $result->category_name = $request->category_name;
-        $result->parent_id = $request->parent_id;
-        $result->category_code = $request->category_code;
-        $result->type_id = $request->type_id;
-        $result->category_sort = $request->category_sort;
+        $result = Attribute::find($id);
+        if(isset($table['AttrValue'])){
+            foreach ($table['AttrValue'] as $key=>$value){
+                AttributeValue::updateOrCreate(['id'=>$value['id']],$value);
+            }
+        };
+
+        $result->attr_name = $request->attr_name;
+        $result->attr_english = $request->attr_english;
+        $result->attr_status = $request->attr_status;
         return $result->save()?'0':'1';
     }
 
@@ -108,7 +115,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //删除操作
-        $result = Category::find($id);
+        $result = Attribute::find($id);
         return $result->delete()?'0':'1';
     }
 }

@@ -4,45 +4,38 @@
         <form class="layui-form" action="">
             {{csrf_field()}}
             <div class="layui-form-item">
-                <label class="layui-form-label">分类名称</label>
+                <label class="layui-form-label">用户名</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="category_name" lay-verify="required" lay-reqtext="分类名称不能为空" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
+                    <input type="text" name="username" lay-verify="username" lay-reqtext="用户名不能为空" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">父级分类</label>
+                <label class="layui-form-label">用户密码</label>
                 <div class="layui-input-inline">
-                    <select name="parent_id" lay-filter="aihao">
-                        <option value="0">顶级分类</option>
-                        @foreach($category as $value)
-                            <option value="{{$value->id}}">{{$value->category_name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">类型</label>
-                <div class="layui-input-inline">
-                    <select name="type_id" lay-filter="aihao">
-                        <option value="0">请选择类型</option>
-                        @foreach($type as $value)
-                            <option value="{{$value->id}}">{{$value->type_name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">分类编码</label>
-                <div class="layui-input-inline" style="width: 100px;">
-                    <input type="text" name="category_code" value="" lay-verify="required" autocomplete="off" class="layui-input" maxlength="2">
+                    <input type="password" name="password" lay-verify="password" placeholder="请输入用户密码" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">排序</label>
-                <div class="layui-input-inline" style="width: 50px;">
-                    <input type="text" name="category_sort" value="0" autocomplete="off" class="layui-input">
+                <label class="layui-form-label">确认密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="password_confirmation" lay-verify="required" placeholder="请输入确认密码" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">真实姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="admin_name" lay-verify="required" lay-reqtext="真实名称不能为空" placeholder="请输入真实名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <div class="layui-col-md12">
+                        <input type="checkbox" name="status" lay-skin="switch" lay-text="ON|OFF" checked>
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -62,16 +55,34 @@
         //Demo
         layui.config({
             base: '{{asset("/admin/layuiadmin/")}}/' //静态资源所在路径
-        }).use('form', function(){
-            var form = layui.form;
+        }).use(['form','upload'], function(){
+            var form = layui.form
+                ,upload = layui.upload;
             var $=layui.jquery;
 
+            //自定义验证规则
+            form.verify({
+                username: function(value){
+                    if(value.length < 4){
+                        return '用户名不能少得4个字符啊';
+                    }
+                }
+                ,password: [
+                    /^[\S]{6,20}$/
+                    ,'密码必须6到20位，且不能出现空格'
+                ]
+
+            });
 
             //监听提交
             form.on('submit(form)', function(data){
-                //layer.msg(JSON.stringify(data.field));
+                if(data.field.status == "on") {
+                    data.field.status = "1";
+                } else {
+                    data.field.status = "0";
+                }
                 $.ajax({
-                    url:"{{url('admins/category')}}",
+                    url:"{{url('admins/admin')}}",
                     type:'post',
                     data:data.field,
                     datatype:'json',

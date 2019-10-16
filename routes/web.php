@@ -26,5 +26,16 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');
     Route::resource('type','TypeController');
+    Route::resource('brand','BrandController');
+    Route::resource('product_unit','ProductUnitController');
+    Route::resource('supplier','SupplierController');
+    Route::resource('warehouse','WarehouseController');
+    Route::resource('attribute','AttributeController');
+    Route::resource('attribute_value','AttributeValueController');
+
+
+
+    Route::get('data/get_admin','DataController@get_admin');
+    Route::post('uploader/pic_upload','UploaderController@picUpload');  //图片异步上传
 
 });

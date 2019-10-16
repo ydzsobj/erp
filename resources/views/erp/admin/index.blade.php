@@ -1,12 +1,9 @@
 @extends('erp.father.father')
 @section('content')
-    <script type="text/html" id="type_name">
-        @{{  d.category_name }}
-    </script>
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加分类','{{url("admins/category/create")}}',2,'500px','400px');">添加分类</button>
+                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加管理员','{{url("admins/admin/create")}}',2,'500px','600px');">添加管理员</button>
             </div>
             <div class="layui-card-body">
                 <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
@@ -26,6 +23,7 @@
         </div>
         <table id="data_list" lay-filter="list"></table>
     </div>
+    <img src="" id="show_big" width="100%" style="display: none">
     <script type="text/html" id="button" >
         <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -46,22 +44,28 @@
             table.render({
                 elem: '#data_list'
                 ,height: 500
-                ,url: "{{url('api/category')}}" //数据接口
+                ,url: "{{url('admins/data/get_admin')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
-                ,title: '分类数据表'
+                ,title: '管理员数据表'
                 ,page: true //开启分页
                 ,count: 10000
                 ,limit: 10
                 ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'category_name', title: '分类名称', width:180}
-                    ,{field: 'category_code', title: '分类编码', width:110, sort: true}
-                    ,{field: 'parent_id', title: '父级ID', width:80}
-                    ,{ title: '类别名称', width:130,templet:'#type_name'}
-                    ,{field: 'category_sort', title: '排序', width: 80, sort: true}
+                    ,{field: 'username', title: '管理员账号', width:150}
+                    ,{field: 'admin_name', title: '管理员姓名', width:150}
+                    ,{field: 'admin_num', title: '登录次数', width:100}
+                    ,{field: 'admin_ip', title: '登录IP', width:100}
+                    ,{field: 'updated_at', title: '登录时间', width:160}
+                    ,{field: 'is_root', title: '超级管理员', width: 100,templet:function(res){
+                            return res.is_root==1?'<div style="text-align:center;color:#008000">✔</div>':'<div style="text-align:center;color: #ff0000">✘</div>';
+                    }}
+                    ,{field: 'status', title: '是否启用', width: 90,templet:function(res){
+                            return res.status==1?'<button type="button" class="layui-btn layui-btn-sm">已启用</button>':'<button type="button" class="layui-btn layui-btn-danger layui-btn-sm">已禁用</button>';
+                    }}
                     ,{field: 'button', title: '操作', toolbar:'#button'}
                 ]]
             });
@@ -126,14 +130,14 @@
                         area:['350px','420px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/category/')}}/"+data.id
+                        content:"{{url('admins/admin/')}}/"+data.id
                     });
                     //layer.msg('ID：'+ data.id + ' 的查看操作');
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
                         $.ajax({
-                            url:"{{url('admins/category/')}}/"+data.id,
+                            url:"{{url('admins/admin/')}}/"+data.id,
                             type:'delete',
                             data:{"_token":"{{csrf_token()}}"},
                             datatype:'json',
@@ -162,9 +166,24 @@
                         area:['500px','400px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/category/')}}/"+data.id+"/edit"
+                        content:"{{url('admins/admin/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                }else if(obj.event === 'show_img'){
+                    $('#show_big').attr('src',data.brand_pic);
+                    //console.log($('#show_big').attr('url'));
+                    layer.open({
+                        type:1,
+                        title: false,
+                        scrollbar: false,
+                        closeBtn: 0,
+                        //content: ['浏览器滚动条已锁','no'],
+                        shadeClose: true,
+                        area:'600px',
+                        skin: 'layui-layer-nobg', //没有背景色
+                        shadeClose: true,
+                        content:$('#show_big')
+                    })
                 }
             });
 

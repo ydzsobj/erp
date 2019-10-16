@@ -4,45 +4,30 @@
         <form class="layui-form" action="">
             {{csrf_field()}}
             <div class="layui-form-item">
-                <label class="layui-form-label">分类名称</label>
+                <label class="layui-form-label">仓库名称</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="category_name" lay-verify="required" lay-reqtext="分类名称不能为空" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
+                    <input type="text" name="warehouse_name" lay-verify="required" lay-reqtext="仓库名称不能为空" placeholder="请输入仓库名称" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">父级分类</label>
+                <label class="layui-form-label">仓库编码</label>
                 <div class="layui-input-inline">
-                    <select name="parent_id" lay-filter="aihao">
-                        <option value="0">顶级分类</option>
-                        @foreach($category as $value)
-                            <option value="{{$value->id}}">{{$value->category_name}}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" name="warehouse_code" placeholder="请输入仓库编码" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">类型</label>
+                <label class="layui-form-label">仓库地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="warehouse_address" placeholder="请输入仓库地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">仓库状态</label>
                 <div class="layui-input-inline">
-                    <select name="type_id" lay-filter="aihao">
-                        <option value="0">请选择类型</option>
-                        @foreach($type as $value)
-                            <option value="{{$value->id}}">{{$value->type_name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">分类编码</label>
-                <div class="layui-input-inline" style="width: 100px;">
-                    <input type="text" name="category_code" value="" lay-verify="required" autocomplete="off" class="layui-input" maxlength="2">
-                </div>
-                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">排序</label>
-                <div class="layui-input-inline" style="width: 50px;">
-                    <input type="text" name="category_sort" value="0" autocomplete="off" class="layui-input">
+                    <div class="layui-col-md12">
+                        <input type="checkbox" name="warehouse_status" lay-skin="switch" lay-text="ON|OFF" checked>
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -62,16 +47,22 @@
         //Demo
         layui.config({
             base: '{{asset("/admin/layuiadmin/")}}/' //静态资源所在路径
-        }).use('form', function(){
-            var form = layui.form;
+        }).use(['form','upload'], function(){
+            var form = layui.form
+                ,upload = layui.upload;
             var $=layui.jquery;
 
 
             //监听提交
             form.on('submit(form)', function(data){
                 //layer.msg(JSON.stringify(data.field));
+                if(data.field.warehouse_status == "on") {
+                    data.field.warehouse_status = "1";
+                } else {
+                    data.field.warehouse_status = "0";
+                }
                 $.ajax({
-                    url:"{{url('admins/category')}}",
+                    url:"{{url('admins/warehouse')}}",
                     type:'post',
                     data:data.field,
                     datatype:'json',

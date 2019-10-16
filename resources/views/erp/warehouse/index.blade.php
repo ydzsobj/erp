@@ -1,12 +1,9 @@
 @extends('erp.father.father')
 @section('content')
-    <script type="text/html" id="type_name">
-        @{{  d.category_name }}
-    </script>
     <div class="layui-fluid">
         <div class="layui-card">
             <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加分类','{{url("admins/category/create")}}',2,'500px','400px');">添加分类</button>
+                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加仓库','{{url("admins/warehouse/create")}}',2,'800px','600px');">添加仓库</button>
             </div>
             <div class="layui-card-body">
                 <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
@@ -46,22 +43,23 @@
             table.render({
                 elem: '#data_list'
                 ,height: 500
-                ,url: "{{url('api/category')}}" //数据接口
+                ,url: "{{url('api/warehouse')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
-                ,title: '分类数据表'
+                ,title: '仓库数据表'
                 ,page: true //开启分页
                 ,count: 10000
                 ,limit: 10
                 ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'category_name', title: '分类名称', width:180}
-                    ,{field: 'category_code', title: '分类编码', width:110, sort: true}
-                    ,{field: 'parent_id', title: '父级ID', width:80}
-                    ,{ title: '类别名称', width:130,templet:'#type_name'}
-                    ,{field: 'category_sort', title: '排序', width: 80, sort: true}
+                    ,{field: 'warehouse_name', title: '仓库名称', width:280}
+                    ,{field: 'warehouse_code', title: '编码', width:60}
+                    ,{field: 'warehouse_address', title: '仓库地点', width:380}
+                    ,{field: 'warehouse_status', title: '状态', width: 80,templet:function(res){
+                            return res.warehouse_status==1?'启用':'禁用';
+                    }}
                     ,{field: 'button', title: '操作', toolbar:'#button'}
                 ]]
             });
@@ -126,14 +124,14 @@
                         area:['350px','420px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/category/')}}/"+data.id
+                        content:"{{url('admins/warehouse/')}}/"+data.id
                     });
                     //layer.msg('ID：'+ data.id + ' 的查看操作');
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
                         $.ajax({
-                            url:"{{url('admins/category/')}}/"+data.id,
+                            url:"{{url('admins/warehouse/')}}/"+data.id,
                             type:'delete',
                             data:{"_token":"{{csrf_token()}}"},
                             datatype:'json',
@@ -159,10 +157,10 @@
                         skin:'layui-layer-nobg',
                         type:2,
                         title:'编辑信息',
-                        area:['500px','400px'],
+                        area:['800px','600px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/category/')}}/"+data.id+"/edit"
+                        content:"{{url('admins/warehouse/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }

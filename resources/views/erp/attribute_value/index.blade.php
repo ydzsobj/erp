@@ -1,22 +1,6 @@
 @extends('erp.father.father')
 @section('content')
-    <script type="text/html" id="type_name">
-        @{{  d.category_name }}
-    </script>
     <div class="layui-fluid">
-        <div class="layui-card">
-            <div class="layui-card-header layuiadmin-card-header-auto">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加分类','{{url("admins/category/create")}}',2,'500px','400px');">添加分类</button>
-            </div>
-            <div class="layui-card-body">
-                <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
-                <script type="text/html" id="layuiadmin-app-cont-tagsbar">
-                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-                </script>
-            </div>
-
-        </div>
         <div class="demoTable">
             搜索ID或名称：
             <div class="layui-inline">
@@ -45,23 +29,25 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,height: 500
-                ,url: "{{url('api/category')}}" //数据接口
+                ,height: 530
+                ,url: "{{url('api/attribute_value')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
-                ,title: '分类数据表'
+                ,title: '属性值数据表'
                 ,page: true //开启分页
                 ,count: 10000
                 ,limit: 10
                 ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'category_name', title: '分类名称', width:180}
-                    ,{field: 'category_code', title: '分类编码', width:110, sort: true}
-                    ,{field: 'parent_id', title: '父级ID', width:80}
-                    ,{ title: '类别名称', width:130,templet:'#type_name'}
-                    ,{field: 'category_sort', title: '排序', width: 80, sort: true}
+                    ,{field: 'attr_value_name', title: '属性值名称', width:180}
+                    ,{field: 'attr_value_english', title: '英文名称', width:180}
+                    ,{field: 'attr_id', title: '属性ID', width:120, sort: true}
+                    ,{field: 'attr_value_code', title: '属性值编码', width: 100}
+                    ,{field: 'attr_value_status', title: '状态', width: 100,templet:function(res){
+                            return res.attr_value_status==1?'<div style="color: #008000">已启用</div>':'<div style="color: #ff0000">已禁用</div>';
+                    }}
                     ,{field: 'button', title: '操作', toolbar:'#button'}
                 ]]
             });
@@ -126,14 +112,14 @@
                         area:['350px','420px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/category/')}}/"+data.id
+                        content:"{{url('admins/attribute_value/')}}/"+data.id
                     });
                     //layer.msg('ID：'+ data.id + ' 的查看操作');
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
                         $.ajax({
-                            url:"{{url('admins/category/')}}/"+data.id,
+                            url:"{{url('admins/attribute_value/')}}/"+data.id,
                             type:'delete',
                             data:{"_token":"{{csrf_token()}}"},
                             datatype:'json',
@@ -162,7 +148,7 @@
                         area:['500px','400px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/category/')}}/"+data.id+"/edit"
+                        content:"{{url('admins/attribute_value/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }

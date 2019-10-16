@@ -4,28 +4,10 @@
         <form class="layui-form" action="">
             {{csrf_field()}}
             <div class="layui-form-item">
-                <label class="layui-form-label">分类名称</label>
+                <label class="layui-form-label">属性类型</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="category_name" lay-verify="required" lay-reqtext="分类名称不能为空" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
-                </div>
-                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">父级分类</label>
-                <div class="layui-input-inline">
-                    <select name="parent_id" lay-filter="aihao">
+                    <select name="type_id">
                         <option value="0">顶级分类</option>
-                        @foreach($category as $value)
-                            <option value="{{$value->id}}">{{$value->category_name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">类型</label>
-                <div class="layui-input-inline">
-                    <select name="type_id" lay-filter="aihao">
-                        <option value="0">请选择类型</option>
                         @foreach($type as $value)
                             <option value="{{$value->id}}">{{$value->type_name}}</option>
                         @endforeach
@@ -33,16 +15,28 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">分类编码</label>
-                <div class="layui-input-inline" style="width: 100px;">
-                    <input type="text" name="category_code" value="" lay-verify="required" autocomplete="off" class="layui-input" maxlength="2">
+                <label class="layui-form-label">属性名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="attr_name" lay-verify="required" lay-reqtext="属性名称不能为空"
+                           placeholder="请输入属性名称" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">排序</label>
-                <div class="layui-input-inline" style="width: 50px;">
-                    <input type="text" name="category_sort" value="0" autocomplete="off" class="layui-input">
+                <label class="layui-form-label">英文名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="attr_english" lay-verify="required" lay-reqtext="英文名称不能为空"
+                           placeholder="请输入英文名称" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">属性展示</label>
+                <div class="layui-input-inline">
+                    <div class="layui-col-md12">
+                        <input type="checkbox" name="attr_status" lay-skin="switch" lay-text="ON|OFF" checked>
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -62,29 +56,35 @@
         //Demo
         layui.config({
             base: '{{asset("/admin/layuiadmin/")}}/' //静态资源所在路径
-        }).use('form', function(){
+        }).use('form', function () {
             var form = layui.form;
-            var $=layui.jquery;
+            var $ = layui.jquery;
 
 
             //监听提交
-            form.on('submit(form)', function(data){
+            form.on('submit(form)', function (data) {
                 //layer.msg(JSON.stringify(data.field));
+                if(data.field.attr_status == "on") {
+                    data.field.attr_status = "1";
+                } else {
+                    data.field.attr_status = "0";
+                }
+
                 $.ajax({
-                    url:"{{url('admins/category')}}",
-                    type:'post',
-                    data:data.field,
-                    datatype:'json',
-                    success:function (msg) {
-                        if(msg=='0'){
-                            layer.msg('添加成功！',{icon:1,time:2000},function () {
+                    url: "{{url('admins/attribute')}}",
+                    type: 'post',
+                    data: data.field,
+                    datatype: 'json',
+                    success: function (msg) {
+                        if (msg == '0') {
+                            layer.msg('添加成功！', {icon: 1, time: 2000}, function () {
                                 var index = parent.layer.getFrameIndex(window.name);
                                 //刷新
                                 parent.window.location = parent.window.location;
                                 parent.layer.close(index);
                             });
-                        }else{
-                            layer.msg('添加失败！',{icon:2,time:2000});
+                        } else {
+                            layer.msg('添加失败！', {icon: 2, time: 2000});
                         }
                     },
                     error: function(data){
