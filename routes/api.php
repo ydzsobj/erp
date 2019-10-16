@@ -35,6 +35,13 @@ $api->version('v1', function ($api) {
         $api->resource('/product_unit','ProductUnitController', ['only' => ['index']]);
         $api->resource('/supplier','SupplierController', ['only' => ['index']]);
         $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
+        $api->resource('/attribute','AttributeController', ['only' => ['index']]);
+        $api->resource('/attribute_value','AttributeValueController', ['only' => ['index']]);
+
+
+
+        $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
+
 
     });
 
