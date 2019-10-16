@@ -1,7 +1,7 @@
 @extends('erp.father.father')
 @section('content')
     <script type="text/html" id="type_name">
-        @{{  d.type.type_name }}
+        @{{# if(d.type){ }} @{{ d.type.type_name }} @{{# }else{  }} 无 @{{# }  }}
     </script>
     <div class="layui-fluid">
         <div class="layui-card">
