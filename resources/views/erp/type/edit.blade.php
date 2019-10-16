@@ -21,7 +21,7 @@
                 <label class="layui-form-label">属性名称</label>
                 <div class="layui-input-block">
 {{--                    @foreach($attribute as $value)--}}
-{{--                        <input type="checkbox" value="{{$value->id}}" name="attr_ids[]" title="{{$value->attr_name}}" @if(in_array($value->id,$dataArray)) checked @endif>--}}
+{{--                        <input type="checkbox" value="{{$value->id}}" name="attr_ids[]" title="{{$value->attr_name}}">--}}
 {{--                    @endforeach--}}
                 </div>
             </div>

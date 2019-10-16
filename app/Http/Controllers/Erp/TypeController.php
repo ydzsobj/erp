@@ -72,7 +72,7 @@ class TypeController extends Controller
     public function edit($id)
     {
         //编辑操作
-        //$attribute = Attribute::where('attr_show',1)->get();
+        $attribute = Attribute::where('type_id',$id)->get();
         $data = Type::find($id);
         //$dataArray = explode(',',$data->attr_ids);
         //return view('erp.type.edit',compact('data','attribute','dataArray'));

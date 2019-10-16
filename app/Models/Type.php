@@ -12,4 +12,11 @@ class Type extends Model
 
     protected $table = "type";
     protected $dates = ['deleted_at'];
+
+
+    //一对多
+    public function attribute(){
+        return $this->hasMany('App\Models\attribute','id','type_id');
+    }
+
 }
