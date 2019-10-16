@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TypeRequest;
+use App\Models\Attribute;
 use App\Models\Type;
 use Illuminate\Http\Request;
 
@@ -76,7 +77,7 @@ class TypeController extends Controller
         $data = Type::find($id);
         //$dataArray = explode(',',$data->attr_ids);
         //return view('erp.type.edit',compact('data','attribute','dataArray'));
-        return view('erp.type.edit',compact('data'));
+        return view('erp.type.edit',compact('data','attribute'));
     }
 
     /**
