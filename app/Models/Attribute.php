@@ -19,5 +19,10 @@ class Attribute extends Model
         return $this->hasOne('App\Models\Type','id','type_id');
     }
 
+    //一对多关联
+    public function attributeValue()
+    {
+        return $this->hasMany('App\Models\AttributeValue','id','attr_id');
+    }
 
 }

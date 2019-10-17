@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Attribute;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class DataController extends Controller
@@ -29,6 +31,22 @@ class DataController extends Controller
         }
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
+    //获取分类对应的规格信息
+    public function get_attr(Request $request)
+    {
+        $type_id = Category::find($request->category_id)->type_id;
+        if($type_id>0){
+            $data = Attribute::where('type_id',$type_id)->get();
+        }else{
+            $data = '';
+        }
+
+        return $data;
+        //返回信息
+        //return response()->json($data);
+
     }
 
 

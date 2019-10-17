@@ -32,10 +32,13 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('warehouse','WarehouseController');
     Route::resource('attribute','AttributeController');
     Route::resource('attribute_value','AttributeValueController');
+    Route::resource('product','ProductController');
+    Route::resource('product_goods','ProductGoodsController');
 
 
 
     Route::get('data/get_admin','DataController@get_admin');
+    Route::get('data/get_attr','DataController@get_attr');
     Route::post('uploader/pic_upload','UploaderController@picUpload');  //图片异步上传
 
 });
