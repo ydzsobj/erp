@@ -38,7 +38,7 @@ class DataController extends Controller
     {
         $type_id = Category::find($request->category_id)->type_id;
         if($type_id>0){
-            $data = Attribute::with('attributeValue')->where('type_id',$type_id)->get();
+            $data = Attribute::with('attributes')->where('type_id',$type_id);
         }else{
             $data = '';
         }

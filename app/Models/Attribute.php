@@ -20,7 +20,7 @@ class Attribute extends Model
     }
 
     //一对多关联
-    public function attributeValue()
+    public function attributes()
     {
         return $this->hasMany('App\Models\AttributeValue','id','attr_id');
     }
