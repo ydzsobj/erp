@@ -66,11 +66,11 @@ $(function(){
 //			});
 //			
 			SKUTableDom += "<table class='skuTable'><tr>";
-			//创建表头
-			for(var t = 0 ; t < skuTypeArr.length ; t ++){
-				SKUTableDom += '<th>'+skuTypeArr[t].skuTypeTitle+'</th>';
-			}
-			SKUTableDom += '<th>价格</th><th>库存</th>';
+            //创建表头
+            for(var t = 0 ; t < skuTypeArr.length ; t ++){
+                SKUTableDom += '<th>'+skuTypeArr[t].skuTypeTitle+'</th>';
+            }
+			SKUTableDom += '<th>成本价格</th><th>销售价格</th><th>库存</th>';
 			SKUTableDom += "</tr>";
 			//循环处理表体
 			for(var i = 0 ; i < totalRow ; i ++){//总共需要创建多少行
@@ -105,19 +105,24 @@ $(function(){
 //					return (provids1 - propvids2)
 //				});
 				
-				var propvalids = propvalidArr.toString()
-				var alreadySetSkuPrice = "";//已经设置的SKU价格
-				var alreadySetSkuStock = "";//已经设置的SKU库存
+				var propvalids = propvalidArr.toString();
+				var alreadySetSkuPrice = "0";//已经设置的SKU价格
+                var alreadySetSkuCostPrice = "0";//已经设置的SKU价格
+				var alreadySetSkuStock = "0";//已经设置的SKU库存
 				//赋值
 				if(alreadySetSkuVals){
 					var currGroupSkuVal = alreadySetSkuVals[propvalids];//当前这组SKU值
 					if(currGroupSkuVal){
 						alreadySetSkuPrice = currGroupSkuVal.skuPrice;
+                        alreadySetSkuCostPrice = currGroupSkuVal.skuCostPrice;
 						alreadySetSkuStock = currGroupSkuVal.skuStock
 					}
 				}
 				//console.log(propvalids);
-				SKUTableDom += '<tr propvalids=\''+propvalids+'\' propids=\''+propIdArr.toString()+'\' propvalnames=\''+propvalnameArr.join(";")+'\'  propnames=\''+propNameArr.join(";")+'\' class="sku_table_tr">'+currRowDoms+'<td><input type="text" class="setting_sku_price" value="'+alreadySetSkuPrice+'"/></td><td><input type="text" class="setting_sku_stock" value="'+alreadySetSkuStock+'"/></td></tr>';
+				SKUTableDom += '<tr propvalids=\''+propvalids+'\' propids=\''+propIdArr.toString()+'\' propvalnames=\''+propvalnameArr.join(";")+'\'  propnames=\''+propNameArr.join(";")+'\' class="sku_table_tr">' +
+                    '<input type="hidden" name="sku['+i+'][propids]" value="'+propIdArr.toString()+'"/><input type="hidden" name="sku['+i+'][propnames]" value="'+propNameArr.join(";")+'"/><input type="hidden" name="sku['+i+'][propvalids]" value="'+propvalids+'"/><input type="hidden" name="sku['+i+'][propvalnames]" value="'+propvalnameArr.join(";")+'"/>'+
+                    '<input type="hidden" name="sku['+i+'][sku_attr_id]" value="'+skuValues[point].skuPropId+'"/><input type="hidden" name="sku['+i+'][sku_attr_name]" value=""/><input type="hidden" name="sku['+i+'][sku_attr_value_id]" value="'+skuValues[point].skuValueId+'"/><input type="hidden" name="sku['+i+'][sku_attr_value_name]" value="'+skuValues[point].skuValueTitle+'"/>'+
+                    ''+currRowDoms+'<td><input type="text" class="setting_sku_cost_price" name="sku['+i+'][sku_cost_price]" value="'+alreadySetSkuCostPrice+'"/></td><td><input type="text" class="setting_sku_price" name="sku['+i+'][sku_price]" value="'+alreadySetSkuPrice+'"/></td><td><input type="text" name="sku['+i+'][sku_num]" class="setting_sku_stock" value="'+alreadySetSkuStock+'"/></td></tr>';
 			}
 			SKUTableDom += "</table>";
 		}
@@ -132,12 +137,14 @@ function getAlreadySetSkuVals(){
 	alreadySetSkuVals = {};
 	//获取设置的SKU属性值
 	$("tr[class*='sku_table_tr']").each(function(){
-		var skuPrice = $(this).find("input[type='text'][class*='setting_sku_price']").val();//SKU价格
+		var skuCostPrice = $(this).find("input[type='text'][class*='setting_sku_cost_price']").val();//SKU价格
+        var skuPrice = $(this).find("input[type='text'][class*='setting_sku_price']").val();//SKU价格
 		var skuStock = $(this).find("input[type='text'][class*='setting_sku_stock']").val();//SKU库存
 		if(skuPrice || skuStock){//已经设置了全部或部分值
 			var propvalids = $(this).attr("propvalids");//SKU值主键集合
 			alreadySetSkuVals[propvalids] = {
-				"skuPrice" : skuPrice,
+				"skuCostPrice" : skuCostPrice,
+                "skuPrice" : skuPrice,
 				"skuStock" : skuStock
 			}
 		}
