@@ -44,11 +44,13 @@
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'sku_id', title: '产品SPU', width: 180}
+                    ,{field: 'product_id', title: '产品ID', width: 100, sort: true}
+                    ,{field: 'sku_code', title: 'SKU编码', width: 150}
                     ,{field: 'sku_name', title: '产品名称', width:180}
-                    ,{field: 'category_id', title: '产品类别', width:80, sort: true}
+                    ,{field: 'sku_attr_names', title: '产品属性名', width:150}
+                    ,{field: 'sku_attr_value_names', title: '产品规格值', width:150}
                     ,{field: 'sku_price', title: '销售价', width:80}
-                    ,{field: 'created_at', title: '发布时间', width: 180, sort: true}
+                    ,{field: 'sku_sort', title: '排序', width: 100, sort: true}
                     ,{field: 'button', title: '操作', toolbar:'#button'}
                 ]]
             });

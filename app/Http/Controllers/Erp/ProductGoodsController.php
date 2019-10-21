@@ -14,7 +14,8 @@ class ProductGoodsController extends Controller
      */
     public function index()
     {
-        //
+        //首页列表
+        return view('erp.product_goods.index');
     }
 
     /**
