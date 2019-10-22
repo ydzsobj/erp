@@ -76,38 +76,48 @@ class ProductController extends Controller
         ];
 
         $lastId = DB::table('product')->insertGetId($arr);
-        foreach($request->sp_val as $key => $value){
-            $productAttrArr[$key]['product_id'] = $lastId;
-            $productAttrArr[$key]['attr_id'] = $key;
-            foreach ($value['attr_value'] as $k=>$v){
-                $productToAttrArr[$key]['attr_value_id'] = $k;
-                $productToAttrArr[$key]['attr_value_name'] = $v;
+        if(isset($request->sp_val)) {
+            foreach ($request->sp_val as $key => $value) {
+                $productAttrArr[$key]['product_id'] = $lastId;
+                $productAttrArr[$key]['attr_id'] = $key;
+                foreach ($value['attr_value'] as $k => $v) {
+                    $productToAttrArr[$key]['attr_value_id'] = $k;
+                    $productToAttrArr[$key]['attr_value_name'] = $v;
+                }
+                $productToAttrArr[$key]['product_id'] = $lastId;
+                $productToAttrArr[$key]['attr_id'] = $key;
+                $productToAttrArr[$key]['attr_name'] = $value['attr_name'];
             }
-            $productToAttrArr[$key]['product_id'] = $lastId;
-            $productToAttrArr[$key]['attr_id'] = $key;
-            $productToAttrArr[$key]['attr_name'] = $value['attr_name'];
+        }else{
+            $productToAttrArr = '';
+        }
+        if(isset($request->sku)) {
+            foreach ($request->sku as $key => $value) {
+                $skuId = $spuId . str_pad($key, 4, '0', STR_PAD_LEFT);
+                $skuArr[$key]['product_id'] = $lastId;
+                $skuArr[$key]['sku_name'] = $request->product_name;
+                $skuArr[$key]['sku_english'] = $request->product_english;
+                $skuArr[$key]['sku_code'] = $skuId;
+                $skuArr[$key]['sku_cost_price'] = $value['sku_cost_price'] == 0 ? $request->product_cost_price : $value['sku_cost_price'];
+                $skuArr[$key]['sku_price'] = $value['sku_price'] == 0 ? $request->product_price : $value['sku_price'];
+                $skuArr[$key]['sku_num'] = $value['sku_num'] != 0 ? $value['sku_num'] : 0;
+                $skuArr[$key]['sku_attr_ids'] = $value['propids'];
+                $skuArr[$key]['sku_attr_names'] = $value['propnames'];
+                $skuArr[$key]['sku_attr_value_ids'] = $value['propvalids'];
+                $skuArr[$key]['sku_attr_value_names'] = $value['propvalnames'];
+                $skuAttrArr[] = $this->doProp($key, $skuId, $value['propids'], $value['propnames'], $value['propvalids'], $value['propvalnames']);
+
+            }
+
+            foreach ($skuAttrArr as $ke => $val) {
+                SkuAttrValue::insert($val);
+            }
+        }else{
+            $skuArr = [];
+            $productAttrArr = [];
+            $productToAttrArr = [];
         }
 
-        foreach ($request->sku as $key=>$value){
-            $skuId = $spuId.str_pad($key,4,'0',STR_PAD_LEFT);
-            $skuArr[$key]['product_id'] = $lastId;
-            $skuArr[$key]['sku_name'] = $request->product_name;
-            $skuArr[$key]['sku_english'] = $request->product_english;
-            $skuArr[$key]['sku_code'] = $skuId;
-            $skuArr[$key]['sku_cost_price'] = $value['sku_cost_price']==0?$request->product_cost_price:$value['sku_cost_price'];
-            $skuArr[$key]['sku_price'] = $value['sku_price']==0?$request->product_price:$value['sku_price'];
-            $skuArr[$key]['sku_num'] = $value['sku_num']!=0?$value['sku_num']:0;
-            $skuArr[$key]['sku_attr_ids'] = $value['propids'];
-            $skuArr[$key]['sku_attr_names'] = $value['propnames'];
-            $skuArr[$key]['sku_attr_value_ids'] = $value['propvalids'];
-            $skuArr[$key]['sku_attr_value_names'] = $value['propvalnames'];
-            $skuAttrArr[] = $this->doProp($key,$skuId,$value['propids'],$value['propnames'],$value['propvalids'],$value['propvalnames']);
-
-        }
-
-        foreach($skuAttrArr as $ke =>$val){
-            SkuAttrValue::insert($val);
-        }
         //数据插入
         ProductAttr::insert($productAttrArr);
         ProductToAttr::insert($productToAttrArr);
@@ -169,16 +179,24 @@ class ProductController extends Controller
      */
     public function createSpuCode($category_id){
         $product = Product::where('category_id',$category_id)->orderByDesc('product_code')->first();
-        $category_code = $product->category_code;
+        $category = Category::where('id',$category_id)->first();
+        $category_code = $category->category_code;
         $yid = substr(date('Y'),-2);
         $codeLength = 4;
+        $codeStr = 'Y';
         $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
         if ($product) {
-            $code = $product->product_code;
+            $product_code = $product->product_code;
+            if(strstr($product_code,$codeStr)){
+                $code = substr($product_code,1);
+            }else{
+                $code = $product_code;
+            }
+
             $number = intval(substr($code,strlen($category_id.$yid))) + 1;
             $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
         }
-        return $category_code . $yid . $subCode;
+        return $codeStr.$category_code . $yid . $subCode;
     }
 
     public function doProp($key,$skuId,$pIds,$pNames,$pValIds,$pValNames){
