@@ -229,6 +229,16 @@ class ProductController extends Controller
         return $data;
     }
 
+    /*
+     * 显示产品下的SKU
+     */
+    public function sku($id)
+    {
+        //$data = ProductGoods::where('product_id',$id)->get();
+        $data['id'] = $id;
+        return view('erp.product.sku',compact('data'));
+    }
+
 
 
 }
