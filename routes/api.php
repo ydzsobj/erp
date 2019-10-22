@@ -44,6 +44,9 @@ $api->version('v1', function ($api) {
 
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
 
+        /******订单相关****/
+        $api->get('/orders','OrderController@index')->name('api.orders.index');
+
 
     });
 

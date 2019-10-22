@@ -56,7 +56,7 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/product')}}">订单列表</a>
+                        <a lay-href="{{route('orders.index') }}">订单列表</a>
                     </dd>
 
                 </dl>
