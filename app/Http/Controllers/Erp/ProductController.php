@@ -169,6 +169,7 @@ class ProductController extends Controller
      */
     public function createSpuCode($category_id){
         $product = Product::where('category_id',$category_id)->orderByDesc('product_code')->first();
+        $category_code = $product->category_code;
         $yid = substr(date('Y'),-2);
         $codeLength = 4;
         $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
@@ -177,7 +178,7 @@ class ProductController extends Controller
             $number = intval(substr($code,strlen($category_id.$yid))) + 1;
             $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
         }
-        return $category_id . $yid . $subCode;
+        return $category_code . $yid . $subCode;
     }
 
     public function doProp($key,$skuId,$pIds,$pNames,$pValIds,$pValNames){
