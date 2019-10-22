@@ -519,7 +519,17 @@
                 }
             }
             ,{field:'sku', title: '产品名称', templet:function(row){return row.sku.sku_name;}}
-            ,{field:'sku', title: '属性',  templet:function(row){return row.sku.sku_value;}}
+            ,{field:'sku', title: '属性',
+                templet:function(row)
+                {
+                    var sku_values = row.sku.sku_values;
+                    var sku_str = '';
+                    for(var i=0;i<sku_values.length;i++){
+                        sku_str += sku_values[i].attr_value_name +' ';
+                    }
+                    return sku_str;
+                }
+            }
             ,{field:'sku_nums', title: '数量', sort: true}
 
             ]]

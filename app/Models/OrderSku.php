@@ -15,6 +15,6 @@ class OrderSku extends Model
     ];
 
     public function sku(){
-        return $this->belongsTo(ProductGoods::class,'sku_id', 'id')->withDefault();
+        return $this->belongsTo(ProductGoods::class,'sku_id', 'sku_code')->withDefault();
     }
 }

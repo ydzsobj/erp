@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Arr;
 
 class OrderController extends Controller
 {
@@ -31,8 +32,8 @@ class OrderController extends Controller
         $countries = config('order.country_list');
 
         foreach($data as $d){
-            $d->status_name = array_get($status, $d->status);
-            $d->country_name = array_get($countries, $d->country_id);
+            $d->status_name = Arr::get($status, $d->status);
+            $d->country_name = Arr::get($countries, $d->country_id);
         }
 
         return $data;

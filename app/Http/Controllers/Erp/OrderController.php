@@ -100,7 +100,7 @@ class OrderController extends Controller
 
         $country_id = $request->post('country_id');
 
-        Excel::import(new OrdersImport($country_id), str_replace_first('storage','',$file_path), 'public');
+        Excel::import(new OrdersImport($country_id), str_replace('storage','',$file_path), 'public');
 
     }
 
@@ -115,7 +115,7 @@ class OrderController extends Controller
 
         $order->last_audited_at = Carbon::now();
 
-        $order->audited_admin_id = Auth::user()->admin_id;
+        $order->audited_admin_id = Auth::user()->id;
 
         if($action == 'cancel_order'){
             $order->status = Order::STATUS_CANCELLED;

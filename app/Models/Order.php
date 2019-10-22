@@ -51,11 +51,11 @@ class Order extends Model
     }
 
     public function admin_user(){
-        return $this->belongsTo(Admin::class,'admin_id');
+        return $this->belongsTo(Admin::class,'admin_id','id');
     }
 
     public function audited_admin_user(){
-        return $this->belongsTo(Admin::class, 'audited_admin_id')->withDefault();
+        return $this->belongsTo(Admin::class, 'audited_admin_id', 'id')->withDefault();
     }
 
     public function audit_logs(){
@@ -77,15 +77,15 @@ class Order extends Model
         $per_page = $limit ?: $this->page_size;
 
         $orders = self::with([
-                'admin_user:admin_id,admin_name',
-                'audited_admin_user:admin_id,admin_name',
+                'admin_user:id,admin_name',
+                'audited_admin_user:id,admin_name',
                 'order_skus',
-                'order_skus.sku:sku_id,sku_name',
+                'order_skus.sku:sku_code,sku_name',
                 'order_skus.sku.sku_values',
                 'audit_logs' => function($query){
                     $query->orderBy('id', 'desc');
                 },
-                'audit_logs.admin_user:admin_id,admin_name'
+                'audit_logs.admin_user:id,admin_name'
             ])
             ->ofKeywords($keywords)
             ->ofStatus($status)
@@ -105,7 +105,7 @@ class Order extends Model
             return $query;
         }
 
-        $sku_ids = ProductGoods::where('sku_name', $keywords)->orWhere('sku_id', $keywords)->pluck('sku_id');
+        $sku_ids = ProductGoods::where('sku_name', $keywords)->orWhere('sku_code', $keywords)->pluck('sku_code');
         if($sku_ids->count() > 0)
         {
             $order_ids = OrderSku::whereIn('sku_id', $sku_ids)->pluck('order_id')->unique();

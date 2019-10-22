@@ -35,7 +35,7 @@ class OrderAuditSuccessedListener
 
         $log_data = collect([]);
 
-        $admin_id = Auth::user()->admin_id;
+        $admin_id = Auth::user()->id;
 
         foreach($order_ids as $order_id){
             $data = $log_data->push([
