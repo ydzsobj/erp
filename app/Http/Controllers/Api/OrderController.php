@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\ProductGoods;
 use Illuminate\Support\Arr;
 
 class OrderController extends Controller

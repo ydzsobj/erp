@@ -80,7 +80,6 @@ class Order extends Model
                 'admin_user:id,admin_name',
                 'audited_admin_user:id,admin_name',
                 'order_skus',
-                'order_skus.sku:sku_code,sku_name',
                 'order_skus.sku.sku_values',
                 'audit_logs' => function($query){
                     $query->orderBy('id', 'desc');
