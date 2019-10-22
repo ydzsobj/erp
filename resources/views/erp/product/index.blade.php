@@ -31,6 +31,13 @@
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
 
+    <script type="text/html" id="category_name">
+        @{{# if(d.category){ }} @{{ d.category.category_name }} @{{# }else{  }} 无 @{{# }  }}
+    </script>
+    <script type="text/html" id="category_code">
+        @{{# if(d.category){ }} @{{ d.category.category_code }} @{{# }else{  }} 无 @{{# }  }}
+    </script>
+
 
 @endsection
 @section('js')
@@ -56,9 +63,10 @@
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'product_code', title: '产品SPU', width: 100}
+                    ,{field: 'product_code', title: '产品SPU', width: 120}
                     ,{field: 'product_name', title: '产品名称', width:280}
-                    ,{field: 'category_id', title: '产品类别', width:100, sort: true}
+                    ,{title: '产品编码', width:100,templet:'#category_code'}
+                    ,{title: '产品类别', width:100,templet:'#category_name'}
                     ,{field: 'product_price', title: '销售价', width:100}
                     ,{field: 'product_image', title: '产品图片', width: 150, event: 'show_img', align:'center',templet: function(res){
                             return '<img src="'+ res.product_image +'"width="100px" height="100px" alt="">'

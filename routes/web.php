@@ -23,6 +23,11 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('admin_info','AdminController@adminInfo');
     Route::any('password','AdminController@password');
 
+    Route::get('product/sku/{id}', 'ProductController@sku')->name('product.sku');
+
+
+
+
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');
     Route::resource('type','TypeController');

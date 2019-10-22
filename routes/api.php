@@ -42,6 +42,7 @@ $api->version('v1', function ($api) {
 
 
 
+        $api->get('/product/sku/{id}','ProductController@sku');
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
 
 

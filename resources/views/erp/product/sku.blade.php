@@ -27,9 +27,11 @@
                 ,title: '产品数据表'
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'sku_id', title: 'SKU', width: 130}
+                    ,{field: 'sku_code', title: 'SKU', width: 140}
                     ,{field: 'sku_name', title: 'SKU名称', width:180}
                     ,{field: 'sku_english', title: '英文名称', width:100, sort: true}
+                    ,{field: 'sku_attr_names', title: '产品属性名', width:150}
+                    ,{field: 'sku_attr_value_names', title: '产品规格值', width:150}
                     ,{field: 'sku_price', title: '销售价', width:100}
                     ,{field: 'sku_image', title: '产品图片', event: 'show_img', align:'center',templet: function(res){
                         return '<img src="'+ res.sku_image +'"width="50px"  alt="">'
