@@ -46,6 +46,7 @@ $api->version('v1', function ($api) {
 
         /******订单相关****/
         $api->get('/orders','OrderController@index')->name('api.orders.index');
+        $api->get('/shopify_orders','ShopifyOrderController@index')->name('api.shopify_orders.index');
 
 
     });
