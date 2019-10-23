@@ -62,6 +62,18 @@
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
+                <a href="javascript:;" lay-tips="shopify店铺管理" lay-direction="2">
+                    <i class="layui-icon layui-icon-util"></i>
+                    <cite>shopify配置</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="console">
+                        <a lay-href="{{route('shopify_accounts.index') }}">店铺管理</a>
+                    </dd>
+
+                </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item ">
                 <a href="javascript:;" lay-tips="仓库管理" lay-direction="2">
                     <i class="layui-icon layui-icon-util"></i>
                     <cite>仓库管理</cite>

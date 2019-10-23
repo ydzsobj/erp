@@ -20,7 +20,7 @@ class ShopifyOrderController extends Controller
     {
         $countries = config('order.country_list');
         $status_list = config('order.status_list');
-        return view('erp.shopify_order.index2', compact('countries','status_list'));
+        return view('erp.shopify_order.index', compact('countries','status_list'));
     }
 
     public function create_import()

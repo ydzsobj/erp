@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderSku extends Model
+class ShopifyOrderSku extends Model
 {
-    protected $table = 'order_skus';
+    protected $table = 'shopify_order_skus';
 
     protected $fillable = [
         'order_id',
         'sku_id',
         'sku_nums',
+        'price',
     ];
 
     public function sku(){

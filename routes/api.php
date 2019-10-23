@@ -45,8 +45,9 @@ $api->version('v1', function ($api) {
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
 
         /******订单相关****/
-        $api->get('/orders','OrderController@index')->name('api.orders.index');
-        $api->get('/shopify_orders','ShopifyOrderController@index')->name('api.shopify_orders.index');
+        // $api->get('/orders','OrderController@index')->name('api.orders.index');
+        $api->get('/orders','ShopifyOrderController@index')->name('api.orders.index');
+        $api->get('/shopify_accounts','ShopifyAccountController@index')->name('api.shopify_accounts.index');
 
 
     });

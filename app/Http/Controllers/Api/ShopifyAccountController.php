@@ -10,31 +10,30 @@ use App\Models\ShopifyApi;
 use App\Models\ShopifyOrder;
 use Illuminate\Support\Arr;
 
-class ShopifyOrderController extends Controller
+class ShopifyAccountController extends Controller
 {
     public function index(Request $request){
 
-        $o = new ShopifyOrder();
-        list($orders, $search) = $o->get_data($request);
-        $count = $orders->total();
+        $shop_ac = new ShopifyAccount();
+        $data = $shop_ac->get_data($request);
 
-        $orders = $this->format_data($orders);
+        $count = $data->total();
+
+        $data = $this->format_data($data);
 
         return response()->json([
             'code' => 0,
             'count' => $count,
             'msg' => '获取数据成功',
-            'data' => $orders,
+            'data' => $data
         ]);
     }
 
     protected function format_data($data){
 
-        $status = config('order.status_list');
         $countries = config('order.country_list');
 
         foreach($data as $d){
-            $d->status_name = Arr::get($status, $d->status);
             $d->country_name = Arr::get($countries, $d->country_id);
         }
 

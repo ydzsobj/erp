@@ -24,6 +24,9 @@ class ShopifyOrder extends Model
         'province',
         'city',
         'area',
+        'address1',
+        'address2',
+        'company',
         'short_address',
         'submit_order_at',
         'admin_id',
@@ -89,8 +92,8 @@ class ShopifyOrder extends Model
             ->ofKeywords($keywords)
             ->ofStatus($status)
             ->ofSubmitOrderDate($start_date, $end_date)
-            ->select('orders.*')
-            ->orderBy('orders.submit_order_at','desc')
+            ->select('shopify_orders.*')
+            ->orderBy('shopify_orders.submit_order_at','desc')
             ->paginate($per_page);
 
         $search = compact('per_page');
@@ -130,4 +133,5 @@ class ShopifyOrder extends Model
 
         $query->whereBetween('submit_order_at', [$start_date, $end_date]);
     }
+
 }

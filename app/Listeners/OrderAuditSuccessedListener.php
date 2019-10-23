@@ -39,7 +39,7 @@ class OrderAuditSuccessedListener
 
         foreach($order_ids as $order_id){
             $data = $log_data->push([
-                    'order_id' => $order_id,
+                    'shopify_order_id' => $order_id,
                     'remark' => $event->remark,
                     'admin_id' => $admin_id,
                     'created_at' => Carbon::now()
