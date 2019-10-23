@@ -12,12 +12,12 @@
         "barryvdh/laravel-cors": "^0.11.4",
         "dingo/api": "^2.3",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
+        "maatwebsite/excel": "^3.1",
         "mews/captcha": "^3.0",
-        "tymon/jwt-auth": "dev-develop",
-        "maatwebsite/excel": "^3.1"
-
+        "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
@@ -68,5 +68,12 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
+    },
+
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
     }
 }
