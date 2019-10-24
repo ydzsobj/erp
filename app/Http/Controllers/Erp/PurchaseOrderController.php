@@ -41,6 +41,26 @@ class PurchaseOrderController extends Controller
     {
         //
         dd($request);
+        //存储表单信息
+        $arr = [
+            'purchase_order_code' => '',
+            'purchase_type' => $request->purchase_type,
+            'purchase_num' => $request->category_id,
+            'purchase_money' => $request->category_id,
+            'purchase_tax' => $request->category_id,
+            'supplier_id' => $request->category_id,
+            'supplier_contacts' => $request->category_id,
+            'supplier_phone' => $request->category_id,
+            'supplier_fax' => $request->category_id,
+            'user_id' => $request->category_id,
+            'purchase_text' => $request->category_id,
+            'purchase_order_status' => '1',
+            'created_at' => date('Y-m-d H:i:s', time()),
+        ];
+
+
+
+
     }
 
     /**
