@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class ShopifyOrder extends Model
 {
@@ -84,7 +85,7 @@ class ShopifyOrder extends Model
                 'admin_user:id,admin_name',
                 'audited_admin_user:id,admin_name',
                 'order_skus',
-                'order_skus.sku.sku_values',
+                'order_skus.sku.sku_values.attr_value',
                 'audit_logs' => function($query){
                     $query->orderBy('id', 'desc');
                 },
@@ -160,31 +161,33 @@ class ShopifyOrder extends Model
         $end_date = $request->get('end_date');
         $country_id = $request->get('country_id');
 
-        $orders =  self::with(['order_skus','order_skus.sku.sku_values'])
+        $orders =  self::with([
+                    'order_skus',
+                    'order_skus.sku.sku_values.attr_value',
+                ]
+            )
             ->ofKeywords($keywords)
             ->ofStatus($status)
             ->ofSubmitOrderDate($start_date, $end_date)
             ->ofCountryId($country_id)
             ->select(
-                'good_orders.id',
-                'good_orders.created_at',
-                'good_orders.last_audited_at',
-                'good_orders.sn',
-                'good_orders.receiver_name',
-                'good_orders.postcode',
-                'good_orders.receiver_phone',
-                'good_orders.province',
-                'good_orders.city',
-                'good_orders.area',
-                'good_orders.short_address',
-                'good_orders.price',
-
-                'good_orders.status',
-                'good_orders.pay_type_id',
-                'good_orders.remark'
+                'id',
+                'submit_order_at',
+                'last_audited_at',
+                'sn',
+                'receiver_name',
+                'postcode',
+                'receiver_phone',
+                'province',
+                'city',
+                'area',
+                'address1',
+                'price',
+                'status',
+                'remark'
 
             )
-                ->orderBy('good_orders.id', 'desc')
+                ->orderBy('submit_order_at', 'desc')
                 ->get();
 
         $status = config('order.status_list');
@@ -202,35 +205,42 @@ class ShopifyOrder extends Model
             $admin_user_str = '';
 
             foreach ($order_skus as $order_sku){
-                $sku = $order_sku->sku_info;
+                $sku = $order_sku->sku;
+
+                if($sku->count() == 0){
+                    continue;
+                }
 
                 //skuid
-                $sku_ids .= $sku->sku_id;
+                $sku_ids .= $sku->sku_code;
                 $sku_ids .= "\r\n";
 
                 //备注-中文
-                $sku_str .= $sku->good->name .' '. $sku->s1_name . $sku->s2_name. $sku->s3_name. ' x'. $order_sku->sku_nums;
+                $sku_str .= $sku->sku_name .' '. $sku->sku_attr_value_names. ' x'. $order_sku->sku_nums;
                 $sku_str .= "\r\n";
 
                 //物品描述-英文
-                $sku_desc_str .= $sku->good->product->english_name .' '. ProductAttributeValue::get_english_name($sku->good_id, [$sku->s1,$sku->s2,$sku->s3]). ' x'. $order_sku->sku_nums;
+                $sku_attr_values = $sku->sku_values;
+                if($sku_attr_values->count() >0){
+                    $attr_values_str = $sku_attr_values->map(function($item){
+                        return $item->attr_value->attr_value_english;
+                    });
+                    // dump($attr_values_str);
+                    $sku_desc_str .= $sku->sku_english. ' '.$attr_values_str->implode(',') .' x'. $order_sku->sku_nums;
+                }
+
                 $sku_desc_str .= "\r\n";
 
                 //产品中文名称
-                $product_name_str .= $sku->good->product->name;
+                $product_name_str .= $sku->sku_name;
                 $product_name_str .= "\r\n";
 
                 //产品英文名称
-                $product_english_name_str .= $sku->good->product->english_name;
+                $product_english_name_str .= $sku->sku_english;
                 $product_english_name_str .= "\r\n";
 
                 //件数
                 $total_nums += $order_sku->sku_nums;
-
-                //所属人
-                $admin_user_str .= $sku->good->admin_user->name;
-                $admin_user_str .= "\r\n";
-
 
             }
 
@@ -240,22 +250,19 @@ class ShopifyOrder extends Model
             $order->product_english_name_str = $product_english_name_str;
             $order->total_nums = $total_nums;
             $order->sku_desc_str = $sku_desc_str;
-            $order->admin_user_str = $admin_user_str;
 
-            $order->status_str = array_get($status, $order->status, '');
-            $order->pay_type_str = array_get($pay_types, $order->pay_type_id, '');
+            $order->status_str = Arr::get($status, $order->status, '');
             $order->service_remark = $order->remark;
-
 
             unset(
                 $order->id,
-                $order->pay_type_id,
                 $order->status,
-                $order->remark
+                $order->remark,
+                $order->order_skus
             );
         }
 
-//        dd($orders->toArray());
+        // dd($orders->toArray());
 
         return $orders;
 

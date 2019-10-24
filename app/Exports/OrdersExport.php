@@ -3,8 +3,11 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet ;
 
-class OrdersExport implements FromCollection
+class OrdersExport implements FromCollection,WithHeadings,withEvents
 {
     protected $export_data;
 
@@ -20,6 +23,7 @@ class OrdersExport implements FromCollection
     public function collection()
     {
        return $this->export_data;
+        // return collect([['ab','bb','c'], ['ab','bb','c'],['ab','bb','c']]);
     }
 
     public function headings(): array
@@ -42,9 +46,7 @@ class OrdersExport implements FromCollection
             '英文品名',
             '件数',
             '物品描述',
-            '所属人',
             '审核状态',
-            '付款方式',
             '客服备注',
 
         ];

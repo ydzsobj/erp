@@ -13,7 +13,7 @@ use App\Models\OrderAuditLog;
 use App\Models\ShopifyOrder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
+use Excel;
 
 class ShopifyOrderController extends Controller
 {
@@ -167,7 +167,10 @@ class ShopifyOrderController extends Controller
 
         $o = new ShopifyOrder();
         $data = $o->export($request);
-        return Excel::download(new OrdersExport($data), '订单导出'.date('y-m-d H_i_s').'.xlsx');
+        ob_end_clean();
+        ob_start();
+        // dd($data);
+        return Excel::download(new OrdersExport($data), 'orders.xls');
     }
 
 

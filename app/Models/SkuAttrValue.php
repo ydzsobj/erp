@@ -10,4 +10,8 @@ class SkuAttrValue extends Model
     protected $table = "sku_attr_value";
 
     protected $guarded = [];
+
+    public function attr_value(){
+        return $this->belongsTo(AttributeValue::class,'attr_value_id')->withDefault();
+    }
 }

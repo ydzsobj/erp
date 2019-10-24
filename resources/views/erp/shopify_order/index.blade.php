@@ -370,15 +370,59 @@
 
             console.log(checkStatus.data);
 
-            if(layEvent === 'import_order'){ //
+            if(layEvent === 'export_order'){ //
                 //do somehing
-                console.log('click import order');
-                layer.open({
-                    title:'订单导入',
-                    type: 1,
-                    area:['600px','300px'],
-                    content: $("#fm_import")
-                })
+                console.log('click export order');
+
+                var params = {
+                    keywords: $("#demoReload").val(),
+                    status: $("#search_status").val(),
+                    country_id: $("#search_country_id").val(),
+                    start_date:$("#start_date").val(),
+                    end_date:$("#end_date").val(),
+                };
+
+                // $.ajax({
+                //     type:'GET',
+                //     url: "{{ route('orders.export') }}",
+                //     data:params,
+                //     dataType:"json",
+                //     success:function(msg){
+                //             console.log('abc',msg);
+                //             if(msg.success){
+                //                 table.exportFile([
+                //                     '下单时间',
+                //                     '审核时间',
+                //                     '订单sn',
+                //                     '收件人',
+                //                     '收货地邮编',
+                //                     '收货人电话',
+                //                     '收件省份',
+                //                     '收件城市',
+                //                     '收件地区',
+                //                     '收件详细地址',
+                //                     '代收货款',
+                //                     'SKUID',
+                //                     '备注',
+                //                     '中文品名',
+                //                     '英文品名',
+                //                     '件数',
+                //                     '物品描述',
+                //                     '审核状态',
+                //                     '客服备注',
+                //                 ], msg.data, 'csv'); //默认导出 csv，也可以为：xls
+                //             }
+                //     },
+                //     error: function(data){
+                //         layer.msg('请求接口失败',{icon:2,time:2000});
+                //     }
+                // })
+
+                var route = "{{ route('orders.export') }}";
+                var href = route + '?'+ encodeSearchParams(params);
+                console.log(href);
+                location.href = href;
+
             }else if(layEvent == 'batch_audit'){
                 //批量审核
                 if(checkStatus.data.length == 0){
@@ -487,8 +531,32 @@
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
       <button class="layui-btn layui-btn-sm" lay-event="batch_audit" >批量审核</button>
-      <button class="layui-btn layui-btn-sm" lay-event="export_order" >导出订单</button>
+      <a class="layui-btn layui-btn-sm" lay-event="export_order" >导出订单</a>
     </div>
+  </script>
+
+  <script>
+
+/**
+ * 拼接对象为请求字符串
+ * @param {Object} obj - 待拼接的对象
+ * @returns {string} - 拼接成的请求字符串
+ */
+function encodeSearchParams(obj) {
+  const params = []
+
+  Object.keys(obj).forEach((key) => {
+    let value = obj[key]
+    // 如果值为undefined我们将其置空
+    if (typeof value === 'undefined') {
+      value = ''
+    }
+    // 对于需要编码的文本（比如说中文）我们要进行编码
+    params.push([key, encodeURIComponent(value)].join('='))
+  })
+
+  return params.join('&')
+}
   </script>
 
 @endsection
