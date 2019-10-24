@@ -40,17 +40,17 @@ class ShopifyAccount extends Model
     }
 
     //抓取订单
-    public function create_order(){
+    public function create_order($shopify_account){
 
         $admin_id = Auth::user()->id;
 
-        $country_id = $this->country_id;
+        $country_id = $shopify_account->country_id;
 
         $successed = 0;
         $failed = 0;
         $existed = 0;
 
-        $api = new ShopifyApi($this);
+        $api = new ShopifyApi($shopify_account);
 
         list($api_result, $msg) = $api->orders();
 
@@ -59,8 +59,6 @@ class ShopifyAccount extends Model
         }
 
         $shopify_orders = $api_result['orders'];
-
-        // dd($shopify_orders);
 
         foreach($shopify_orders as $shopify_order){
 
@@ -75,7 +73,7 @@ class ShopifyAccount extends Model
                 }
             }
 
-            $submit_order_at = Carbon::parse($shopify_order['created_at'])->toDateString();
+            $submit_order_at = Carbon::parse($shopify_order['created_at'])->toDateTimeString();
             $price = $shopify_order['total_price'];
             $total_off = $shopify_order['total_discounts'];
 

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Events\OrderAuditSuccessed;
+use App\Exports\OrdersExport;
 use App\Imports\OrdersImport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportOrderRequest;
 use App\Models\Order;
 use App\Models\OrderAuditLog;
+use App\Models\ShopifyOrder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -68,7 +70,10 @@ class ShopifyOrderController extends Controller
      */
     public function edit($id)
     {
-        //
+        $status_list = config('order.status_list');
+        $order = new ShopifyOrder();
+        $detail = $order->detail($id);
+        return view('erp.shopify_order.edit', compact('detail', 'status_list'));
     }
 
     /**
@@ -80,7 +85,13 @@ class ShopifyOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $req = $request->except('_token');
+
+        $result = ShopifyOrder::where('id', $id)->update($req);
+
+        $msg = $result ? '设置成功':'设置失败';
+
+        return returned($result, $msg);
     }
 
     /**
@@ -94,16 +105,6 @@ class ShopifyOrderController extends Controller
         //
     }
 
-    public function import(ImportOrderRequest $request){
-
-        $file_path = $request->post('path');
-
-        $country_id = $request->post('country_id');
-
-        Excel::import(new OrdersImport($country_id), str_replace('storage','',$file_path), 'public');
-
-    }
-
     /**
      * 审核、取消订单
      */
@@ -111,17 +112,17 @@ class ShopifyOrderController extends Controller
 
         $action = $request->get('action');
 
-        $order = Order::find($id);
+        $order = ShopifyOrder::find($id);
 
         $order->last_audited_at = Carbon::now();
 
         $order->audited_admin_id = Auth::user()->id;
 
         if($action == 'cancel_order'){
-            $order->status = Order::STATUS_CANCELLED;
+            $order->status = ShopifyOrder::STATUS_CANCELLED;
             $remark = '取消订单';
         }else{
-            $order->status = Order::STATUS_AUDITED;
+            $order->status = ShopifyOrder::STATUS_AUDITED;
             $remark = '审核通过';
         }
 
@@ -146,11 +147,11 @@ class ShopifyOrderController extends Controller
 
         $data = [
             'last_audited_at' => Carbon::now(),
-            'status' => Order::STATUS_AUDITED,
+            'status' => ShopifyOrder::STATUS_AUDITED,
             'audited_admin_id' => Auth::user()->id
         ];
 
-        $res = Order::whereIn('id', $order_ids)->update($data);
+        $res = ShopifyOrder::whereIn('id', $order_ids)->update($data);
 
         if($res){
             event(new OrderAuditSuccessed($order_ids, '审核通过'));
@@ -160,4 +161,15 @@ class ShopifyOrderController extends Controller
 
         return returned($res, $msg, $order_ids);
     }
+
+    //订单导出
+    public function export(Request $request){
+
+        $o = new ShopifyOrder();
+        $data = $o->export($request);
+        return Excel::download(new OrdersExport($data), '订单导出'.date('y-m-d H_i_s').'.xlsx');
+    }
+
+
+
 }

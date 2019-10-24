@@ -122,7 +122,7 @@ class ShopifyAccountController extends Controller
 
         $shopify_account = ShopifyAccount::find($id);
 
-        list($success,$msg) = $shopify_account->create_order();
+        list($success,$msg) = $shopify_account->create_order($shopify_account);
 
         return returned($success, $msg);
 

@@ -76,6 +76,7 @@ class ShopifyOrder extends Model
         $status = $request->get('status');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
+        $country_id = $request->get('country_id');
 
         $per_page = $limit ?: $this->page_size;
 
@@ -92,6 +93,7 @@ class ShopifyOrder extends Model
             ->ofKeywords($keywords)
             ->ofStatus($status)
             ->ofSubmitOrderDate($start_date, $end_date)
+            ->ofCountryId($country_id)
             ->select('shopify_orders.*')
             ->orderBy('shopify_orders.submit_order_at','desc')
             ->paginate($per_page);
@@ -110,7 +112,7 @@ class ShopifyOrder extends Model
         $sku_ids = ProductGoods::where('sku_name', $keywords)->orWhere('sku_code', $keywords)->pluck('sku_code');
         if($sku_ids->count() > 0)
         {
-            $order_ids = OrderSku::whereIn('sku_id', $sku_ids)->pluck('order_id')->unique();
+            $order_ids = ShopifyOrderSku::whereIn('sku_id', $sku_ids)->pluck('shopify_order_id')->unique();
             if($order_ids->count() >0){
                 return $query->whereIn('id', $order_ids);
             }
@@ -132,6 +134,131 @@ class ShopifyOrder extends Model
         }
 
         $query->whereBetween('submit_order_at', [$start_date, $end_date]);
+    }
+
+    public function scopeOfCountryId($query, $country_id){
+
+        if($country_id){
+            return $query->where('country_id', $country_id);
+        }else{
+            return $query;
+        }
+    }
+
+    //详情
+    public function detail($id){
+        $detail = self::with(['order_skus','order_skus.sku.sku_values'])->where('id', $id)->first();
+        return $detail;
+    }
+
+    public function export($request){
+
+        $limit = $request->get('limit');
+        $keywords = $request->get('keywords');
+        $status = $request->get('status');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        $country_id = $request->get('country_id');
+
+        $orders =  self::with(['order_skus','order_skus.sku.sku_values'])
+            ->ofKeywords($keywords)
+            ->ofStatus($status)
+            ->ofSubmitOrderDate($start_date, $end_date)
+            ->ofCountryId($country_id)
+            ->select(
+                'good_orders.id',
+                'good_orders.created_at',
+                'good_orders.last_audited_at',
+                'good_orders.sn',
+                'good_orders.receiver_name',
+                'good_orders.postcode',
+                'good_orders.receiver_phone',
+                'good_orders.province',
+                'good_orders.city',
+                'good_orders.area',
+                'good_orders.short_address',
+                'good_orders.price',
+
+                'good_orders.status',
+                'good_orders.pay_type_id',
+                'good_orders.remark'
+
+            )
+                ->orderBy('good_orders.id', 'desc')
+                ->get();
+
+        $status = config('order.status_list');
+
+        foreach ($orders as $order){
+            $order->sn = ' '.$order->sn;
+            $order->receiver_phone = ' '.$order->receiver_phone;
+            $order_skus = $order->order_skus;
+            $sku_ids = '';
+            $sku_str = '';
+            $sku_desc_str = '';
+            $product_name_str = '';
+            $product_english_name_str = '';
+            $total_nums = 0;
+            $admin_user_str = '';
+
+            foreach ($order_skus as $order_sku){
+                $sku = $order_sku->sku_info;
+
+                //skuid
+                $sku_ids .= $sku->sku_id;
+                $sku_ids .= "\r\n";
+
+                //备注-中文
+                $sku_str .= $sku->good->name .' '. $sku->s1_name . $sku->s2_name. $sku->s3_name. ' x'. $order_sku->sku_nums;
+                $sku_str .= "\r\n";
+
+                //物品描述-英文
+                $sku_desc_str .= $sku->good->product->english_name .' '. ProductAttributeValue::get_english_name($sku->good_id, [$sku->s1,$sku->s2,$sku->s3]). ' x'. $order_sku->sku_nums;
+                $sku_desc_str .= "\r\n";
+
+                //产品中文名称
+                $product_name_str .= $sku->good->product->name;
+                $product_name_str .= "\r\n";
+
+                //产品英文名称
+                $product_english_name_str .= $sku->good->product->english_name;
+                $product_english_name_str .= "\r\n";
+
+                //件数
+                $total_nums += $order_sku->sku_nums;
+
+                //所属人
+                $admin_user_str .= $sku->good->admin_user->name;
+                $admin_user_str .= "\r\n";
+
+
+            }
+
+            $order->sku_ids = $sku_ids;
+            $order->sku_str = $sku_str;
+            $order->product_name_str = $product_name_str;
+            $order->product_english_name_str = $product_english_name_str;
+            $order->total_nums = $total_nums;
+            $order->sku_desc_str = $sku_desc_str;
+            $order->admin_user_str = $admin_user_str;
+
+            $order->status_str = array_get($status, $order->status, '');
+            $order->pay_type_str = array_get($pay_types, $order->pay_type_id, '');
+            $order->service_remark = $order->remark;
+
+
+            unset(
+                $order->id,
+                $order->pay_type_id,
+                $order->status,
+                $order->remark
+            );
+        }
+
+//        dd($orders->toArray());
+
+        return $orders;
+
     }
 
 }

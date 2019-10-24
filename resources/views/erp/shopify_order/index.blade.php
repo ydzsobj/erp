@@ -47,29 +47,6 @@
         }
       </style>
 
-@section('hidden_dom')
-
-    <form class="layui-form" action="" id ="fm_import" style="display:none;">
-        <div class="layui-form-item">
-                <label class="layui-form-label">国家地区</label>
-                <div class="layui-input-block">
-                    @foreach ($countries as $key=>$country_name)
-                        <input type="radio" name="country_id" class="country_id" value="{{ $key }}" title="{{ $country_name }}">
-                    @endforeach
-                </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">选择店铺</label>
-            <div class="layui-input-block">
-                <input type="checkbox" name="" value="1" title="店铺1" checked>
-                <input type="checkbox" name="" title="店铺2">
-                <input type="checkbox" name="" title="店铺3">
-            </div>
-        </div>
-
-    </form>
-@endsection
 <!--筛选开始-->
 <div class="layui-row" style="margin-top:10px;">
         <form class="layui-form" action="">
@@ -78,14 +55,14 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
-                        <div class="layui-inline" style="width:300px;">
+                        <div class="layui-inline" style="width:260px;">
                             <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
                         </div>
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">状态</label>
-                    <div class="layui-input-inline">
+                    <div class="layui-input-inline" style="width:120px;">
                         <select name="status" id="search_status">
                             <option value="0">全部</option>
                             @foreach ($status_list as $key=>$status)
@@ -96,12 +73,24 @@
                 </div>
 
                 <div class="layui-inline">
+                        <label class="layui-form-label">国家</label>
+                        <div class="layui-input-inline" style="width:120px;">
+                            <select name="country_id" id="search_country_id">
+                                <option value="0">全部</option>
+                                @foreach ($countries as $key=>$country)
+                                    <option value="{{ $key }}">{{ $country }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                <div class="layui-inline">
                         <label class="layui-form-label">下单时间</label>
                         <div class="layui-input-block">
-                            <div class="layui-inline">
+                            <div class="layui-inline" style="width:150px;">
                                 <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
                             </div>-
-                            <div class="layui-inline">
+                            <div class="layui-inline" style="width:150px;">
                                     <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
                                 </div>
                         </div>
@@ -132,7 +121,7 @@
                 <div class="layui-card">
                     <div class="layui-tab layui-tab-card">
                         <ul class="layui-tab-title">
-                            <li class="layui-this">SKU信息</li>
+                            <li class="layui-this"><span id="sku_detail"></span> 详情</li>
                         </ul>
                         <div class="layui-tab-content">
                             <div class="layui-tab-item layui-show">
@@ -176,12 +165,23 @@
                 }
                 ,cols: [[ //
                     ,{type: 'checkbox', width:50}
-                    ,{field: 'submit_order_at', title: '下单时间'}
-                    ,{field: 'sn', title: '订单编号'}
-                    ,{field: 'amount', title: '总件数'}
+                    ,{field: 'submit_order_at', title: '下单时间',width:170}
+                    ,{field: 'sn', title: '订单编号',width:150}
+                    ,{field: 'amount', title: '件数',width:60}
+                    ,{field: 'price', title: '价格', width:80,
+                        templet:function(row){
+                            return parseFloat(row.price - row.total_off);
+                        }
+                    }
                     ,{field: 'receiver_name', title: '收货人'}
-                    ,{field: 'country_name', title: '国家' }
-                    ,{field: 'status_name', title: '状态',
+                    ,{field: 'address', title: '收货地址',width:200,
+                        templet:function(row){
+                            return row.privince || '' + row.city + row.area + "\n" +
+                            row.address1 + row.address2 + row.company;
+                        }
+                    }
+                    ,{field: 'country_name', title: '国家',width:80 }
+                    ,{field: 'status_name', title: '状态', width:80,
                         templet:function(row){
                             var color = '';
                             if(row.status == 1){
@@ -195,14 +195,10 @@
                             return "<span style='color:" + color +"'>" + row.status_name +"</span>";
                         }
                     }
-                    ,{field: 'admin_user', title: '创建人', width:120,
+
+                    ,{field: 'audited_admin_user', title: '审核人', width:100,
                         templet:function(row){
-                            return row.admin_user.admin_name;
-                        }
-                    }
-                    ,{field: 'audited_admin_user', title: '审核人', width:120,
-                        templet:function(row){
-                            return row.audited_admin_user.admin_name;
+                            return row.audited_admin_user.admin_name || '';
                         }
                     }
 
@@ -255,10 +251,11 @@
 
         table.on('row(test)', function(obj){
             var data = obj.data;
-            console.log(data)
             table.reload('sku_table', {
                 data:data.order_skus
             });
+
+            $("#sku_detail").text('单号：' + data.sn);
 
             //标注选中样式
             obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
@@ -332,7 +329,7 @@
                 }
                 table_str += '</table>';
 
-                console.log(table_str);
+                // console.log(table_str);
 
                 layer.open({
                     title:'审核记录',
@@ -348,12 +345,15 @@
                 });
             } else if(layEvent === 'edit'){ //编辑
                 //do something
-
-                //同步更新缓存对应的值
-                obj.update({
-                username: '123'
-                ,title: 'xxx'
-                });
+                layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'编辑订单',
+                        area:['800px','700px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{url('admins/orders/')}}/"+data.id+"/edit"
+                    });
             } else if(layEvent === 'LAYTABLE_TIPS'){
                 layer.alert('Hi，头部工具栏扩展的右侧图标。');
             }
@@ -431,6 +431,7 @@
                     ,where: {
                         keywords: demoReload.val(),
                         status: $("#search_status").val(),
+                        country_id: $("#search_country_id").val(),
                         start_date:$("#start_date").val(),
                         end_date:$("#end_date").val(),
 
@@ -447,6 +448,7 @@
             table.reload('sku_table', {
                 data:[]
             });
+            $("#sku_detail").text('');
         });
 
         laydate.render({
@@ -484,8 +486,8 @@
 
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-      <!--<button class="layui-btn layui-btn-sm" lay-event="import_order" >导入订单</button>-->
       <button class="layui-btn layui-btn-sm" lay-event="batch_audit" >批量审核</button>
+      <button class="layui-btn layui-btn-sm" lay-event="export_order" >导出订单</button>
     </div>
   </script>
 
