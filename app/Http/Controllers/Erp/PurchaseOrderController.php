@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
@@ -14,7 +15,8 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        //
+        //首页列表
+        return view('erp.purchase_order.index');
     }
 
     /**
@@ -24,7 +26,9 @@ class PurchaseOrderController extends Controller
      */
     public function create()
     {
-        //
+        //创建操作
+        $supplier = Supplier::where('supplier_status','1')->get();
+        return view('erp.purchase_order.create',compact('supplier'));
     }
 
     /**
@@ -36,6 +40,7 @@ class PurchaseOrderController extends Controller
     public function store(Request $request)
     {
         //
+        dd($request);
     }
 
     /**
@@ -46,7 +51,8 @@ class PurchaseOrderController extends Controller
      */
     public function show($id)
     {
-        //
+        //展示操作
+
     }
 
     /**
@@ -82,4 +88,10 @@ class PurchaseOrderController extends Controller
     {
         //
     }
+
+
+    public function show_goods(){
+        return view('erp.purchase_order.show_goods');
+    }
+
 }
