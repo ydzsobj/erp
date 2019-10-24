@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Erp;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ProductGoodsController extends Controller
+class PurchaseWarehouseInfoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,7 @@ class ProductGoodsController extends Controller
      */
     public function index()
     {
-        //首页列表
-        return view('erp.product_goods.index');
+        //
     }
 
     /**

@@ -137,35 +137,28 @@
                         </div>
                     </div>
                     <hr class="layui-bg-gray">
+                    <div id="view"></div>
                     <!-- sku start-->
                     <script id="info" type="text/html">
                         <link rel="stylesheet" href="/admin/css/sku_style.css" />
                         <fieldset class="layui-elem-field site-demo-button" style="padding:20px;">
                             <legend>规格属性</legend>
+                            @{{#  layui.each(d, function(index, i){ }}
+                            <input type="hidden" name="sp_val[@{{i.id}}][attr_name]" value="@{{i.attr_name}}"/>
+                            <input type="hidden" name="sp_val[@{{i.id}}][attr_english]" value="@{{i.attr_english}}"/>
+                            <div class="layui-form-item">
+                                <ul class="SKU_TYPE">
+                                    <li class="layui-form-label" is_required='1' sku-type-name="@{{i.attr_name}}"><em>*</em> @{{i.attr_name}}：</li>
+                                </ul>
+                                <ul>
+                                    @{{#  layui.each(i.attributes, function(index_1, item){ }}
+                                    <li><label><input type="checkbox" propid='@{{i.id}}' name="sp_val[@{{i.id}}][attr_value][@{{ item.id }}]" class="sku_value" propvalid='@{{ item.id }}' value="@{{ item.attr_value_name }}" lay-ignore/>@{{ item.attr_value_name }}</label></li>
+                                    @{{#  }); }}
+                                </ul>
+                            </div>
+                            <div class="clear"></div>
+                            @{{#  }); }}
 
-                            <div class="layui-form-item">
-                                <ul class="SKU_TYPE">
-                                    <li class="layui-form-label" is_required='1' propid='3' sku-type-name="颜色"><em>*</em> 颜色：</li>
-                                </ul>
-                                <ul>
-                                    <li><label><input type="checkbox" name="like[color][]" class="sku_value" propvalid='31' value="土豪金" lay-ignore/>土豪金</label></li>
-                                    <li><label><input type="checkbox" name="like[color][]" class="sku_value" propvalid='32' value="银白色" lay-ignore/>银白色</label></li>
-                                    <li><label><input type="checkbox" name="like[color][]" class="sku_value" propvalid='33' value="深空灰" lay-ignore/>深空灰</label></li>
-                                    <li><label><input type="checkbox" name="like[color][]" class="sku_value" propvalid='34' value="黑色" lay-ignore/>黑色</label></li>
-                                    <li><label><input type="checkbox" name="like[color][]" class="sku_value" propvalid='33' value="玫瑰金" lay-ignore/>玫瑰金</label></li>
-                                </ul>
-                            </div>
-                            <div class="clear"></div>
-                            <div class="layui-form-item">
-                                <ul class="SKU_TYPE">
-                                    <li class="layui-form-label" is_required='1' propid='4' sku-type-name="类型"><em>*</em> 类型：</li>
-                                </ul>
-                                <ul>
-                                    <li><label><input type="checkbox" name="like[size][]" class="sku_value" propvalid='41' value="儿童" lay-ignore/>儿童</label></li>
-                                    <li><label><input type="checkbox" name="like[size][]" class="sku_value" propvalid='42' value="成人" lay-ignore/>成人</label></li>
-                                </ul>
-                            </div>
-                            <div class="clear"></div>
                             <li style="display: none;" id="onlySkuValCloneModel">
                                 <input type="checkbox" class="model_sku_val" propvalid='' value="" />
                                 <input type="text" class="cusSkuValInput" />
@@ -304,7 +297,15 @@
                     data: {'category_id':data.value},
                     datatype: 'json',
                     success: function (msg) {
-
+                        console.log(msg);
+                        var getTpl = info.innerHTML
+                            ,view = $('#view');
+                        if(msg!=''){
+                            laytpl(getTpl).render(msg, function(html){
+                                view.append(html)
+                            });
+                            form.render();
+                        }
                     },
                     error: function (XmlHttpRequest, textStatus, errorThrown) {
                         layer.msg('error!', {icon: 2, time: 2000});

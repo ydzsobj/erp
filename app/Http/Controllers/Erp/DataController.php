@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Erp;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -38,7 +39,7 @@ class DataController extends Controller
     {
         $type_id = Category::find($request->category_id)->type_id;
         if($type_id>0){
-            $data = Attribute::with('attributes')->where('type_id',$type_id);
+            $data = Attribute::with('attributes')->where('type_id',$type_id)->get();
         }else{
             $data = '';
         }

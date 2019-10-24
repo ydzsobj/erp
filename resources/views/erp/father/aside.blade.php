@@ -92,9 +92,14 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/product')}}">采购列表</a>
+                        <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>
                     </dd>
-
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
+                    </dd>
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
