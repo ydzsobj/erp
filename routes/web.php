@@ -24,7 +24,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::any('password','AdminController@password');
 
     Route::get('product/sku/{id}', 'ProductController@sku')->name('product.sku');
-
+    Route::get('purchase_order/show_goods','PurchaseOrderController@show_goods');
 
 
 
@@ -39,6 +39,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('attribute_value','AttributeValueController');
     Route::resource('product','ProductController');
     Route::resource('product_goods','ProductGoodsController');
+    Route::resource('purchase_order','PurchaseOrderController');
 
 
 
