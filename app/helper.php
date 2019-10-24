@@ -18,3 +18,17 @@ if (!function_exists('getSql')) {
 
     }
 }
+
+/**
+ * @api返回json
+ */
+if(!function_exists('returned')){
+    function returned($success, $msg,$data=[]){
+        return response()->json(['success' => $success, 'msg' => $msg,'data' => $data ]);
+    }
+}
+
+
+
+?>
+

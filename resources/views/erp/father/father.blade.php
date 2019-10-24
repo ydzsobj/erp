@@ -326,4 +326,5 @@
   </script>
   @endsection
 </body>
+@yield('hidden_dom')
 </html>

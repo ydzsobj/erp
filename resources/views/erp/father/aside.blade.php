@@ -56,7 +56,19 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/product')}}">订单列表</a>
+                        <a lay-href="{{route('orders.index') }}">订单列表</a>
+                    </dd>
+
+                </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item ">
+                <a href="javascript:;" lay-tips="shopify店铺管理" lay-direction="2">
+                    <i class="layui-icon layui-icon-util"></i>
+                    <cite>shopify配置</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="console">
+                        <a lay-href="{{route('shopify_accounts.index') }}">店铺管理</a>
                     </dd>
 
                 </dl>
