@@ -95,6 +95,9 @@
                         <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>
                     </dd>
                     <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_order/create')}}">添加采购订单</a>
+                    </dd>
+                    <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
                     </dd>
                     <dd data-name="console">
