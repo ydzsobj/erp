@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
         //抓取订单
         $import_order_log_path = storage_path('logs/import_order.log');
-        $schedule->command('import:order')->everyMinute()->appendOutputTo($import_order_log_path);;
+        $schedule->command('import:order')->everyFiveMinutes()->appendOutputTo($import_order_log_path);;
     }
 
     /**
