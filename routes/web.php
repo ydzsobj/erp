@@ -40,6 +40,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('product','ProductController');
     Route::resource('product_goods','ProductGoodsController');
     Route::resource('purchase_order','PurchaseOrderController');
+    Route::resource('purchase_warehouse','PurchaseWarehouseController');
 
 
 
