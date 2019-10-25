@@ -13,9 +13,11 @@ class ShopifyApi extends Model
     private $api_key;
     private $api_secret;
     private $api_domain;
+    private $shopify_account;
 
     public function __construct($shopify_account)
     {
+        $this->shopify_account = $shopify_account;
         $this->api_key = $shopify_account->api_key;
         $this->api_secret = $shopify_account->api_secret;
         $this->api_domain = $shopify_account->api_domain;
@@ -36,15 +38,15 @@ class ShopifyApi extends Model
                     $data = json_decode($response->getBody(),true);
                     return [$data, '获取数据成功'];
                 }else{
-                    return [false, '返回内容不存在'];
+                    return [false, '店铺id='. $this->shopify_account->id. ' 返回内容不存在'];
                 }
             }else{
-                return [false, '请求失败，状态码：'. $response->getStatusCode()];
+                return [false, '店铺id='. $this->shopify_account->id.' 请求失败，状态码：'. $response->getStatusCode()];
             }
 
 
         } catch (RequestException $e) {
-            Log::info('请求接口'.$request_url.'失败');
+            Log::info('店铺id='. $this->shopify_account->id.' 请求接口:'.$request_url.'失败');
             if ($e->hasResponse()) {
                 Log::info($e->getResponse());
             }
