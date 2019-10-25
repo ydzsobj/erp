@@ -47,6 +47,32 @@
         }
       </style>
 
+@section('hidden_dom')
+
+<form class="layui-form" action="" id="audit_window" style="display:none;margin:5px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label"> <span style="color:red;">* </span>选择状态</label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline">
+                    <select name="status" id="audit_status" lay-verify="required" lay-reqtext="不能为空">
+                        @foreach ($audit_status_options as $key=>$option )
+                            <option value="{{ $key }}">{{ $option }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"> <span style="color:red;">* </span>备注内容</label>
+        <div class="layui-input-block">
+            <textarea name="remark" id="audit_remark" lay-verify="required" lay-reqtext="不能为空"></textarea>
+        </div>
+    </div>
+
+</form>
+@endsection
+
 <!--筛选开始-->
 <div class="layui-row" style="margin-top:10px;">
         <form class="layui-form" action="">
@@ -196,8 +222,10 @@
                                 color = 'red';
                             }else if(row.status == 2){
                                 color = 'green';
-                            }else if(row.status == 6){
+                            }else if(row.status == 7){
                                 color = 'orange';
+                            }else if(row.status == 6){
+                                color = 'pink';
                             }
 
                             return "<span style='color:" + color +"'>" + row.status_name +"</span>";
@@ -208,7 +236,10 @@
                          templet: function(row){
                              if(row.status == 1){
                                 return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>' +
-                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>';
+                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>' ;
+                             }else if(row.status == 7){
+                                return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
+
                              }else if(row.status == 2){
                                 return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>' +
                                  '<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="cancel_order">取消</a>';
@@ -269,31 +300,16 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
-            var route = '/admins/orders/update_audited_at/' + data.id;
+            var route = '/admins/orders/' + data.id + '/update_audited_at';
 
             if(layEvent === 'audit'){ //
-                //do somehing
-                layer.confirm('确定要审核通过吗?', function(index){
-                    layer.close(index);
-                    //向服务端发送指令
-                    $.ajax({
-                        type:'POST',
-                        url: route,
-                        data:{ _token: "{{ csrf_token() }}" ,action: 'audit'},
-                        dataType:"json",
-                        success:function(msg){
-                                console.log(msg);
-                                layer.msg(msg.msg);
-                                if(msg.success){
-                                table.reload('demo');
-                                }
-                        },
-                        error: function(data){
-                            layer.msg('请求接口失败',{icon:2,time:2000});
-                        }
-
-                    })
+                layer.open({
+                    type:2,
+                    title:'审核',
+                    content: "/admins/orders/" + data.id + '/create_audit',
+                    area: ['500px', '300px'],
                 });
+
             }else if(layEvent == 'cancel_order'){
                 //取消订单
                 layer.confirm('确定要取消订单吗?', function(index){
@@ -302,7 +318,7 @@
                     $.ajax({
                         type:'POST',
                         url: route,
-                        data:{ _token: "{{ csrf_token() }}",action:'cancel_order'},
+                        data:{ _token: "{{ csrf_token() }}",_method:'put', status:6, remark:'订单取消'},
                         dataType:"json",
                         success:function(msg){
                                 console.log(msg);
@@ -431,31 +447,43 @@
                 }
                 console.log(selected_ids);
 
-                layer.confirm('确定要审核通过吗?', function(index){
-                    layer.close(index);
-                    //向服务端发送指令
-                    $.ajax({
-                        type:'POST',
-                        url: "{{ route('orders.batch_audit') }}",
-                        data:{ _token: "{{ csrf_token() }}" ,order_ids: selected_ids },
-                        dataType:"json",
-                        success:function(msg){
-                                console.log(msg);
-                                layer.msg(msg.msg);
-                                if(msg.success){
-                                table.reload('demo');
-                                }
-                        },
-                        error: function(data){
-                                var errors = JSON.parse(data.responseText).errors;
-                                var msg = '';
-                                for(var a in errors){
-                                    msg += errors[a][0]+'<br />';
-                                }
-                                    layer.msg(msg,{icon:2,time:2000});
-                        }
+                layer.open({
+                    type:1,
+                    title: '批量审核',
+                    content: $("#audit_window"),
+                    area: ['500px', '300px'],
+                    btn:['确定'],
+                    yes:function(index){
+                        console.log(index);
+                        $.ajax({
+                            type:'POST',
+                            url: "{{ route('orders.batch_audit') }}",
+                            data:{
+                                 _token: "{{ csrf_token() }}" ,
+                                 order_ids: selected_ids,
+                                 status:$("#audit_status").val(),
+                                 remark:$("#audit_remark").val(),
+                            },
+                            dataType:"json",
+                            success:function(msg){
+                                    layer.close(index);
+                                    console.log(msg);
+                                    layer.msg(msg.msg);
+                                    if(msg.success){
+                                    table.reload('demo');
+                                    }
+                            },
+                            error: function(data){
+                                    var errors = JSON.parse(data.responseText).errors;
+                                    var msg = '';
+                                    for(var a in errors){
+                                        msg += errors[a][0]+'<br />';
+                                    }
+                                        layer.msg(msg,{icon:2,time:2000});
+                            }
 
-                    })
+                        })
+                    },
                 });
 
             }

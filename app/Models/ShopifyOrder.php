@@ -50,6 +50,10 @@ class ShopifyOrder extends Model
      * 已取消
      */
     const STATUS_CANCELLED = 6;
+    /**
+     * 已拒绝
+     */
+    const STATUS_REFUSED = 7;
 
 
     public function order_skus(){
@@ -70,6 +74,13 @@ class ShopifyOrder extends Model
 
     public function by_sn($sn){
         return self::where('sn', $sn)->first();
+    }
+
+    public static function audit_status_options(){
+        return [
+            self::STATUS_AUDITED => '审核通过',
+            self::STATUS_REFUSED => '审核拒绝',
+        ];
     }
 
     public function get_data($request){
