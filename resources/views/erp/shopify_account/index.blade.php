@@ -175,12 +175,16 @@
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }else if(obj.event === 'import_order'){
                     //抓取订单数据
+                    var index = layer.open({
+                        type:3
+                    })
                     $.ajax({
                             url:"{{ route('shopify_account.create_orders') }}",
                             type:'post',
                             data:{"_token":"{{csrf_token()}}","id":data.id},
                             datatype:'json',
                             success:function (msg) {
+                                layer.close(index);
                                 if(msg.success){
                                     console.log(msg);
                                     layer.msg(msg.msg);
@@ -189,6 +193,7 @@
                                 }
                             },
                             error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.close(index);
                                 layer.msg('error!',{icon:2,time:2000});
                             }
                         });

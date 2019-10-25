@@ -47,6 +47,32 @@
         }
       </style>
 
+@section('hidden_dom')
+
+<form class="layui-form" action="" id="audit_window" style="display:none;margin:5px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label"> <span style="color:red;">* </span>选择状态</label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline">
+                    <select name="status" id="audit_status" lay-verify="required" lay-reqtext="不能为空">
+                        @foreach ($audit_status_options as $key=>$option )
+                            <option value="{{ $key }}">{{ $option }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"> <span style="color:red;">* </span>备注内容</label>
+        <div class="layui-input-block">
+            <textarea name="remark" id="audit_remark" lay-verify="required" lay-reqtext="不能为空"></textarea>
+        </div>
+    </div>
+
+</form>
+@endsection
+
 <!--筛选开始-->
 <div class="layui-row" style="margin-top:10px;">
         <form class="layui-form" action="">
@@ -168,45 +194,52 @@
                     ,{field: 'submit_order_at', title: '下单时间',width:170}
                     ,{field: 'sn', title: '订单编号',width:150}
                     ,{field: 'amount', title: '件数',width:60}
-                    ,{field: 'price', title: '价格', width:80,
+                    ,{field: 'price', title: '价格', width:100,
                         templet:function(row){
                             return parseFloat(row.price - row.total_off);
                         }
                     }
-                    ,{field: 'receiver_name', title: '收货人'}
-                    ,{field: 'address', title: '收货地址',width:200,
-                        templet:function(row){
-                            return row.privince || '' + row.city + row.area + "\n" +
-                            row.address1 + row.address2 + row.company;
-                        }
-                    }
-                    ,{field: 'country_name', title: '国家',width:80 }
-                    ,{field: 'status_name', title: '状态', width:80,
-                        templet:function(row){
-                            var color = '';
-                            if(row.status == 1){
-                                color = 'red';
-                            }else if(row.status == 2){
-                                color = 'green';
-                            }else if(row.status == 6){
-                                color = 'orange';
-                            }
+                    ,{field: 'receiver_name', title: '收货人',width:150}
+                    ,{field: 'receiver_phone', title: '收货电话',width:150}
+                    ,{field: 'province', title: '省',width:120}
+                    ,{field: 'city', title: '市',width:120}
+                    ,{field: 'area', title: '区',width:120}
+                    ,{field: 'address1', title: '详细地址1',width:200}
+                    ,{field: 'address2', title: '详细地址2',width:100}
+                    ,{field: 'company', title: '公司',width:100}
 
-                            return "<span style='color:" + color +"'>" + row.status_name +"</span>";
-                        }
-                    }
+                    ,{field: 'country_name', title: '国家',width:80 }
 
                     ,{field: 'audited_admin_user', title: '审核人', width:100,
                         templet:function(row){
                             return row.audited_admin_user.admin_name || '';
                         }
                     }
+                    ,{field: 'status_name', title: '状态', width:80 , fixed:'right',
+                        templet:function(row){
+                            var color = '';
+                            if(row.status == 1){
+                                color = 'red';
+                            }else if(row.status == 2){
+                                color = 'green';
+                            }else if(row.status == 7){
+                                color = 'orange';
+                            }else if(row.status == 6){
+                                color = 'pink';
+                            }
 
+                            return "<span style='color:" + color +"'>" + row.status_name +"</span>";
+                        }
+                    }
+                    ,{field: 'remark', title: '备注',width:100 ,edit:true,fixed:'right' }
                     ,{title: '操作', width:150, fixed:'right',
                          templet: function(row){
                              if(row.status == 1){
                                 return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>' +
-                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>';
+                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>' ;
+                             }else if(row.status == 7){
+                                return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
+
                              }else if(row.status == 2){
                                 return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>' +
                                  '<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="cancel_order">取消</a>';
@@ -231,16 +264,15 @@
                     return row.sku_id;
                 }
             }
-            ,{field:'sku', title: '产品名称', templet:function(row){return row.sku.sku_name;}}
+            ,{field:'sku', title: '产品名称',
+                templet:function(row){
+                    return row.sku.sku_name || '';
+                }
+            }
             ,{field:'sku', title: '属性',
                 templet:function(row)
                 {
-                    var sku_values = row.sku.sku_values;
-                    var sku_str = '';
-                    for(var i=0;i<sku_values.length;i++){
-                        sku_str += sku_values[i].attr_value_name +' ';
-                    }
-                    return sku_str;
+                   return row.sku.sku_attr_value_names || '';
                 }
             }
             ,{field:'sku_nums', title: '数量', sort: true}
@@ -268,31 +300,16 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
-            var route = '/admins/orders/update_audited_at/' + data.id;
+            var route = '/admins/orders/' + data.id + '/update_audited_at';
 
             if(layEvent === 'audit'){ //
-                //do somehing
-                layer.confirm('确定要审核通过吗?', function(index){
-                    layer.close(index);
-                    //向服务端发送指令
-                    $.ajax({
-                        type:'POST',
-                        url: route,
-                        data:{ _token: "{{ csrf_token() }}" ,action: 'audit'},
-                        dataType:"json",
-                        success:function(msg){
-                                console.log(msg);
-                                layer.msg(msg.msg);
-                                if(msg.success){
-                                table.reload('demo');
-                                }
-                        },
-                        error: function(data){
-                            layer.msg('请求接口失败',{icon:2,time:2000});
-                        }
-
-                    })
+                layer.open({
+                    type:2,
+                    title:'审核',
+                    content: "/admins/orders/" + data.id + '/create_audit',
+                    area: ['500px', '300px'],
                 });
+
             }else if(layEvent == 'cancel_order'){
                 //取消订单
                 layer.confirm('确定要取消订单吗?', function(index){
@@ -301,7 +318,7 @@
                     $.ajax({
                         type:'POST',
                         url: route,
-                        data:{ _token: "{{ csrf_token() }}",action:'cancel_order'},
+                        data:{ _token: "{{ csrf_token() }}",_method:'put', status:6, remark:'订单取消'},
                         dataType:"json",
                         success:function(msg){
                                 console.log(msg);
@@ -359,6 +376,35 @@
             }
         });
 
+        //监听编辑行
+        table.on('edit(test)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            console.log(obj.value); //得到修改后的值
+            console.log(obj.field); //当前编辑的字段名
+            console.log(obj.data); //所在行的所有相关数据
+
+            if(obj.field == 'remark'){
+                $.ajax({
+                    type:'post',
+                    url:"/admins/orders/" + obj.data.id + '/update_remark',
+                    data:{_token:"{{ csrf_token() }}",_method: 'put', remark: obj.value},
+                    success:function(msg){
+                        if(msg.success){
+                            layer.msg(msg.msg);
+                        }
+                    },
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                            layer.msg(msg,{icon:2,time:2000});
+                    }
+                })
+            }
+
+        });
+
         //监听头部工具条
         table.on('toolbar(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
@@ -370,15 +416,23 @@
 
             console.log(checkStatus.data);
 
-            if(layEvent === 'import_order'){ //
+            if(layEvent === 'export_order'){ //
                 //do somehing
-                console.log('click import order');
-                layer.open({
-                    title:'订单导入',
-                    type: 1,
-                    area:['600px','300px'],
-                    content: $("#fm_import")
-                })
+                console.log('click export order');
+
+                var params = {
+                    keywords: $("#demoReload").val(),
+                    status: $("#search_status").val(),
+                    country_id: $("#search_country_id").val(),
+                    start_date:$("#start_date").val(),
+                    end_date:$("#end_date").val(),
+                };
+
+                var route = "{{ route('orders.export') }}";
+                var href = route + '?'+ encodeSearchParams(params);
+                console.log(href);
+                location.href = href;
+
             }else if(layEvent == 'batch_audit'){
                 //批量审核
                 if(checkStatus.data.length == 0){
@@ -393,26 +447,43 @@
                 }
                 console.log(selected_ids);
 
-                layer.confirm('确定要审核通过吗?', function(index){
-                    layer.close(index);
-                    //向服务端发送指令
-                    $.ajax({
-                        type:'POST',
-                        url: "{{ route('orders.batch_audit') }}",
-                        data:{ _token: "{{ csrf_token() }}" ,order_ids: selected_ids },
-                        dataType:"json",
-                        success:function(msg){
-                                console.log(msg);
-                                layer.msg(msg.msg);
-                                if(msg.success){
-                                table.reload('demo');
-                                }
-                        },
-                        error: function(data){
-                            layer.msg('请求接口失败',{icon:2,time:2000});
-                        }
+                layer.open({
+                    type:1,
+                    title: '批量审核',
+                    content: $("#audit_window"),
+                    area: ['500px', '300px'],
+                    btn:['确定'],
+                    yes:function(index){
+                        console.log(index);
+                        $.ajax({
+                            type:'POST',
+                            url: "{{ route('orders.batch_audit') }}",
+                            data:{
+                                 _token: "{{ csrf_token() }}" ,
+                                 order_ids: selected_ids,
+                                 status:$("#audit_status").val(),
+                                 remark:$("#audit_remark").val(),
+                            },
+                            dataType:"json",
+                            success:function(msg){
+                                    layer.close(index);
+                                    console.log(msg);
+                                    layer.msg(msg.msg);
+                                    if(msg.success){
+                                    table.reload('demo');
+                                    }
+                            },
+                            error: function(data){
+                                    var errors = JSON.parse(data.responseText).errors;
+                                    var msg = '';
+                                    for(var a in errors){
+                                        msg += errors[a][0]+'<br />';
+                                    }
+                                        layer.msg(msg,{icon:2,time:2000});
+                            }
 
-                    })
+                        })
+                    },
                 });
 
             }
@@ -487,8 +558,32 @@
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
       <button class="layui-btn layui-btn-sm" lay-event="batch_audit" >批量审核</button>
-      <button class="layui-btn layui-btn-sm" lay-event="export_order" >导出订单</button>
+      <a class="layui-btn layui-btn-sm" lay-event="export_order" >导出订单</a>
     </div>
+  </script>
+
+  <script>
+
+/**
+ * 拼接对象为请求字符串
+ * @param {Object} obj - 待拼接的对象
+ * @returns {string} - 拼接成的请求字符串
+ */
+function encodeSearchParams(obj) {
+  const params = []
+
+  Object.keys(obj).forEach((key) => {
+    let value = obj[key]
+    // 如果值为undefined我们将其置空
+    if (typeof value === 'undefined') {
+      value = ''
+    }
+    // 对于需要编码的文本（比如说中文）我们要进行编码
+    params.push([key, encodeURIComponent(value)].join('='))
+  })
+
+  return params.join('&')
+}
   </script>
 
 @endsection

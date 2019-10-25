@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class ShopifyOrder extends Model
 {
@@ -47,6 +50,10 @@ class ShopifyOrder extends Model
      * 已取消
      */
     const STATUS_CANCELLED = 6;
+    /**
+     * 已拒绝
+     */
+    const STATUS_REFUSED = 7;
 
 
     public function order_skus(){
@@ -69,6 +76,13 @@ class ShopifyOrder extends Model
         return self::where('sn', $sn)->first();
     }
 
+    public static function audit_status_options(){
+        return [
+            self::STATUS_AUDITED => '审核通过',
+            self::STATUS_REFUSED => '审核拒绝',
+        ];
+    }
+
     public function get_data($request){
 
         $limit = $request->get('limit');
@@ -84,7 +98,7 @@ class ShopifyOrder extends Model
                 'admin_user:id,admin_name',
                 'audited_admin_user:id,admin_name',
                 'order_skus',
-                'order_skus.sku.sku_values',
+                'order_skus.sku.sku_values.attr_value',
                 'audit_logs' => function($query){
                     $query->orderBy('id', 'desc');
                 },
@@ -160,34 +174,40 @@ class ShopifyOrder extends Model
         $end_date = $request->get('end_date');
         $country_id = $request->get('country_id');
 
-        $orders =  self::with(['order_skus','order_skus.sku.sku_values'])
+        $orders =  self::with([
+                    'order_skus',
+                    'order_skus.sku.sku_values.attr_value',
+                ]
+            )
             ->ofKeywords($keywords)
             ->ofStatus($status)
             ->ofSubmitOrderDate($start_date, $end_date)
             ->ofCountryId($country_id)
             ->select(
-                'good_orders.id',
-                'good_orders.created_at',
-                'good_orders.last_audited_at',
-                'good_orders.sn',
-                'good_orders.receiver_name',
-                'good_orders.postcode',
-                'good_orders.receiver_phone',
-                'good_orders.province',
-                'good_orders.city',
-                'good_orders.area',
-                'good_orders.short_address',
-                'good_orders.price',
-
-                'good_orders.status',
-                'good_orders.pay_type_id',
-                'good_orders.remark'
+                'id',
+                'submit_order_at',
+                'last_audited_at',
+                'sn',
+                'receiver_name',
+                'postcode',
+                'receiver_phone',
+                'country_id',
+                'province',
+                'city',
+                'area',
+                'address1',
+                'address2',
+                'company',
+                'price',
+                'status',
+                'remark'
 
             )
-                ->orderBy('good_orders.id', 'desc')
+                ->orderBy('submit_order_at', 'desc')
                 ->get();
 
         $status = config('order.status_list');
+        $country_list = config('order.country_list');
 
         foreach ($orders as $order){
             $order->sn = ' '.$order->sn;
@@ -202,35 +222,42 @@ class ShopifyOrder extends Model
             $admin_user_str = '';
 
             foreach ($order_skus as $order_sku){
-                $sku = $order_sku->sku_info;
+                $sku = $order_sku->sku;
+
+                if($sku->count() == 0){
+                    continue;
+                }
 
                 //skuid
-                $sku_ids .= $sku->sku_id;
+                $sku_ids .= $sku->sku_code;
                 $sku_ids .= "\r\n";
 
                 //备注-中文
-                $sku_str .= $sku->good->name .' '. $sku->s1_name . $sku->s2_name. $sku->s3_name. ' x'. $order_sku->sku_nums;
+                $sku_str .= $sku->sku_name .' '. $sku->sku_attr_value_names. ' x'. $order_sku->sku_nums;
                 $sku_str .= "\r\n";
 
                 //物品描述-英文
-                $sku_desc_str .= $sku->good->product->english_name .' '. ProductAttributeValue::get_english_name($sku->good_id, [$sku->s1,$sku->s2,$sku->s3]). ' x'. $order_sku->sku_nums;
+                $sku_attr_values = $sku->sku_values;
+                if($sku_attr_values->count() >0){
+                    $attr_values_str = $sku_attr_values->map(function($item){
+                        return $item->attr_value->attr_value_english;
+                    });
+                    // dump($attr_values_str);
+                    $sku_desc_str .= $sku->sku_english. ' '.$attr_values_str->implode(',') .' x'. $order_sku->sku_nums;
+                }
+
                 $sku_desc_str .= "\r\n";
 
                 //产品中文名称
-                $product_name_str .= $sku->good->product->name;
+                $product_name_str .= $sku->sku_name;
                 $product_name_str .= "\r\n";
 
                 //产品英文名称
-                $product_english_name_str .= $sku->good->product->english_name;
+                $product_english_name_str .= $sku->sku_english;
                 $product_english_name_str .= "\r\n";
 
                 //件数
                 $total_nums += $order_sku->sku_nums;
-
-                //所属人
-                $admin_user_str .= $sku->good->admin_user->name;
-                $admin_user_str .= "\r\n";
-
 
             }
 
@@ -240,25 +267,125 @@ class ShopifyOrder extends Model
             $order->product_english_name_str = $product_english_name_str;
             $order->total_nums = $total_nums;
             $order->sku_desc_str = $sku_desc_str;
-            $order->admin_user_str = $admin_user_str;
 
-            $order->status_str = array_get($status, $order->status, '');
-            $order->pay_type_str = array_get($pay_types, $order->pay_type_id, '');
+            $order->status_str = Arr::get($status, $order->status, '');
+            $order->country_name = Arr::get($country_list, $order->country_id, '');
             $order->service_remark = $order->remark;
-
 
             unset(
                 $order->id,
-                $order->pay_type_id,
+                $order->country_id,
                 $order->status,
-                $order->remark
+                $order->remark,
+                $order->order_skus
             );
         }
 
-//        dd($orders->toArray());
+        // dd($orders->toArray());
 
         return $orders;
 
+    }
+
+    //抓取订单
+    public function create_order($shopify_account){
+
+        $admin_id = Auth::user() ? Auth::user()->id : 0;
+
+        $country_id = $shopify_account->country_id;
+
+        $successed = 0;
+        $failed = 0;
+        $existed = 0;
+
+        $api = new ShopifyApi($shopify_account);
+
+        list($api_result, $msg) = $api->orders();
+
+        if(!$api_result){
+            return [false, $msg];
+        }
+
+        $shopify_orders = $api_result['orders'];
+
+        foreach($shopify_orders as $shopify_order){
+
+            $sn = $shopify_order['id'];
+
+            if($sn){
+                $order = new ShopifyOrder();
+                $existed_order = $order->by_sn($sn);
+                if($existed_order){
+                    $existed++;
+                    continue;
+                }
+            }
+
+            $submit_order_at = Carbon::parse($shopify_order['created_at'])->toDateTimeString();
+            $price = $shopify_order['total_price'];
+            $total_off = $shopify_order['total_discounts'];
+
+            if(isset($shopify_order['shipping_address'])){
+                $address_info = $shopify_order['shipping_address'];
+            }else{
+                $address_info = $shopify_order['customer']['default_address'];
+            }
+
+            $postcode = $address_info['zip'];
+            $receiver_name = $address_info['name'];
+            $receiver_phone = trim($address_info['phone']);
+            $province = $address_info['province'];
+            $city = $address_info['city'];
+            $area = '';
+            $address1 = $address_info['address1'];
+            $address2 = $address_info['address2'];
+            $company = $address_info['company'];
+
+            $order = (compact(
+                'sn',
+                'submit_order_at',
+                'price',
+                'total_off',
+                'postcode',
+                'receiver_name',
+                'receiver_phone',
+                'province',
+                'city',
+                'area',
+                'address1',
+                'address2',
+                'company',
+                'admin_id',
+                'country_id'
+            ));
+
+            // dd($shopify_order,$order);
+
+            $mod = ShopifyOrder::create($order);
+
+            if($mod){
+                $successed++;
+                $line_items = $shopify_order['line_items'];
+                $order_skus = collect([]);
+                $amount = 0;
+                foreach($line_items as $item){
+                    $amount += $item['quantity'];
+                    $order_skus->push([
+                        'sku_nums' => $item['quantity'],
+                        'sku_id' => $item['sku'],
+                        'price' => $item['price'],
+                    ]);
+                }
+                // dd($order_skus);
+                $mod->amount = $amount;
+                $mod->save();
+                $mod->order_skus()->createMany($order_skus->all());
+            }else{
+                $failed++;
+            }
+        }
+
+        return [true, '店铺id='.$shopify_account->id.',共获取到'.count($shopify_orders). '个订单; 添加成功:'.$successed.'个；失败：'.$failed.' 个； 订单已存在：'.$existed.'个' ];
     }
 
 }

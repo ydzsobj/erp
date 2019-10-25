@@ -64,10 +64,11 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::group(['middleware' => [] ],
         function($router){
             $router->resource('/orders', 'ShopifyOrderController');
-            // $router->get('/create_import', 'ShopifyOrderController@create_import')->name('orders.create_import');
-            $router->post('/export_orders', 'ShopifyOrderController@export')->name('orders.export');
+            $router->put('/orders/{id}/update_remark', 'ShopifyOrderController@update_remark')->name('orders.update_remark');
+            $router->get('/export_orders', 'ShopifyOrderController@export')->name('orders.export');
             //审核
-            $router->post('/orders/update_audited_at/{id}', 'ShopifyOrderController@audit')->name('orders.audit');
+            $router->get('/orders/{id}/create_audit','ShopifyOrderController@create_audit');
+            $router->put('/orders/{id}/update_audited_at', 'ShopifyOrderController@audit')->name('orders.audit');
             $router->post('/orders/batch_audit', 'ShopifyOrderController@batch_audit')->name('orders.batch_audit');
 
             //店铺管理

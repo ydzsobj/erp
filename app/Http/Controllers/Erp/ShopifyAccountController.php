@@ -10,6 +10,7 @@ use App\Http\Requests\ImportOrderRequest;
 use App\Models\Order;
 use App\Models\OrderAuditLog;
 use App\Models\ShopifyAccount;
+use App\Models\ShopifyOrder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -122,7 +123,9 @@ class ShopifyAccountController extends Controller
 
         $shopify_account = ShopifyAccount::find($id);
 
-        list($success,$msg) = $shopify_account->create_order($shopify_account);
+        $order = new ShopifyOrder();
+
+        list($success,$msg) = $order->create_order($shopify_account);
 
         return returned($success, $msg);
 
