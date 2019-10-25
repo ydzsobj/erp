@@ -168,7 +168,7 @@
                     ,{field: 'submit_order_at', title: '下单时间',width:170}
                     ,{field: 'sn', title: '订单编号',width:150}
                     ,{field: 'amount', title: '件数',width:60}
-                    ,{field: 'price', title: '价格', width:80,
+                    ,{field: 'price', title: '价格', width:100,
                         templet:function(row){
                             return parseFloat(row.price - row.total_off);
                         }

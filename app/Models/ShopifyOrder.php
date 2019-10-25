@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class ShopifyOrder extends Model
 {
@@ -272,6 +274,107 @@ class ShopifyOrder extends Model
 
         return $orders;
 
+    }
+
+    //抓取订单
+    public function create_order($shopify_account){
+
+        $admin_id = Auth::user() ? Auth::user()->id : 0;
+
+        $country_id = $shopify_account->country_id;
+
+        $successed = 0;
+        $failed = 0;
+        $existed = 0;
+
+        $api = new ShopifyApi($shopify_account);
+
+        list($api_result, $msg) = $api->orders();
+
+        if(!$api_result){
+            return [false, $msg];
+        }
+
+        $shopify_orders = $api_result['orders'];
+
+        foreach($shopify_orders as $shopify_order){
+
+            $sn = $shopify_order['id'];
+
+            if($sn){
+                $order = new ShopifyOrder();
+                $existed_order = $order->by_sn($sn);
+                if($existed_order){
+                    $existed++;
+                    continue;
+                }
+            }
+
+            $submit_order_at = Carbon::parse($shopify_order['created_at'])->toDateTimeString();
+            $price = $shopify_order['total_price'];
+            $total_off = $shopify_order['total_discounts'];
+
+            if(isset($shopify_order['shipping_address'])){
+                $address_info = $shopify_order['shipping_address'];
+            }else{
+                $address_info = $shopify_order['customer']['default_address'];
+            }
+
+            $postcode = $address_info['zip'];
+            $receiver_name = $address_info['name'];
+            $receiver_phone = trim($address_info['phone']);
+            $province = $address_info['province'];
+            $city = $address_info['city'];
+            $area = '';
+            $address1 = $address_info['address1'];
+            $address2 = $address_info['address2'];
+            $company = $address_info['company'];
+
+            $order = (compact(
+                'sn',
+                'submit_order_at',
+                'price',
+                'total_off',
+                'postcode',
+                'receiver_name',
+                'receiver_phone',
+                'province',
+                'city',
+                'area',
+                'address1',
+                'address2',
+                'company',
+                'admin_id',
+                'country_id'
+            ));
+
+            // dd($shopify_order,$order);
+
+            $mod = ShopifyOrder::create($order);
+
+            if($mod){
+                $successed++;
+                $line_items = $shopify_order['line_items'];
+                $order_skus = collect([]);
+                $amount = 0;
+                foreach($line_items as $item){
+                    $amount += $item['quantity'];
+                    $order_skus->push([
+                        'sku_nums' => $item['quantity'],
+                        'sku_id' => $item['sku'],
+                        'price' => $item['price'],
+                    ]);
+                }
+                // dd($order_skus);
+                $mod->amount = $amount;
+                $mod->save();
+                $mod->order_skus()->createMany($order_skus->all());
+            }else{
+                $failed++;
+            }
+        }
+
+        return [true, '店铺id='.$shopify_account->id.',共获取到'.count($shopify_orders). '个订单; 添加成功:'.$successed.'个；失败：'.$failed.' 个； 订单已存在：'.$existed.'个' ];
     }
 
 }
