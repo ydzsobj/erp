@@ -183,7 +183,13 @@
                     ,{field: 'company', title: '公司',width:100}
 
                     ,{field: 'country_name', title: '国家',width:80 }
-                    ,{field: 'status_name', title: '状态', width:80,
+
+                    ,{field: 'audited_admin_user', title: '审核人', width:100,
+                        templet:function(row){
+                            return row.audited_admin_user.admin_name || '';
+                        }
+                    }
+                    ,{field: 'status_name', title: '状态', width:80 , fixed:'right',
                         templet:function(row){
                             var color = '';
                             if(row.status == 1){
@@ -195,12 +201,6 @@
                             }
 
                             return "<span style='color:" + color +"'>" + row.status_name +"</span>";
-                        }
-                    }
-
-                    ,{field: 'audited_admin_user', title: '审核人', width:100,
-                        templet:function(row){
-                            return row.audited_admin_user.admin_name || '';
                         }
                     }
                     ,{field: 'remark', title: '备注',width:100 ,edit:true,fixed:'right' }
