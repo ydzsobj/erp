@@ -64,7 +64,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::group(['middleware' => [] ],
         function($router){
             $router->resource('/orders', 'ShopifyOrderController');
-            // $router->get('/create_import', 'ShopifyOrderController@create_import')->name('orders.create_import');
+            $router->put('/orders/{id}/update_remark', 'ShopifyOrderController@update_remark')->name('orders.update_remark');
             $router->get('/export_orders', 'ShopifyOrderController@export')->name('orders.export');
             //审核
             $router->post('/orders/update_audited_at/{id}', 'ShopifyOrderController@audit')->name('orders.audit');

@@ -173,13 +173,15 @@
                             return parseFloat(row.price - row.total_off);
                         }
                     }
-                    ,{field: 'receiver_name', title: '收货人'}
-                    ,{field: 'address', title: '收货地址',width:200,
-                        templet:function(row){
-                            return row.privince || '' + row.city + row.area + "\n" +
-                            row.address1 + row.address2 + row.company;
-                        }
-                    }
+                    ,{field: 'receiver_name', title: '收货人',width:150}
+                    ,{field: 'receiver_phone', title: '收货电话',width:150}
+                    ,{field: 'province', title: '省',width:120}
+                    ,{field: 'city', title: '市',width:120}
+                    ,{field: 'area', title: '区',width:120}
+                    ,{field: 'address1', title: '详细地址1',width:200}
+                    ,{field: 'address2', title: '详细地址2',width:100}
+                    ,{field: 'company', title: '公司',width:100}
+
                     ,{field: 'country_name', title: '国家',width:80 }
                     ,{field: 'status_name', title: '状态', width:80,
                         templet:function(row){
@@ -201,7 +203,7 @@
                             return row.audited_admin_user.admin_name || '';
                         }
                     }
-
+                    ,{field: 'remark', title: '备注',width:100 ,edit:true,fixed:'right' }
                     ,{title: '操作', width:150, fixed:'right',
                          templet: function(row){
                              if(row.status == 1){
@@ -231,16 +233,15 @@
                     return row.sku_id;
                 }
             }
-            ,{field:'sku', title: '产品名称', templet:function(row){return row.sku.sku_name;}}
+            ,{field:'sku', title: '产品名称',
+                templet:function(row){
+                    return row.sku.sku_name || '';
+                }
+            }
             ,{field:'sku', title: '属性',
                 templet:function(row)
                 {
-                    var sku_values = row.sku.sku_values;
-                    var sku_str = '';
-                    for(var i=0;i<sku_values.length;i++){
-                        sku_str += sku_values[i].attr_value_name +' ';
-                    }
-                    return sku_str;
+                   return row.sku.sku_attr_value_names || '';
                 }
             }
             ,{field:'sku_nums', title: '数量', sort: true}
@@ -359,6 +360,35 @@
             }
         });
 
+        //监听编辑行
+        table.on('edit(test)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            console.log(obj.value); //得到修改后的值
+            console.log(obj.field); //当前编辑的字段名
+            console.log(obj.data); //所在行的所有相关数据
+
+            if(obj.field == 'remark'){
+                $.ajax({
+                    type:'post',
+                    url:"/admins/orders/" + obj.data.id + '/update_remark',
+                    data:{_token:"{{ csrf_token() }}",_method: 'put', remark: obj.value},
+                    success:function(msg){
+                        if(msg.success){
+                            layer.msg(msg.msg);
+                        }
+                    },
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                            layer.msg(msg,{icon:2,time:2000});
+                    }
+                })
+            }
+
+        });
+
         //监听头部工具条
         table.on('toolbar(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
@@ -381,42 +411,6 @@
                     start_date:$("#start_date").val(),
                     end_date:$("#end_date").val(),
                 };
-
-                // $.ajax({
-                //     type:'GET',
-                //     url: "{{ route('orders.export') }}",
-                //     data:params,
-                //     dataType:"json",
-                //     success:function(msg){
-                //             console.log('abc',msg);
-                //             if(msg.success){
-                //                 table.exportFile([
-                //                     '下单时间',
-                //                     '审核时间',
-                //                     '订单sn',
-                //                     '收件人',
-                //                     '收货地邮编',
-                //                     '收货人电话',
-                //                     '收件省份',
-                //                     '收件城市',
-                //                     '收件地区',
-                //                     '收件详细地址',
-                //                     '代收货款',
-                //                     'SKUID',
-                //                     '备注',
-                //                     '中文品名',
-                //                     '英文品名',
-                //                     '件数',
-                //                     '物品描述',
-                //                     '审核状态',
-                //                     '客服备注',
-                //                 ], msg.data, 'csv'); //默认导出 csv，也可以为：xls
-                //             }
-                //     },
-                //     error: function(data){
-                //         layer.msg('请求接口失败',{icon:2,time:2000});
-                //     }
-                // })
 
                 var route = "{{ route('orders.export') }}";
                 var href = route + '?'+ encodeSearchParams(params);
@@ -453,7 +447,12 @@
                                 }
                         },
                         error: function(data){
-                            layer.msg('请求接口失败',{icon:2,time:2000});
+                                var errors = JSON.parse(data.responseText).errors;
+                                var msg = '';
+                                for(var a in errors){
+                                    msg += errors[a][0]+'<br />';
+                                }
+                                    layer.msg(msg,{icon:2,time:2000});
                         }
 
                     })

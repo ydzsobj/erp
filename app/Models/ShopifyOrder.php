@@ -178,10 +178,13 @@ class ShopifyOrder extends Model
                 'receiver_name',
                 'postcode',
                 'receiver_phone',
+                'country_id',
                 'province',
                 'city',
                 'area',
                 'address1',
+                'address2',
+                'company',
                 'price',
                 'status',
                 'remark'
@@ -191,6 +194,7 @@ class ShopifyOrder extends Model
                 ->get();
 
         $status = config('order.status_list');
+        $country_list = config('order.country_list');
 
         foreach ($orders as $order){
             $order->sn = ' '.$order->sn;
@@ -252,10 +256,12 @@ class ShopifyOrder extends Model
             $order->sku_desc_str = $sku_desc_str;
 
             $order->status_str = Arr::get($status, $order->status, '');
+            $order->country_name = Arr::get($country_list, $order->country_id, '');
             $order->service_remark = $order->remark;
 
             unset(
                 $order->id,
+                $order->country_id,
                 $order->status,
                 $order->remark,
                 $order->order_skus

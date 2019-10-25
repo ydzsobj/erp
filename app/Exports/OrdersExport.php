@@ -38,7 +38,9 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents
             '收件省份',
             '收件城市',
             '收件地区',
-            '收件详细地址',
+            '详细地址1',
+            '详细地址2',
+            '公司',
             '代收货款',
             'SKUID',
             '备注',
@@ -47,6 +49,7 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents
             '件数',
             '物品描述',
             '审核状态',
+            '国家',
             '客服备注',
 
         ];
@@ -55,7 +58,7 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents
     public function registerEvents(): array
     {
         $num = count($this->export_data) + 1;
-        $cell_num = 'A1:P'.$num;
+        $cell_num = 'A1:V'.$num;
         return [
             AfterSheet::class  => function(AfterSheet $event) use ($cell_num) {
                 $event->sheet->getDelegate()->getStyle($cell_num)->getAlignment()->setVertical('center')->setWrapText(true);

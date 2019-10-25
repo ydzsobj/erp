@@ -170,7 +170,23 @@ class ShopifyOrderController extends Controller
         ob_end_clean();
         ob_start();
         // dd($data);
-        return Excel::download(new OrdersExport($data), 'orders.xls');
+        return Excel::download(new OrdersExport($data), '订单导出'.date('y-m-d H_i_s').'.xlsx');
+    }
+
+    //客服备注
+    public function update_remark(Request $request, $id){
+
+        $remark = $request->post('remark');
+
+        $shopify_order = ShopifyOrder::find($id);
+
+        $shopify_order->remark = $remark;
+
+        $res = $shopify_order->save();
+
+        $msg = $res ? '设置成功':'设置失败';
+
+        return returned($res, $msg);
     }
 
 
