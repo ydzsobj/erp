@@ -30,5 +30,4 @@ if(!function_exists('returned')){
 
 
 
-?>
 

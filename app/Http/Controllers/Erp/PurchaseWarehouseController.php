@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
-use App\Models\PurchaseOrder;
 use App\Models\PurchaseWarehouse;
+use App\Models\PurchaseWarehouseInfo;
 use App\Models\Supplier;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
@@ -49,24 +49,23 @@ class PurchaseWarehouseController extends Controller
         //存储表单信息
         $purchase_warehouse_code = $this->createPurchaseWarehouseCode();
         $arr = [
-            'purchase_order_code' => $purchase_warehouse_code,
+            'purchase_warehouse_code' => $purchase_warehouse_code,
             'payment_type' => $request->payment_type,
-            'purchase_num' => $request->purchase_num,
-            'purchase_money' => $request->purchase_money,
-            'purchase_tax' => $request->purchase_tax,
+            'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
+            'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
+            'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
+            'money_tax' => isset($request->money_tax)?$request->money_tax:0,
             'supplier_id' => $request->supplier_id,
-            'supplier_contacts' => $request->supplier_contacts,
-            'supplier_phone' => $request->supplier_phone,
-            'supplier_fax' => $request->supplier_fax,
+            'warehouse_id' => $request->warehouse_id,
             'user_id' => Auth::guard('admin')->user()->id,
-            'purchase_text' => $request->purchase_text,
-            'deliver_at' => $request->deliver_at,
-            'purchase_order_status' => '0',
+            'warehouse_text' => $request->warehouse_text,
+            'stored_at' => $request->stored_at,
+            'purchase_warehouse_status' => '0',
             'created_at' => date('Y-m-d H:i:s', time()),
         ];
 
-        //$lastId = DB::table('purchase_warehouse')->insertGetId($arr);
-        $lastId = 33;
+        $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
+
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
@@ -82,7 +81,7 @@ class PurchaseWarehouseController extends Controller
                 $infoArr[$key]['tax'] = $value['tax'];
                 $infoArr[$key]['money_tax'] = $value['money_tax'];
             }
-        }dd($infoArr);
+        }
         $result = PurchaseWarehouseInfo::insert($infoArr);
         return $result ? '0' : '1';
     }

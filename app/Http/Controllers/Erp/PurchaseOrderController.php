@@ -50,9 +50,10 @@ class PurchaseOrderController extends Controller
         $arr = [
             'purchase_order_code' => $purchase_order_code,
             'payment_type' => $request->payment_type,
-            'purchase_num' => $request->purchase_num,
-            'purchase_money' => $request->purchase_money,
-            'purchase_tax' => $request->purchase_tax,
+            'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
+            'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
+            'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
+            'money_tax' => isset($request->money_tax)?$request->money_tax:0,
             'supplier_id' => $request->supplier_id,
             'supplier_contacts' => $request->supplier_contacts,
             'supplier_phone' => $request->supplier_phone,
@@ -83,8 +84,8 @@ class PurchaseOrderController extends Controller
             }
         }
         $result = PurchaseOrderInfo::insert($infoArr);
-        return $result ? '0' : '1';
 
+        return $result ?'0':'1';
 
     }
 
@@ -144,11 +145,12 @@ class PurchaseOrderController extends Controller
      * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
      */
     public function createPurchaseOrderCode(){
-        $purchase = PurchaseOrder::orderBy('id','desc')->first();
-        $purchaseOrder = $purchase['purchase_order_code'];
+
         $ymd = substr(date('Ymd'),2);
         $codeLength = 5;
         $codeStr = 'C';
+        $purchase = PurchaseOrder::Where('purchase_order_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
+        $purchaseOrder = $purchase['purchase_order_code'];
         $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
         if ($purchaseOrder) {
             if(strstr($purchaseOrder,$codeStr)){
@@ -161,6 +163,7 @@ class PurchaseOrderController extends Controller
         }
         return $codeStr . $ymd . $subCode;
     }
+
 
 
 }

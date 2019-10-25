@@ -268,10 +268,11 @@
 
             //监听提交
             form.on('submit(form)', function(data){
+                console.log('1');
                 //layer.msg(JSON.stringify(data.field));
                 data.field.table = table.cache;
                 $.ajax({
-                    url:"{{url('admins/purchase_order')}}",
+                    url:"{{url('/admins/purchase_order')}}",
                     type:'post',
                     data:data.field,
                     datatype:'json',

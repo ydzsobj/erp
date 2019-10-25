@@ -14,7 +14,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">入库日期</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="deliver_at" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                            <input type="text" name="stored_at" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
                         </div>
                     </div>
                     <div class="layui-form-mid"></div>
@@ -33,7 +33,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">入库仓库</label>
                     <div class="layui-input-inline">
-                        <select name="supplier_id">
+                        <select name="warehouse_id">
                             <option value="0">请选择入库仓库</option>
                             @foreach($warehouse as $value)
                                 <option value="{{$value->id}}">{{$value->warehouse_name}}</option>
@@ -48,7 +48,7 @@
                     </div>
                     <label class="layui-form-label">备注</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="purchase_text" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
+                        <input type="text" name="warehouse_text" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
                     </div>
                 </div>
             </div>
