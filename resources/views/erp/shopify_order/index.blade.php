@@ -104,7 +104,7 @@
                             <select name="country_id" id="search_country_id">
                                 <option value="0">全部</option>
                                 @foreach ($countries as $key=>$country)
-                                    <option value="{{ $key }}">{{ $country }}</option>
+                                    <option value="{{ $key }}">{{ $country['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -194,17 +194,14 @@
                     ,{field: 'submit_order_at', title: '下单时间',width:170}
                     ,{field: 'sn', title: '订单编号',width:150}
                     ,{field: 'amount', title: '件数',width:60}
-                    ,{field: 'price', title: '价格', width:100,
-                        templet:function(row){
-                            return parseFloat(row.price - row.total_off);
-                        }
-                    }
+                    ,{field: 'price', title: '价格', width:100,sort:true}
+                    ,{field: 'currency_code', title: '币种', width:80}
                     ,{field: 'receiver_name', title: '收货人',width:150}
                     ,{field: 'receiver_phone', title: '收货电话',width:150}
                     ,{field: 'province', title: '省',width:120}
                     ,{field: 'city', title: '市',width:120}
                     ,{field: 'area', title: '区',width:120}
-                    ,{field: 'address1', title: '详细地址1',width:200}
+                    ,{field: 'address1', title: '详细地址1',width:120}
                     ,{field: 'address2', title: '详细地址2',width:100}
                     ,{field: 'company', title: '公司',width:100}
 
@@ -231,7 +228,7 @@
                             return "<span style='color:" + color +"'>" + row.status_name +"</span>";
                         }
                     }
-                    ,{field: 'remark', title: '备注',width:100 ,edit:true,fixed:'right' }
+                    ,{field: 'remark', title: '客服备注',width:100 ,edit:true,fixed:'right' }
                     ,{title: '操作', width:150, fixed:'right',
                          templet: function(row){
                              if(row.status == 1){

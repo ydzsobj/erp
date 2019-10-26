@@ -2,8 +2,14 @@
     return [
 
         'country_list' => [
-            1 => '印尼',
-            2 => '菲律宾',
+            1 => [
+                    'name'=>'印尼',
+                    'currency_code' => 'IDR',
+            ],
+            2 => [
+                    'name'=> '菲律宾',
+                    'currency_code' => 'PHP',
+            ]
         ],
 
         'status_list' => [

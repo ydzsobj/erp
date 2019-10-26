@@ -41,7 +41,7 @@
                 <div class="layui-input-inline">
                     <select name="country_id">
                         @foreach ($countries as $key=>$country)
-                        <option value="{{ $key }}" @if($key == $detail->country_id)selected @endif>{{ $country }}</option>
+                        <option value="{{ $key }}" @if($key == $detail->country_id)selected @endif>{{ $country['name'] }}</option>
                         @endforeach
 
                     </select>

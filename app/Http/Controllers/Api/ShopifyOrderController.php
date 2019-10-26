@@ -35,7 +35,10 @@ class ShopifyOrderController extends Controller
 
         foreach($data as $d){
             $d->status_name = Arr::get($status, $d->status);
-            $d->country_name = Arr::get($countries, $d->country_id);
+            $country = Arr::get($countries, $d->country_id);
+            $d->country_name = $country['name'];
+            $d->price = floatval($d->price - $d->total_off);
+            $d->currency_code = $country['currency_code'];
         }
 
         return $data;

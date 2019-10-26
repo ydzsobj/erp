@@ -269,7 +269,8 @@ class ShopifyOrder extends Model
             $order->sku_desc_str = $sku_desc_str;
 
             $order->status_str = Arr::get($status, $order->status, '');
-            $order->country_name = Arr::get($country_list, $order->country_id, '');
+            $country = Arr::get($country_list, $order->country_id, '');
+            $order->country_name = $country['name'];
             $order->service_remark = $order->remark;
 
             unset(
