@@ -4,7 +4,7 @@
         <form class="layui-form" action="">
             {{csrf_field()}}
             <fieldset class="layui-elem-field layui-field-title">
-                <legend>采购配置单</legend>
+                <legend>采购入库单</legend>
             </fieldset>
             <div class="layui-form-item">
                 <div class="layui-inline">
@@ -12,9 +12,9 @@
                     <div class="layui-form-mid" style="color: #ff0000">* 订单编号自动生成</div>
                     <div class="layui-form-mid"></div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">交货日期</label>
+                        <label class="layui-form-label">入库日期</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="deliver_at" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                            <input type="text" name="stored_at" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
                         </div>
                     </div>
                     <div class="layui-form-mid"></div>
@@ -30,33 +30,26 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">交货地址</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_address" placeholder="请输入供货交货地址" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">联系人</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_contacts" placeholder="请输入供货联系人" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">电话</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_phone" placeholder="请输入供货电话" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">传真</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_fax" placeholder="请输入供货地点" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">付款方式</label>
-                <div class="layui-input-inline">
-                    <select name="payment_type">
-                        <option value="0">记应付账款</option>
-                    </select>
-                </div>
-                <label class="layui-form-label">备注</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="purchase_text" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
+                <div class="layui-inline">
+                    <label class="layui-form-label">入库仓库</label>
+                    <div class="layui-input-inline">
+                        <select name="warehouse_id">
+                            <option value="0">请选择入库仓库</option>
+                            @foreach($warehouse as $value)
+                                <option value="{{$value->id}}">{{$value->warehouse_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <label class="layui-form-label">付款方式</label>
+                    <div class="layui-input-inline">
+                        <select name="payment_type">
+                            <option value="0">记应付账款</option>
+                        </select>
+                    </div>
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="warehouse_text" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
             </div>
             <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
@@ -268,11 +261,10 @@
 
             //监听提交
             form.on('submit(form)', function(data){
-                console.log('1');
                 //layer.msg(JSON.stringify(data.field));
                 data.field.table = table.cache;
                 $.ajax({
-                    url:"{{url('/admins/purchase_order')}}",
+                    url:"{{url('admins/purchase_warehouse')}}",
                     type:'post',
                     data:data.field,
                     datatype:'json',
@@ -280,7 +272,7 @@
                         if(msg=='0'){
                             layer.msg('添加成功！',{icon:1,time:2000},function () {
                                 //调转
-                                window.location.href = '/admins/purchase_order';
+                                window.location.href = '/admins/purchase_warehouse';
                                 return;
                             });
                         }else{

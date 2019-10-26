@@ -71,7 +71,9 @@ class ProductController extends Controller
             'product_status' => $request->product_status,
             'created_at' => date('Y-m-d H:i:s', time()),
         ];
+
         $lastId = DB::table('product')->insertGetId($arr);
+
         if(isset($request->sp_val)) {
             foreach ($request->sp_val as $key => $value) {
                 $productAttrArr[$key]['product_id'] = $lastId;
@@ -87,6 +89,7 @@ class ProductController extends Controller
         }else{
             $productToAttrArr = '';
         }
+
         if(isset($request->sku)) {
             foreach ($request->sku as $key => $value) {
                 $skuId = $spuId . str_pad($key, 4, '0', STR_PAD_LEFT);
@@ -111,12 +114,14 @@ class ProductController extends Controller
             $productAttrArr = [];
             $productToAttrArr = [];
         }
+
         //数据插入
         ProductAttr::insert($productAttrArr);
         ProductToAttr::insert($productToAttrArr);
         $result = ProductGoods::insert($skuArr);
         return $result ? '0' : '1';
     }
+
 
     /**
      * Display the specified resource.
@@ -140,6 +145,7 @@ class ProductController extends Controller
         //
     }
 
+
     /**
      * Update the specified resource in storage.
      *
@@ -151,6 +157,7 @@ class ProductController extends Controller
     {
         //
     }
+
 
     /**
      * Remove the specified resource from storage.

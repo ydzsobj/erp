@@ -101,7 +101,13 @@
                         <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
                     </dd>
                     <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_warehouse/create')}}">添加采购入库单</a>
+                    </dd>
+                    <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_return/create')}}">添加退货出库订单</a>
                     </dd>
                 </dl>
             </li>
