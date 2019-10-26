@@ -56,7 +56,19 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/product')}}">订单列表</a>
+                        <a lay-href="{{route('orders.index') }}">订单列表</a>
+                    </dd>
+
+                </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item ">
+                <a href="javascript:;" lay-tips="shopify店铺管理" lay-direction="2">
+                    <i class="layui-icon layui-icon-util"></i>
+                    <cite>shopify配置</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="console">
+                        <a lay-href="{{route('shopify_accounts.index') }}">店铺管理</a>
                     </dd>
 
                 </dl>
@@ -89,7 +101,13 @@
                         <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
                     </dd>
                     <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_warehouse/create')}}">添加采购入库单</a>
+                    </dd>
+                    <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_return/create')}}">添加退货出库订单</a>
                     </dd>
                 </dl>
             </li>
