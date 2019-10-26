@@ -291,6 +291,7 @@
 
             //监听select
             form.on('select(category)',function (data) {
+                $('#view').empty();
                 $.ajax({
                     url: "{{url('admins/data/get_attr')}}",
                     type: 'get',
