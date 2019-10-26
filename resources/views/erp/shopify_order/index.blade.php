@@ -81,14 +81,14 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
-                        <div class="layui-inline" style="width:260px;">
+                        <div class="layui-inline" style="width:220px;">
                             <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
                         </div>
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">状态</label>
-                    <div class="layui-input-inline" style="width:120px;">
+                    <div class="layui-input-inline" style="width:100px;">
                         <select name="status" id="search_status">
                             <option value="0">全部</option>
                             @foreach ($status_list as $key=>$status)
@@ -100,7 +100,7 @@
 
                 <div class="layui-inline">
                         <label class="layui-form-label">国家</label>
-                        <div class="layui-input-inline" style="width:120px;">
+                        <div class="layui-input-inline" style="width:100px;">
                             <select name="country_id" id="search_country_id">
                                 <option value="0">全部</option>
                                 @foreach ($countries as $key=>$country)
@@ -111,14 +111,19 @@
                     </div>
 
                 <div class="layui-inline">
-                        <label class="layui-form-label">下单时间</label>
                         <div class="layui-input-block">
+                            <div class="layui-inline" style="width:100px;">
+                                <select id="select_date_type">
+                                    <option value="1">下单时间</option>
+                                    <option value="2">审核时间</option>
+                                </select>
+                            </div>
                             <div class="layui-inline" style="width:150px;">
                                 <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
                             </div>-
                             <div class="layui-inline" style="width:150px;">
-                                    <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
-                                </div>
+                                <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                            </div>
                         </div>
                     </div>
             </div>
@@ -421,6 +426,7 @@
                     keywords: $("#demoReload").val(),
                     status: $("#search_status").val(),
                     country_id: $("#search_country_id").val(),
+                    select_date_type: $("#select_date_type").val(),
                     start_date:$("#start_date").val(),
                     end_date:$("#end_date").val(),
                 };
@@ -502,6 +508,7 @@
                         country_id: $("#search_country_id").val(),
                         start_date:$("#start_date").val(),
                         end_date:$("#end_date").val(),
+                        select_date_type: $("#select_date_type").val(),
 
                     }
                 }, 'data');
