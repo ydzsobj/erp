@@ -272,7 +272,7 @@
                         if(msg=='0'){
                             layer.msg('添加成功！',{icon:1,time:2000},function () {
                                 //调转
-                                window.location.href = '/admins/purchase_warehouse';
+                                window.parent.location.href = "url('/admin/purchase_order')";
                                 return;
                             });
                         }else{

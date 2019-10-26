@@ -136,7 +136,7 @@
         </div>
     </script>
     <script type="text/html" id="button" >
-        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看</a>
+        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
@@ -319,21 +319,27 @@
                         content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-                }else if(obj.event === 'show_img'){
-                    $('#show_big').attr('src',data.brand_pic);
-                    //console.log($('#show_big').attr('url'));
-                    layer.open({
-                        type:1,
-                        title: false,
-                        scrollbar: false,
-                        closeBtn: 0,
-                        //content: ['浏览器滚动条已锁','no'],
-                        shadeClose: true,
-                        area:'600px',
-                        skin: 'layui-layer-nobg', //没有背景色
-                        shadeClose: true,
-                        content:$('#show_big')
-                    })
+                }else if(obj.event === 'check'){
+                        $.ajax({
+                            url:"{{url('admins/purchase_order/check/')}}/"+data.id,
+                            type:'post',
+                            data:{"_token":"{{csrf_token()}}"},
+                            datatype:'json',
+                            success:function (msg) {
+                                if(msg=='0'){
+                                    layer.msg('审核成功！',{icon:1,time:2000},function () {
+                                        window.location = window.location;
+                                        layer.close(index);
+                                    });
+                                }else{
+                                    layer.msg('审核失败！',{icon:2,time:2000});
+                                }
+                            },
+                            error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.msg('error!',{icon:2,time:2000});
+                            }
+                        });
+
                 }
             });
 

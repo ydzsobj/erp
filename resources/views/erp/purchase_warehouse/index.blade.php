@@ -142,7 +142,7 @@
     </script>
 
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} 已入库 @{{# }  }}
+        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} 已入库 @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -179,7 +179,7 @@
             table.render({
                 elem: '#data_list'
                 ,height: 500
-                ,url: "{{url('api/purchase_order')}}" //数据接口
+                ,url: "{{url('api/purchase_warehouse')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbarShow'
                 ,defaultToolbar: ['filter', 'exports', 'print']
@@ -191,13 +191,9 @@
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-                    ,{field: 'purchase_order_status', title: '状态', width:60,templet:"#purchase_order_status"}
-                    ,{field: 'purchase_order_code', title: '采购单号', width:130}
-                    ,{field: 'deliver_at', title: '交付日期', width:120}
-                    ,{field: 'supplier_address', title: '供货地点', width:100}
-                    ,{field: 'supplier_contacts', title: '联系人', width:80}
-                    ,{field: 'supplier_phone', title: '手机', width:130}
-                    ,{field: 'supplier_fax', title: '传真', width:120}
+                    ,{field: 'purchase_warehouse_status', title: '状态', width:60,templet:"#purchase_order_status"}
+                    ,{field: 'purchase_warehouse_code', title: '采购单号', width:130}
+                    ,{field: 'stored_at', title: '交付日期', width:120}
                     ,{field: 'purchase_num', title: '数量', width:60}
                     ,{field: 'supplier_money', title: '金额', width:80}
                     ,{field: 'supplier_tax', title: '税金', width:80}

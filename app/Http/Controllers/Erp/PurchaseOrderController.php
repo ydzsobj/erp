@@ -164,6 +164,15 @@ class PurchaseOrderController extends Controller
         return $codeStr . $ymd . $subCode;
     }
 
+    /*
+     *审核
+     */
+    public function check(Request $request, $id){
+        $result = PurchaseOrder::find($id);
+        $result->purchase_order_status = 1;
+        return $result->save()?'0':'1';
+    }
+
 
 
 }

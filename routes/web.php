@@ -25,6 +25,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
 
     Route::get('product/sku/{id}', 'ProductController@sku')->name('product.sku');
     Route::get('purchase_order/show_goods','PurchaseOrderController@show_goods');
+    Route::post('purchase_order/check/{id}', 'PurchaseOrderController@check')->name('purchase_order.check');
 
 
 

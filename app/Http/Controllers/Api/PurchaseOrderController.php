@@ -21,11 +21,11 @@ class PurchaseOrderController extends Controller
             //$data = Product::where('id',$keywords)->orWhere('product_name','like',"%{$keywords}%")->offset(($page-1)*$limit)->limit($limit)->get();
             $count = PurchaseOrder::where(function ($query) use ($keywords){
                 $query->where('id','like',"%{$keywords}%")
-                    ->orWhere('product_name','like',"%{$keywords}%");
+                    ->orWhere('purchase_order_code','like',"%{$keywords}%");
             })->count();
             $data = PurchaseOrder::where(function ($query) use ($keywords){
                 $query->where('id','like',"%{$keywords}%")
-                    ->orWhere('product_name','like',"%{$keywords}%");
+                    ->orWhere('purchase_order_code','like',"%{$keywords}%");
             })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
 
         }else{
