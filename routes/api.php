@@ -50,6 +50,7 @@ $api->version('v1', function ($api) {
         /******订单相关****/
         // $api->get('/orders','OrderController@index')->name('api.orders.index');
         $api->get('/orders','ShopifyOrderController@index')->name('api.orders.index');
+        $api->get('/orders/{id}','ShopifyOrderController@show')->name('api.orders.show');
         $api->get('/shopify_accounts','ShopifyAccountController@index')->name('api.shopify_accounts.index');
 
 

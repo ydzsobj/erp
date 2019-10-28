@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class ShopifyOrder extends Model
 {
     protected $table = 'shopify_orders';
+
+    use SoftDeletes;
 
     protected $page_size = 20;
 
@@ -88,6 +91,7 @@ class ShopifyOrder extends Model
         $limit = $request->get('limit');
         $keywords = $request->get('keywords');
         $status = $request->get('status');
+        $select_date_type = $request->get('select_date_type');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         $country_id = $request->get('country_id');
@@ -106,7 +110,7 @@ class ShopifyOrder extends Model
             ])
             ->ofKeywords($keywords)
             ->ofStatus($status)
-            ->ofSubmitOrderDate($start_date, $end_date)
+            ->ofSubmitOrderDate($start_date, $end_date, $select_date_type)
             ->ofCountryId($country_id)
             ->select('shopify_orders.*')
             ->orderBy('shopify_orders.submit_order_at','desc')
@@ -142,12 +146,14 @@ class ShopifyOrder extends Model
         return $query->where('status', $status);
     }
 
-    public function scopeOfSubmitOrderDate($query, $start_date,$end_date){
+    public function scopeOfSubmitOrderDate($query, $start_date,$end_date,$select_date_type){
         if(!$start_date || !$end_date){
             return $query;
         }
 
-        $query->whereBetween('submit_order_at', [$start_date, $end_date]);
+        $select_field = $select_date_type == 1 ? 'submit_order_at' : 'last_audited_at';
+
+        $query->whereBetween($select_field, [$start_date, $end_date]);
     }
 
     public function scopeOfCountryId($query, $country_id){
@@ -170,6 +176,7 @@ class ShopifyOrder extends Model
         $limit = $request->get('limit');
         $keywords = $request->get('keywords');
         $status = $request->get('status');
+        $select_date_type = $request->get('select_date_type');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         $country_id = $request->get('country_id');
@@ -181,7 +188,7 @@ class ShopifyOrder extends Model
             )
             ->ofKeywords($keywords)
             ->ofStatus($status)
-            ->ofSubmitOrderDate($start_date, $end_date)
+            ->ofSubmitOrderDate($start_date, $end_date, $select_date_type)
             ->ofCountryId($country_id)
             ->select(
                 'id',
@@ -269,7 +276,8 @@ class ShopifyOrder extends Model
             $order->sku_desc_str = $sku_desc_str;
 
             $order->status_str = Arr::get($status, $order->status, '');
-            $order->country_name = Arr::get($country_list, $order->country_id, '');
+            $country = Arr::get($country_list, $order->country_id, '');
+            $order->country_name = $country['name'];
             $order->service_remark = $order->remark;
 
             unset(

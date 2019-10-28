@@ -41,7 +41,7 @@
                 <div class="layui-input-inline">
                     <select name="country_id">
                         @foreach ($countries as $key=>$country)
-                        <option value="{{ $key }}">{{ $country }}</option>
+                        <option value="{{ $key }}">{{ $country['name'] }}</option>
                         @endforeach
 
                     </select>

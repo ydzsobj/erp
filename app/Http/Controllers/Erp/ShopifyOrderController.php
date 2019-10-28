@@ -111,7 +111,10 @@ class ShopifyOrderController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $res = ShopifyOrder::where('id', $id)->delete();
+        $msg = $res ? '设置成功':'设置失败';
+
+        return returned($res, $msg);
     }
 
     /**

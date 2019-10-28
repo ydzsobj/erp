@@ -81,14 +81,14 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
-                        <div class="layui-inline" style="width:260px;">
+                        <div class="layui-inline" style="width:220px;">
                             <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
                         </div>
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">状态</label>
-                    <div class="layui-input-inline" style="width:120px;">
+                    <div class="layui-input-inline" style="width:100px;">
                         <select name="status" id="search_status">
                             <option value="0">全部</option>
                             @foreach ($status_list as $key=>$status)
@@ -100,25 +100,30 @@
 
                 <div class="layui-inline">
                         <label class="layui-form-label">国家</label>
-                        <div class="layui-input-inline" style="width:120px;">
+                        <div class="layui-input-inline" style="width:100px;">
                             <select name="country_id" id="search_country_id">
                                 <option value="0">全部</option>
                                 @foreach ($countries as $key=>$country)
-                                    <option value="{{ $key }}">{{ $country }}</option>
+                                    <option value="{{ $key }}">{{ $country['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
 
                 <div class="layui-inline">
-                        <label class="layui-form-label">下单时间</label>
                         <div class="layui-input-block">
+                            <div class="layui-inline" style="width:100px;">
+                                <select id="select_date_type">
+                                    <option value="1">下单时间</option>
+                                    <option value="2">审核时间</option>
+                                </select>
+                            </div>
                             <div class="layui-inline" style="width:150px;">
                                 <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
                             </div>-
                             <div class="layui-inline" style="width:150px;">
-                                    <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
-                                </div>
+                                <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                            </div>
                         </div>
                     </div>
             </div>
@@ -194,17 +199,14 @@
                     ,{field: 'submit_order_at', title: '下单时间',width:170}
                     ,{field: 'sn', title: '订单编号',width:150}
                     ,{field: 'amount', title: '件数',width:60}
-                    ,{field: 'price', title: '价格', width:100,
-                        templet:function(row){
-                            return parseFloat(row.price - row.total_off);
-                        }
-                    }
+                    ,{field: 'price', title: '价格', width:100,sort:true}
+                    ,{field: 'currency_code', title: '币种', width:80}
                     ,{field: 'receiver_name', title: '收货人',width:150}
                     ,{field: 'receiver_phone', title: '收货电话',width:150}
                     ,{field: 'province', title: '省',width:120}
                     ,{field: 'city', title: '市',width:120}
                     ,{field: 'area', title: '区',width:120}
-                    ,{field: 'address1', title: '详细地址1',width:200}
+                    ,{field: 'address1', title: '详细地址1',width:120}
                     ,{field: 'address2', title: '详细地址2',width:100}
                     ,{field: 'company', title: '公司',width:100}
 
@@ -215,37 +217,22 @@
                             return row.audited_admin_user.admin_name || '';
                         }
                     }
-                    ,{field: 'status_name', title: '状态', width:80 , fixed:'right',
-                        templet:function(row){
-                            var color = '';
-                            if(row.status == 1){
-                                color = 'red';
-                            }else if(row.status == 2){
-                                color = 'green';
-                            }else if(row.status == 7){
-                                color = 'orange';
-                            }else if(row.status == 6){
-                                color = 'pink';
+                    ,{field: 'status_name', title: '状态', width:80 , fixed:'right'}
+                    ,{field: 'remark', title: '客服备注',width:100 ,edit:true,fixed:'right' }
+                    ,{title: '操作', width:200, fixed:'right',
+                         templet: function(row){
+                            var html_str = '';
+
+                            html_str += '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>';
+                            html_str += '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
+
+                            html_str += '<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="delete">删除</a>';
+
+                            if(row.audit_logs.length > 0){
+                                html_str += '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
                             }
 
-                            return "<span style='color:" + color +"'>" + row.status_name +"</span>";
-                        }
-                    }
-                    ,{field: 'remark', title: '备注',width:100 ,edit:true,fixed:'right' }
-                    ,{title: '操作', width:150, fixed:'right',
-                         templet: function(row){
-                             if(row.status == 1){
-                                return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>' +
-                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>' ;
-                             }else if(row.status == 7){
-                                return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
-
-                             }else if(row.status == 2){
-                                return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>' +
-                                 '<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="cancel_order">取消</a>';
-                             }else{
-                                 return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
-                             }
+                            return html_str;
                          }
                      }
                 ]],
@@ -300,31 +287,44 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
-            var route = '/admins/orders/' + data.id + '/update_audited_at';
-
             if(layEvent === 'audit'){ //
                 layer.open({
                     type:2,
                     title:'审核',
                     content: "/admins/orders/" + data.id + '/create_audit',
                     area: ['500px', '300px'],
+                    end: function(index, layero){
+                        //do something
+                        $.ajax({
+                            type:'get',
+                            url:'/api/orders/' + data.id,
+                            success:function(res){
+                                if(data.status != res.data.status){
+                                    do_reload();
+                                }
+                            }
+                        })
+
+                    }
                 });
 
-            }else if(layEvent == 'cancel_order'){
+            }else if(layEvent == 'delete'){
                 //取消订单
-                layer.confirm('确定要取消订单吗?', function(index){
+                layer.confirm('确定要删除订单吗?', function(index){
                     layer.close(index);
                     //向服务端发送指令
                     $.ajax({
                         type:'POST',
-                        url: route,
-                        data:{ _token: "{{ csrf_token() }}",_method:'put', status:6, remark:'订单取消'},
+                        url: '/admins/orders/' + data.id,
+                        data:{ _token: "{{ csrf_token() }}",_method:'delete'},
                         dataType:"json",
                         success:function(msg){
                                 console.log(msg);
                                 layer.msg(msg.msg);
                                 if(msg.success){
-                                table.reload('demo');
+                                    table.reload('demo');
+                                }else{
+                                    layer.msg(msg.msg);
                                 }
                         },
                         error: function(data){
@@ -369,7 +369,28 @@
                         area:['800px','700px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/orders/')}}/"+data.id+"/edit"
+                        content:"{{url('admins/orders/')}}/"+data.id+"/edit",
+                        end :function(){
+
+                            do_reload();
+                            // $.ajax({
+                            //     type:'get',
+                            //     url:'/api/orders/' + data.id,
+                            //     success:function(res){
+                            //         obj.update({
+                            //             receiver_name:res.data.receiver_name,
+                            //             receiver_phone:res.data.receiver_phone,
+                            //             province: res.data.province,
+                            //             city:res.data.city,
+                            //             area:res.data.area,
+                            //             address1:res.data.address1,
+                            //             address2:res.data.address2,
+                            //             company:res.data.company,
+                            //         });
+                            //     }
+                            // })
+
+                        }
                     });
             } else if(layEvent === 'LAYTABLE_TIPS'){
                 layer.alert('Hi，头部工具栏扩展的右侧图标。');
@@ -424,6 +445,7 @@
                     keywords: $("#demoReload").val(),
                     status: $("#search_status").val(),
                     country_id: $("#search_country_id").val(),
+                    select_date_type: $("#select_date_type").val(),
                     start_date:$("#start_date").val(),
                     end_date:$("#end_date").val(),
                 };
@@ -470,7 +492,7 @@
                                     console.log(msg);
                                     layer.msg(msg.msg);
                                     if(msg.success){
-                                    table.reload('demo');
+                                       do_reload();
                                     }
                             },
                             error: function(data){
@@ -492,10 +514,15 @@
         //搜索条件
         var active = {
             reload: function(){
-                var demoReload = $('#demoReload');
                 console.log('do reload');
                 //执行重载
-                table.reload('demo', {
+                do_reload();
+            }
+        };
+
+        function do_reload(){
+            var demoReload = $('#demoReload');
+            table.reload('demo', {
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
@@ -505,11 +532,11 @@
                         country_id: $("#search_country_id").val(),
                         start_date:$("#start_date").val(),
                         end_date:$("#end_date").val(),
-
+                        select_date_type: $("#select_date_type").val(),
                     }
                 }, 'data');
-            }
-        };
+        }
+
         //点击搜索
         $('#search').on('click', function(){
             var type = $(this).data('type');
