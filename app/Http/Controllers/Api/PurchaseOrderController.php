@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderInfo;
 use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
@@ -35,4 +36,12 @@ class PurchaseOrderController extends Controller
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
+
+    //获取单个采购订单信息
+    public function goods($id)
+    {
+        $data = PurchaseOrderInfo::where('purchase_order_id',$id)->get();
+        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
 }

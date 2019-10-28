@@ -111,12 +111,12 @@
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
                                     <ul class="layui-tab-title">
-                                        <li class="layui-this">基本设置</li>
+                                        <li class="layui-this">商品信息</li>
                                         <li>安全设置</li>
                                     </ul>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
-
+                                            <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
                                         </div>
                                         <div class="layui-tab-item">
 
@@ -134,11 +134,6 @@
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-sm" lay-event="getCheckData">生成采购入库单</button>
         </div>
-    </script>
-    <script type="text/html" id="button" >
-        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
 
     <script type="text/html" id="purchase_order_status">
@@ -205,7 +200,18 @@
                     ,{field: 'created_at', title: '创建时间', width: 120}
                     ,{field: 'checked_at', title: '审核时间', width: 120}
                     ,{field: 'purchase_text', title: '备注', width: 100}
-                    ,{field: 'button', title: '操作', toolbar:'#button', width: 180, fixed: 'right'}
+                    ,{field: 'button', title: '操作', width: 180, fixed: 'right',
+                        templet: function(row){
+                            var status = '';
+                            if(row.purchase_order_status == 0){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
+                            }else if(row.purchase_order_status == 1){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">入库</a>';
+                            }
+                        return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
+                            '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                        }
+                    }
                 ]]
             });
 
@@ -238,7 +244,12 @@
             var active = {
                 reload: function(){
                     var searchReload = $('#searchReload');
-
+                    //执行重载
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                    }, 'data');
                     //执行重载
                     table.reload('listReload', {
                         page: {
@@ -266,6 +277,34 @@
                 };
             });
 
+            //监听行单击事件（单击事件为：rowDouble）
+            table.on('row(list)', function(obj){
+                var data = obj.data;
+                console.log(data);
+                table.render({
+                    elem: '#table_list'
+                    ,url: "{{url('api/purchase_order/goods')}}/"+data.id //数据接口
+                    ,cols: [[
+                        {field:'id', title: 'ID', width:80, sort: true}
+                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
+                        ,{field:'goods_name', title: '商品名称', width:180}
+                        ,{field:'goods_attr_name', title: '属性名', width:100}
+                        ,{field:'goods_attr_value', title: '属性值', width:100}
+                        ,{field:'goods_num', title: '数量',width:80}
+                        ,{field:'goods_price', title: '单价',width:80}
+                        ,{field:'goods_money', title: '总价',  width:80}
+                        ,{field:'tax_rate', title: '税率', width:80}
+                        ,{field:'tax', title: '税费', width:80}
+                        ,{field:'price_tax', title: '单税率', width:80}
+                        ,{field:'money_tax', title: '总金额', width:80}
+                        ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
+                    ]]
+                    ,id: 'testReload'
+                });
+
+                //标注选中样式
+                obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
 
 
             //监听工具条
