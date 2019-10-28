@@ -219,11 +219,16 @@
                     }
                     ,{field: 'status_name', title: '状态', width:80 , fixed:'right'}
                     ,{field: 'remark', title: '客服备注',width:100 ,edit:true,fixed:'right' }
-                    ,{title: '操作', width:150, fixed:'right',
+                    ,{title: '操作', width:200, fixed:'right',
                          templet: function(row){
-                            return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>' +
-                                '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>' +
-                                '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
+                            var html_str = '';
+
+                            html_str += '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>';
+                            html_str += '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
+
+                            html_str += '<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="delete">删除</a>';
+                            html_str += '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
+                            return html_str;
                          }
                      }
                 ]],
@@ -278,8 +283,6 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
-            var route = '/admins/orders/' + data.id + '/update_audited_at';
-
             if(layEvent === 'audit'){ //
                 layer.open({
                     type:2,
@@ -292,30 +295,32 @@
                             type:'get',
                             url:'/api/orders/' + data.id,
                             success:function(res){
-                                obj.update({
-                                    status_name: res.data.status_name
-                                });
+                                if(data.status != res.data.status){
+                                    do_reload();
+                                }
                             }
                         })
 
                     }
                 });
 
-            }else if(layEvent == 'cancel_order'){
+            }else if(layEvent == 'delete'){
                 //取消订单
-                layer.confirm('确定要取消订单吗?', function(index){
+                layer.confirm('确定要删除订单吗?', function(index){
                     layer.close(index);
                     //向服务端发送指令
                     $.ajax({
                         type:'POST',
-                        url: route,
-                        data:{ _token: "{{ csrf_token() }}",_method:'put', status:6, remark:'订单取消'},
+                        url: '/admins/orders/' + data.id,
+                        data:{ _token: "{{ csrf_token() }}",_method:'delete'},
                         dataType:"json",
                         success:function(msg){
                                 console.log(msg);
                                 layer.msg(msg.msg);
                                 if(msg.success){
-                                table.reload('demo');
+                                    table.reload('demo');
+                                }else{
+                                    layer.msg(msg.msg);
                                 }
                         },
                         error: function(data){
@@ -360,7 +365,28 @@
                         area:['800px','700px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/orders/')}}/"+data.id+"/edit"
+                        content:"{{url('admins/orders/')}}/"+data.id+"/edit",
+                        end :function(){
+
+                            do_reload();
+                            // $.ajax({
+                            //     type:'get',
+                            //     url:'/api/orders/' + data.id,
+                            //     success:function(res){
+                            //         obj.update({
+                            //             receiver_name:res.data.receiver_name,
+                            //             receiver_phone:res.data.receiver_phone,
+                            //             province: res.data.province,
+                            //             city:res.data.city,
+                            //             area:res.data.area,
+                            //             address1:res.data.address1,
+                            //             address2:res.data.address2,
+                            //             company:res.data.company,
+                            //         });
+                            //     }
+                            // })
+
+                        }
                     });
             } else if(layEvent === 'LAYTABLE_TIPS'){
                 layer.alert('Hi，头部工具栏扩展的右侧图标。');
@@ -462,7 +488,7 @@
                                     console.log(msg);
                                     layer.msg(msg.msg);
                                     if(msg.success){
-                                    table.reload('demo');
+                                       do_reload();
                                     }
                             },
                             error: function(data){
@@ -484,10 +510,15 @@
         //搜索条件
         var active = {
             reload: function(){
-                var demoReload = $('#demoReload');
                 console.log('do reload');
                 //执行重载
-                table.reload('demo', {
+                do_reload();
+            }
+        };
+
+        function do_reload(){
+            var demoReload = $('#demoReload');
+            table.reload('demo', {
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
@@ -498,11 +529,10 @@
                         start_date:$("#start_date").val(),
                         end_date:$("#end_date").val(),
                         select_date_type: $("#select_date_type").val(),
-
                     }
                 }, 'data');
-            }
-        };
+        }
+
         //点击搜索
         $('#search').on('click', function(){
             var type = $(this).data('type');

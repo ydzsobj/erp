@@ -142,10 +142,10 @@
                     datatype:'json',
                     success:function (msg) {
                         if(msg.success){
-                            layer.msg('修改成功！',{icon:1,time:2000},function () {
+                            layer.msg('修改成功！',{icon:1,time:2000},function (index) {
                                 var index = parent.layer.getFrameIndex(window.name);
                                 //刷新
-                                parent.window.location = parent.window.location;
+                                // parent.window.location = parent.window.location;
                                 parent.layer.close(index);
                             });
                         }else{
