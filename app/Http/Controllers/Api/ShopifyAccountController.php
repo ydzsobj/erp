@@ -34,7 +34,8 @@ class ShopifyAccountController extends Controller
         $countries = config('order.country_list');
 
         foreach($data as $d){
-            $d->country_name = Arr::get($countries, $d->country_id);
+            $country = Arr::get($countries, $d->country_id);
+            $d->country_name = $country['name'];
         }
 
         return $data;
