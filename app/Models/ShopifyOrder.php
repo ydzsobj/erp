@@ -136,7 +136,11 @@ class ShopifyOrder extends Model
                 return $query->whereIn('id', $order_ids);
             }
         }else{
-            return $query->where('sn', $keywords);
+            return $query->where(function($query) use($keywords){
+                $query->where('sn', $keywords)
+                    ->orWhere('receiver_phone', $keywords)
+                    ->orWhere('receiver_name', $keywords);
+            });
         }
     }
 
@@ -342,7 +346,7 @@ class ShopifyOrder extends Model
 
             $postcode = $address_info['zip'];
             $receiver_name = $address_info['name'];
-            $receiver_phone = trim($address_info['phone']);
+            $receiver_phone = trim(str_replace(' ','', $address_info['phone']));
             $province = $address_info['province'];
             $city = $address_info['city'];
             $area = '';
