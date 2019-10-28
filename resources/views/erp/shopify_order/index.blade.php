@@ -227,7 +227,11 @@
                             html_str += '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
 
                             html_str += '<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="delete">删除</a>';
-                            html_str += '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
+
+                            if(row.audit_logs.length > 0){
+                                html_str += '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
+                            }
+
                             return html_str;
                          }
                      }
