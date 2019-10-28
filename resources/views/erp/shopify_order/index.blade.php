@@ -81,8 +81,8 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
-                        <div class="layui-inline" style="width:220px;">
-                            <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
+                        <div class="layui-inline" style="width:265px;">
+                            <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号/电话/收件人"  autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
             elem: '#demo'
             ,url: '/api/orders' //数据接口
                 ,page: true //开启分页
-                ,limit:20//分页大小
+                ,limit:50//分页大小
                 ,toolbar: '#toolbarDemo'
                 ,defaultToolbar: ['']
                 ,parseData: function(res){ //res 即为原始返回的数据
@@ -300,7 +300,10 @@
                             url:'/api/orders/' + data.id,
                             success:function(res){
                                 if(data.status != res.data.status){
-                                    do_reload();
+                                    // do_reload();
+                                    obj.update({
+                                        status_name : res.data.status_name
+                                    })
                                 }
                             }
                         })
