@@ -14,7 +14,7 @@ class AttributeController extends Controller
     {
         $keywords = $request->get('keywords');
         $page = $request->page ? $request->page : 1;
-        $limit = $request->limit ? $request->limit :10;
+        $limit = $request->limit ? $request->limit :50;
         if($keywords){
             $count = Attribute::where(function ($query) use ($keywords){
                 $query->where('id','like',"%{$keywords}%")

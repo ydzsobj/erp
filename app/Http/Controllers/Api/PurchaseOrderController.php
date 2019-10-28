@@ -15,7 +15,7 @@ class PurchaseOrderController extends Controller
 
         $keywords = $request->get('keywords');
         $page = $request->page ? $request->page : 1;
-        $limit = $request->limit ? $request->limit :10;
+        $limit = $request->limit ? $request->limit :50;
         //getSql();
         if($keywords){
             //$count = Product::where('id',$keywords)->orWhere('product_name','like',"%{$keywords}%")->count();

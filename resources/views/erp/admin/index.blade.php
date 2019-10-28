@@ -1,19 +1,11 @@
 @extends('erp.father.father')
 @section('content')
     <div class="layui-fluid">
-        <div class="layui-card">
-            <div class="layui-card-header layuiadmin-card-header-auto">
+        <script type="text/html" id="toolbar">
+            <div class="layui-btn-container">
                 <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="create_show('添加管理员','{{url("admins/admin/create")}}',2,'500px','600px');">添加管理员</button>
             </div>
-            <div class="layui-card-body">
-                <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
-                <script type="text/html" id="layuiadmin-app-cont-tagsbar">
-                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-                </script>
-            </div>
-
-        </div>
+        </script>
         <div class="demoTable">
             搜索ID或名称：
             <div class="layui-inline">
@@ -43,7 +35,6 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,height: 500
                 ,url: "{{url('admins/data/get_admin')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
@@ -51,8 +42,8 @@
                 ,title: '管理员数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 10
-                ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
                     ,{field: 'username', title: '管理员账号', width:150}

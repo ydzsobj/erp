@@ -32,15 +32,14 @@
             //渲染实例
             table.render({
                 elem: '#list'
-                ,height: 525
                 ,url: "{{url('api/product_goods')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: 'SKU数据表'
                 ,count: 10000
-                ,limit: 10
-                ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,page: true //开启分页
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}

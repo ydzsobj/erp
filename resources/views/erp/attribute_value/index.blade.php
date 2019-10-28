@@ -29,7 +29,6 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,height: 530
                 ,url: "{{url('api/attribute_value')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
@@ -37,8 +36,8 @@
                 ,title: '属性值数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 10
-                ,limits: [10,20,30,50,100,300,500,1000,2000,5000,10000]
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
                     ,{field: 'attr_value_name', title: '属性值名称', width:180}
