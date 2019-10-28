@@ -81,6 +81,7 @@ class ShopifyOrder extends Model
 
     public static function audit_status_options(){
         return [
+            self::STATUS_NO_AUDIT => '待审核',
             self::STATUS_AUDITED => '审核通过',
             self::STATUS_REFUSED => '审核拒绝',
         ];

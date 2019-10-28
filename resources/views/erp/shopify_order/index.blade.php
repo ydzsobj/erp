@@ -183,7 +183,7 @@
             elem: '#demo'
             ,url: '/api/orders' //数据接口
                 ,page: true //开启分页
-                ,limit:20//分页大小
+                ,limit:50//分页大小
                 ,toolbar: '#toolbarDemo'
                 ,defaultToolbar: ['']
                 ,parseData: function(res){ //res 即为原始返回的数据
