@@ -217,37 +217,13 @@
                             return row.audited_admin_user.admin_name || '';
                         }
                     }
-                    ,{field: 'status_name', title: '状态', width:80 , fixed:'right',
-                        templet:function(row){
-                            var color = '';
-                            if(row.status == 1){
-                                color = 'red';
-                            }else if(row.status == 2){
-                                color = 'green';
-                            }else if(row.status == 7){
-                                color = 'orange';
-                            }else if(row.status == 6){
-                                color = 'pink';
-                            }
-
-                            return "<span style='color:" + color +"'>" + row.status_name +"</span>";
-                        }
-                    }
+                    ,{field: 'status_name', title: '状态', width:80 , fixed:'right'}
                     ,{field: 'remark', title: '客服备注',width:100 ,edit:true,fixed:'right' }
                     ,{title: '操作', width:150, fixed:'right',
                          templet: function(row){
-                             if(row.status == 1){
-                                return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>' +
-                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>' ;
-                             }else if(row.status == 7){
-                                return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
-
-                             }else if(row.status == 2){
-                                return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>' +
-                                 '<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="cancel_order">取消</a>';
-                             }else{
-                                 return '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
-                             }
+                            return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>' +
+                                '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>' +
+                                '<a class="layui-btn layui-btn-xs" lay-event="audit_logs">审核记录</a>';
                          }
                      }
                 ]],
@@ -310,6 +286,19 @@
                     title:'审核',
                     content: "/admins/orders/" + data.id + '/create_audit',
                     area: ['500px', '300px'],
+                    end: function(index, layero){
+                        //do something
+                        $.ajax({
+                            type:'get',
+                            url:'/api/orders/' + data.id,
+                            success:function(res){
+                                obj.update({
+                                    status_name: res.data.status_name
+                                });
+                            }
+                        })
+
+                    }
                 });
 
             }else if(layEvent == 'cancel_order'){
