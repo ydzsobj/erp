@@ -6,8 +6,10 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet ;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class OrdersExport implements FromCollection,WithHeadings,withEvents
+class OrdersExport implements FromCollection,WithHeadings,withEvents,WithColumnFormatting
 {
     protected $export_data;
 
@@ -65,6 +67,13 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents
                 $event->sheet->autoSize();
 
             }
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'C' => NumberFormat::FORMAT_NUMBER
         ];
     }
 }
