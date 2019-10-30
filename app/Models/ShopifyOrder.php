@@ -58,6 +58,11 @@ class ShopifyOrder extends Model
      */
     const STATUS_REFUSED = 7;
 
+    //印尼
+    const COUNTRY_YINNI = 1;
+    //菲律宾
+    const COUNTRY_FEILVBIN = 1;
+
 
     public function order_skus(){
         return $this->hasMany(ShopifyOrderSku::class);
@@ -139,7 +144,7 @@ class ShopifyOrder extends Model
             return $query->where(function($query) use($keywords){
                 $query->where('sn', $keywords)
                     ->orWhere('receiver_phone', $keywords)
-                    ->orWhere('receiver_name', $keywords);
+                    ->orWhere('receiver_name','like' , '%'.$keywords.'%');
             });
         }
     }
@@ -172,7 +177,7 @@ class ShopifyOrder extends Model
 
     //详情
     public function detail($id){
-        $detail = self::with(['order_skus','order_skus.sku.sku_values'])->where('id', $id)->first();
+        $detail = self::with(['order_skus','order_skus.sku'])->where('id', $id)->first();
         return $detail;
     }
 
@@ -209,7 +214,7 @@ class ShopifyOrder extends Model
                 'area',
                 'address1',
                 'address2',
-                'company',
+                // 'company',
                 'price',
                 'status',
                 'remark'
@@ -222,7 +227,7 @@ class ShopifyOrder extends Model
         $country_list = config('order.country_list');
 
         foreach ($orders as $order){
-            $order->sn = ' '.$order->sn;
+            $order->sn = $order->sn;
             $order->receiver_phone = ' '.$order->receiver_phone;
             $order_skus = $order->order_skus;
             $sku_ids = '';
@@ -349,7 +354,13 @@ class ShopifyOrder extends Model
             $receiver_phone = trim(str_replace(' ','', $address_info['phone']));
             $province = $address_info['province'];
             $city = $address_info['city'];
+
             $area = '';
+            if($country_id == self::COUNTRY_YINNI){
+                //印尼的区使用address2
+                $area = $address_info['address2'];
+            }
+
             $address1 = $address_info['address1'];
             $address2 = $address_info['address2'];
             $company = $address_info['company'];

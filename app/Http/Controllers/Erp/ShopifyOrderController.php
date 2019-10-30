@@ -11,7 +11,9 @@ use App\Http\Requests\AuditRequest;
 use App\Http\Requests\ImportOrderRequest;
 use App\Models\Order;
 use App\Models\OrderAuditLog;
+use App\Models\ProductGoods;
 use App\Models\ShopifyOrder;
+use App\Models\ShopifyOrderSku;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Excel;
@@ -82,7 +84,35 @@ class ShopifyOrderController extends Controller
         $status_list = config('order.status_list');
         $order = new ShopifyOrder();
         $detail = $order->detail($id);
-        return view('erp.shopify_order.edit', compact('detail', 'status_list'));
+        $sku_info =  json_encode($this->formart_sku_data($detail));
+
+        return view('erp.shopify_order.edit', compact('detail', 'sku_info', 'status_list'));
+    }
+
+    public function formart_sku_data($detail){
+
+        $return_data = collect([]);
+
+        $order_skus = $detail->order_skus;
+
+        foreach($order_skus as $order_sku){
+
+            $sku = $order_sku->sku;
+
+            $product_skus = ProductGoods::product_skus($sku->product_id);
+
+            $return_data->push([
+                    'order_sku_id' => $order_sku->id,
+                    'sku_code' => $order_sku->sku->sku_code,
+                    'sku_name' =>$sku->sku_name,
+                    'sku_attr_value_names' => $sku->sku_attr_value_names,
+                    'amount' => $order_sku->sku_nums,
+                    'product_skus' => $product_skus
+                ]
+            );
+        }
+
+        return $return_data->all();
     }
 
     /**
@@ -94,9 +124,19 @@ class ShopifyOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $req = $request->except('_token');
+        $req = $request->except('_token','sku_ids');
+
+        $sku_ids = $request->post('sku_ids');
 
         $result = ShopifyOrder::where('id', $id)->update($req);
+
+        if($result && $sku_ids){
+            foreach($sku_ids as $key=>$sku_id){
+                if($key && $sku_id){
+                    ShopifyOrderSku::where('id', $key)->update(['sku_id' => $sku_id]);
+                }
+            }
+        }
 
         $msg = $result ? '设置成功':'设置失败';
 

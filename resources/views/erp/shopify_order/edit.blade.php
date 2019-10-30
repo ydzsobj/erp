@@ -4,6 +4,14 @@
     .layui-input-width{
         width:150%;
     }
+
+    .layui-table-cell{
+        overflow:inherit;
+        height: 40px;
+    }
+    .layui-table-body,.layui-table-box{
+        overflow:inherit;
+    }
 </style>
 <div class="layui-container">
     <div class="layui-row">
@@ -18,44 +26,10 @@
         </div>
     </div>
 </div>
-<table class="layui-table">
-  <colgroup>
-    <col width="200">
-    <col width="300">
-    <col width="180">
-    <col width="80">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>SKU</th>
-      <th>产品名称</th>
-      <th>属性</th>
-      <th>数量</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach ($detail->order_skus as $order_sku )
-        <tr>
-            <td>{{ $order_sku->sku_id }}</td>
-            <td>{{ $order_sku->sku->sku_name }}</td>
-            <td>
-                @php
-                    $sku_values = $order_sku->sku->sku_values;
-                    if($sku_values->count()){
-                        $sku_values_str = $sku_values->pluck('attr_value_name')->implode(',');
-                        echo $sku_values_str;
-                    }
-                @endphp
-            </td>
-            <td>{{ $order_sku->sku_nums }}</td>
-          </tr>
-    @endforeach
-
-  </tbody>
-</table>
     <div class="layui-fluid">
         <form class="layui-form" action="" lay-filter="formData">
             {{csrf_field()}}
+            <table id="sku_table" lay-filter="sku_filter"></table>
             <div class="layui-form-item">
                 <label class="layui-form-label"> <span style="color:red;">* </span>收件人</label>
                 <div class="layui-input-inline">
@@ -128,10 +102,36 @@
         //Demo
         layui.config({
             base: '{{asset("/admin/layuiadmin/")}}/' //静态资源所在路径
-        }).use(['form','upload'], function(){
+        }).use(['form','upload','table'], function(){
             var form = layui.form
+                ,table = layui.table
                 ,upload = layui.upload;
+
             var $=layui.jquery;
+
+            table.render({
+                elem: '#sku_table'
+                ,data: {!! $sku_info !!}
+                ,cols: [[ //
+                    {field: 'sku_code', title:'SKU',width:180}
+                    ,{field: 'sku_name', title: '商品名'}
+                    ,{field: 'test', title: '属性',width:150, style:"height:38px;",
+                        templet:function(row){
+                            var options = '<select name="sku_ids[' + row.order_sku_id +']">';
+
+                            var product_skus = row.product_skus;
+                            for(var i=0;i<product_skus.length;i++){
+                                var selected = product_skus[i].sku_code == row.sku_code ? 'selected' : '';
+                                options += '<option value=' + product_skus[i].sku_code + ' ' + selected + '>' + product_skus[i].sku_attr_value_names +'</option>';
+                            }
+
+                            return options;
+                        }
+                    }
+                    ,{field: 'amount', title: '数量', width:80,sort:true}
+                ]],
+
+        });
 
             //监听提交
             form.on('submit(form)', function(data){

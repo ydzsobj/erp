@@ -6,8 +6,10 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet ;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class OrdersExport implements FromCollection,WithHeadings,withEvents
+class OrdersExport implements FromCollection,WithHeadings,withEvents,WithColumnFormatting
 {
     protected $export_data;
 
@@ -40,7 +42,7 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents
             '收件地区',
             '详细地址1',
             '详细地址2',
-            '公司',
+            // '公司',
             '代收货款',
             'SKUID',
             '备注',
@@ -65,6 +67,13 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents
                 $event->sheet->autoSize();
 
             }
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'C' => NumberFormat::FORMAT_NUMBER
         ];
     }
 }
