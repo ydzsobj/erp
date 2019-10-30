@@ -132,14 +132,14 @@
     </div>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">提交入库</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getAddData">提交入库</button>
             <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加入库单','{{url("admins/purchase_warehouse/create")}}',2,'100%','100%');">添加入库单</button>
         </div>
     </script>
 
 
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} 已入库 @{{# }  }}
+        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.purchase_warehouse_status == 1){  }} <div style="color: #008000">已入库</div>  @{{# }else{  }} <div style="color: #0000FF">已退货</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -203,7 +203,7 @@
                         templet: function(row){
                             var status = '';
                             if(row.purchase_warehouse_status == 0){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">入库</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add">入库</a>';
                             }else if(row.purchase_warehouse_status == 1){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="check">退货</a>';
                             }
@@ -371,6 +371,27 @@
                         shadeClose: true,
                         content:$('#show_big')
                     })
+                }else if(obj.event === 'add'){
+                    $.ajax({
+                        url:"{{url('admins/purchase_warehouse/add/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('提交成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('提交失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
                 }
             });
 

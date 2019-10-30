@@ -179,6 +179,28 @@ class PurchaseWarehouseController extends Controller
         return $codeStr . $ymd . $subCode;
     }
 
+    //提交
+    public function add(Request $request, $id){
+        $warehouse = PurchaseWarehouse::where('id',$id)->first(['warehouse_id','purchase_warehouse_code']);
+        $info = PurchaseWarehouseInfo::where('purchase_warehouse_id',$id)->orderBy('id','asc')->get();
+        foreach($info as $key=>$value){
+            $inventoryInfoArr[$key]['goods_id'] = $value['id'];
+            $inventoryInfoArr[$key]['goods_sku'] = $value['goods_sku'];
+            $inventoryInfoArr[$key]['goods_name'] = $value['goods_name'];
+            $inventoryInfoArr[$key]['in_num'] = $value['goods_num'];
+            $inventoryInfoArr[$key]['in_price'] = $value['goods_price'];
+            $inventoryInfoArr[$key]['in_money'] = $value['goods_money'];
+            $inventoryInfoArr[$key]['stock_code'] = $warehouse['purchase_warehouse_code'];
+
+            $inventory = Inventory::where(['goods_id'=>$value['id'],'warehouse_id'=>$warehouse['warehouse_id']])->first();
+
+
+        }
+        dd($inventoryInfoArr);
+
+
+    }
+
 
 
 }
