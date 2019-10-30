@@ -11,11 +11,12 @@
                     <label class="layui-form-label">订单编号</label>
                     <div class="layui-form-mid" style="color: #ff0000">* 订单编号自动生成</div>
                     <div class="layui-form-mid"></div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">入库日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="stored_at" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
-                        </div>
+                    <label class="layui-form-label">自动拆分</label>
+                    <div class="layui-input-inline">
+                        <select name="">
+                            <option value="0">不自动拆分业务</option>
+                            <option value="1">自动拆分业务</option>
+                        </select>
                     </div>
                     <div class="layui-form-mid"></div>
                     <label class="layui-form-label">供应商</label>
@@ -33,8 +34,8 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">入库仓库</label>
                     <div class="layui-input-inline">
-                        <select name="warehouse_id">
-                            <option value="0">请选择入库仓库</option>
+                        <select name="warehouse_id" lay-verify="required">
+                            <option value="">请选择入库仓库</option>
                             @foreach($warehouse as $value)
                                 <option value="{{$value->id}}">{{$value->warehouse_name}}</option>
                             @endforeach
@@ -204,7 +205,7 @@
                                 iframeWindow.layui.form.on('submit(showSubmit)', function(data){
                                     var field = data.field; //获取提交的字段
                                     // $('#commodity').val(field.id_1)
-                                    console.log(field)
+                                    //console.log(field)
                                     var tableObj = tableIns;
                                     var config = tableObj.config;
                                     var dataTemp = config.data;
@@ -263,6 +264,13 @@
             form.on('submit(form)', function(data){
                 //layer.msg(JSON.stringify(data.field));
                 data.field.table = table.cache;
+                for(var i=0, row; i < table.cache.dataTable.length; i++){
+                    row = table.cache.dataTable[i];
+                    if(!row.id || row.goods_num==0 || row.goods_num==''){
+                        layer.msg("检查每一行，请完善数据！", { icon: 5 }); //提示
+                        return false;
+                    }
+                }
                 $.ajax({
                     url:"{{url('admins/purchase_warehouse')}}",
                     type:'post',
@@ -271,9 +279,9 @@
                     success:function (msg) {
                         if(msg=='0'){
                             layer.msg('添加成功！',{icon:1,time:2000},function () {
-                                //调转
-                                window.parent.location.href = "url('/admin/purchase_order')";
-                                return;
+                                //刷新
+                                parent.window.location = parent.window.location;
+                                parent.layer.close(index);
                             });
                         }else{
                             layer.msg('添加失败！',{icon:2,time:2000});

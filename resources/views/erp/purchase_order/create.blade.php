@@ -14,7 +14,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">交货日期</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="deliver_at" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                            <input type="text" name="deliver_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
                         </div>
                     </div>
                     <div class="layui-form-mid"></div>
@@ -130,7 +130,7 @@
 
             // 工具监听
             table.on('tool(dataTable)', function (obj) {
-                console.log(obj)
+                //console.log(obj)
                 switch (obj.event) {
                     case 'del':
                         var tableObj = tableIns;
@@ -268,9 +268,15 @@
 
             //监听提交
             form.on('submit(form)', function(data){
-                console.log('1');
                 //layer.msg(JSON.stringify(data.field));
                 data.field.table = table.cache;
+                for(var i=0, row; i < table.cache.dataTable.length; i++){
+                    row = table.cache.dataTable[i];
+                    if(!row.id || row.goods_num==0 || row.goods_num==''){
+                        layer.msg("检查每一行，请完善数据！", { icon: 5 }); //提示
+                        return false;
+                    }
+                }
                 $.ajax({
                     url:"{{url('/admins/purchase_order')}}",
                     type:'post',
@@ -279,9 +285,9 @@
                     success:function (msg) {
                         if(msg=='0'){
                             layer.msg('添加成功！',{icon:1,time:2000},function () {
-                                //调转
-                                window.location.href = '/admins/purchase_order';
-                                return;
+                                //刷新
+                                parent.window.location = parent.window.location;
+                                parent.layer.close(index);
                             });
                         }else{
                             layer.msg('添加失败！',{icon:2,time:2000});

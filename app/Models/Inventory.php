@@ -13,4 +13,6 @@ class Inventory extends Model
 
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
+    protected $guarded = ['LAY_TABLE_INDEX','tempId'];
 }

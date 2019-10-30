@@ -130,9 +130,10 @@
             </div>
         </div>
     </div>
-    <script type="text/html" id="toolbarShow">
+    <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">添加入库</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">提交入库</button>
+            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加入库单','{{url("admins/purchase_warehouse/create")}}',2,'100%','100%');">添加入库单</button>
         </div>
     </script>
 
@@ -176,7 +177,7 @@
                 elem: '#data_list'
                 ,url: "{{url('api/purchase_warehouse')}}" //数据接口
                 ,id: 'listReload'
-                ,toolbar: '#toolbarShow'
+                ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '采购数据表'
                 ,page: true //开启分页
@@ -187,15 +188,17 @@
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'purchase_warehouse_status', title: '状态', width:60,templet:"#purchase_order_status"}
-                    ,{field: 'purchase_warehouse_code', title: '采购单号', width:130}
-                    ,{field: 'stored_at', title: '交付日期', width:120}
+                    ,{field: 'purchase_warehouse_code', title: '入库单号', width:130}
+                    ,{title: '仓库名', width:120,templet:function (res) {
+                            return res.warehouse.warehouse_name;
+                        }}
                     ,{field: 'purchase_num', title: '数量', width:60}
                     ,{field: 'supplier_money', title: '金额', width:80}
                     ,{field: 'supplier_tax', title: '税金', width:80}
                     ,{field: 'money_tax', title: '总计', width:100}
                     ,{field: 'created_at', title: '创建时间', width: 120}
                     ,{field: 'checked_at', title: '审核时间', width: 120}
-                    ,{field: 'purchase_text', title: '备注', width: 100}
+                    ,{field: 'warehouse_text', title: '备注', width: 100}
                     ,{field: 'button', title: '操作', width: 220, fixed: 'right',
                         templet: function(row){
                             var status = '';
@@ -279,10 +282,10 @@
                 console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{url('api/purchase_order/goods')}}/"+data.id //数据接口
+                    ,url: "{{url('api/purchase_warehouse/goods')}}/"+data.id //数据接口
                     ,cols: [[
                         {field:'id', title: 'ID', width:80, sort: true}
-                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
+                        ,{field:'goods_id', title: '商品ID', width:100, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:180}
                         ,{field:'goods_attr_name', title: '属性名', width:100}
                         ,{field:'goods_attr_value', title: '属性值', width:100}

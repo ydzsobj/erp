@@ -130,9 +130,10 @@
             </div>
         </div>
     </div>
-    <script type="text/html" id="toolbarShow">
+    <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">生成采购入库单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">提交审核</button>
+            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加采购单','{{url("admins/purchase_order/create")}}',2,'100%','100%');">添加采购单</button>
         </div>
     </script>
 
@@ -175,7 +176,7 @@
                 elem: '#data_list'
                 ,url: "{{url('api/purchase_order')}}" //数据接口
                 ,id: 'listReload'
-                ,toolbar: '#toolbarShow'
+                ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '采购数据表'
                 ,page: true //开启分页

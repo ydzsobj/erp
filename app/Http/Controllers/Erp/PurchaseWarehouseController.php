@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PurchaseWarehouseRequest;
+use App\Models\Inventory;
+use App\Models\InventoryInfo;
 use App\Models\PurchaseWarehouse;
 use App\Models\PurchaseWarehouseInfo;
 use App\Models\Supplier;
@@ -43,7 +46,7 @@ class PurchaseWarehouseController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PurchaseWarehouseRequest $request)
     {
         //dd($request);
         //存储表单信息
@@ -80,8 +83,30 @@ class PurchaseWarehouseController extends Controller
                 $infoArr[$key]['tax_rate'] = $value['tax_rate'];
                 $infoArr[$key]['tax'] = $value['tax'];
                 $infoArr[$key]['money_tax'] = $value['money_tax'];
+                $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
+
+                //库存
+                $inventoryArr['goods_id'] = $value['id'];
+                $inventoryArr['goods_sku'] = $value['goods_sku'];
+                $inventoryArr['afloat_num'] = $value['goods_num'];
+                $inventoryArr['afloat_price'] = $value['goods_price'];
+                $inventoryArr['afloat_money'] = $value['goods_money'];
+                $inventoryArr['warehouse_id'] = $request->warehouse_id;
+                $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
+
+                $inventory = Inventory::where(['goods_id'=>$value['id'],'warehouse_id'=>$request->warehouse_id])->first();
+                if($inventory){
+                    $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
+                    $inventory->afloat_price = $inventory->afloat_price + $value['goods_price'];
+                    $inventory->afloat_money = $inventory->afloat_money + $value['goods_money'];
+                    $inventory->save();
+                }else{
+                    Inventory::insert($inventoryArr);
+                }
+
             }
         }
+
         $result = PurchaseWarehouseInfo::insert($infoArr);
         return $result ? '0' : '1';
     }

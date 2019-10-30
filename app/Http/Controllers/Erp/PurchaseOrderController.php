@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\InventoryInfo;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderInfo;
 use App\Models\Supplier;
@@ -55,6 +56,7 @@ class PurchaseOrderController extends Controller
             'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
             'money_tax' => isset($request->money_tax)?$request->money_tax:0,
             'supplier_id' => $request->supplier_id,
+            'supplier_address' => $request->supplier_address,
             'supplier_contacts' => $request->supplier_contacts,
             'supplier_phone' => $request->supplier_phone,
             'supplier_fax' => $request->supplier_fax,
@@ -81,8 +83,11 @@ class PurchaseOrderController extends Controller
                 $infoArr[$key]['tax_rate'] = $value['tax_rate'];
                 $infoArr[$key]['tax'] = $value['tax'];
                 $infoArr[$key]['money_tax'] = $value['money_tax'];
+
             }
         }
+
+
         $result = PurchaseOrderInfo::insert($infoArr);
 
         return $result ?'0':'1';

@@ -12,4 +12,10 @@ class PurchaseWarehouse extends Model
 
     protected $table = "purchase_warehouse";
     protected $dates = ['deleted_at'];
+
+    //
+    public function warehouse(){
+        return $this->hasOne('App\Models\Warehouse','id','warehouse_id');
+    }
+
 }
