@@ -177,7 +177,7 @@ class ShopifyOrder extends Model
 
     //详情
     public function detail($id){
-        $detail = self::with(['order_skus','order_skus.sku.sku_values'])->where('id', $id)->first();
+        $detail = self::with(['order_skus','order_skus.sku'])->where('id', $id)->first();
         return $detail;
     }
 
@@ -214,7 +214,7 @@ class ShopifyOrder extends Model
                 'area',
                 'address1',
                 'address2',
-                'company',
+                // 'company',
                 'price',
                 'status',
                 'remark'

@@ -42,7 +42,7 @@ class OrdersExport implements FromCollection,WithHeadings,withEvents,WithColumnF
             '收件地区',
             '详细地址1',
             '详细地址2',
-            '公司',
+            // '公司',
             '代收货款',
             'SKUID',
             '备注',
