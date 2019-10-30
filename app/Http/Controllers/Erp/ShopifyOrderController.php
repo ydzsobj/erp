@@ -130,9 +130,11 @@ class ShopifyOrderController extends Controller
 
         $result = ShopifyOrder::where('id', $id)->update($req);
 
-        if($result){
+        if($result && $sku_ids){
             foreach($sku_ids as $key=>$sku_id){
-                ShopifyOrderSku::where('id', $key)->update(['sku_id' => $sku_id]);
+                if($key && $sku_id){
+                    ShopifyOrderSku::where('id', $key)->update(['sku_id' => $sku_id]);
+                }
             }
         }
 
