@@ -42,6 +42,9 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('product_goods','ProductGoodsController');
     Route::resource('purchase_order','PurchaseOrderController');
     Route::resource('purchase_warehouse','PurchaseWarehouseController');
+    Route::resource('inventory','InventoryController');
+    Route::resource('inventory_check','InventoryCheckController');
+    Route::resource('inventory_transfer','InventoryTransferController');
 
 
 

@@ -82,7 +82,15 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
                     </dd>
-
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/inventory')}}">产品库存</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
+                    </dd>
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
