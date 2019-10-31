@@ -216,8 +216,6 @@ class ShopifyOrderController extends Controller
 
         $o = new ShopifyOrder();
         $data = $o->export($request);
-        ob_end_clean();
-        ob_start();
         // dd($data);
         return Excel::download(new OrdersExport($data), '订单导出'.date('y-m-d H_i_s').'.xlsx');
     }

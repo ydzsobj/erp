@@ -207,9 +207,9 @@
                     ,{field: 'city', title: '市',width:120}
                     ,{field: 'area', title: '区',width:120}
                     ,{field: 'postcode', title: '邮编',width:100}
-                    ,{field: 'address1', title: '详细地址1',width:120}
-                    ,{field: 'address2', title: '详细地址2',width:100}
-                    ,{field: 'company', title: '公司',width:100}
+                    ,{field: 'address1', title: '详细地址',width:120}
+                    // ,{field: 'address2', title: '详细地址2',width:100}
+                    // ,{field: 'company', title: '公司',width:100}
 
                     ,{field: 'country_name', title: '国家',width:80 }
 
