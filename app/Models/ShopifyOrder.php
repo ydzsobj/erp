@@ -226,78 +226,78 @@ class ShopifyOrder extends Model
         $status = config('order.status_list');
         $country_list = config('order.country_list');
 
-        foreach ($orders as $order){
-            $order->sn = $order->sn;
-            $order->receiver_phone = ' '.$order->receiver_phone;
-            $order_skus = $order->order_skus;
-            $sku_ids = '';
-            $sku_str = '';
-            $sku_desc_str = '';
-            $product_name_str = '';
-            $product_english_name_str = '';
-            $total_nums = 0;
-            $admin_user_str = '';
+        // foreach ($orders as $order){
+        //     $order->sn = $order->sn;
+        //     $order->receiver_phone = ' '.$order->receiver_phone;
+        //     $order_skus = $order->order_skus;
+        //     $sku_ids = '';
+        //     $sku_str = '';
+        //     $sku_desc_str = '';
+        //     $product_name_str = '';
+        //     $product_english_name_str = '';
+        //     $total_nums = 0;
+        //     $admin_user_str = '';
 
-            foreach ($order_skus as $order_sku){
-                $sku = $order_sku->sku;
+        //     foreach ($order_skus as $order_sku){
+        //         $sku = $order_sku->sku;
 
-                if($sku->count() == 0){
-                    continue;
-                }
+        //         if($sku->count() == 0){
+        //             continue;
+        //         }
 
-                //skuid
-                $sku_ids .= $sku->sku_code;
-                $sku_ids .= "\r\n";
+        //         //skuid
+        //         $sku_ids .= $sku->sku_code;
+        //         $sku_ids .= "\r\n";
 
-                //备注-中文
-                $sku_str .= $sku->sku_name .' '. $sku->sku_attr_value_names. ' x'. $order_sku->sku_nums;
-                $sku_str .= "\r\n";
+        //         //备注-中文
+        //         $sku_str .= $sku->sku_name .' '. $sku->sku_attr_value_names. ' x'. $order_sku->sku_nums;
+        //         $sku_str .= "\r\n";
 
-                //物品描述-英文
-                $sku_attr_values = $sku->sku_values;
-                if($sku_attr_values->count() >0){
-                    $attr_values_str = $sku_attr_values->map(function($item){
-                        return $item->attr_value->attr_value_english;
-                    });
-                    // dump($attr_values_str);
-                    $sku_desc_str .= $sku->sku_english. ' '.$attr_values_str->implode(',') .' x'. $order_sku->sku_nums;
-                }
+        //         //物品描述-英文
+        //         $sku_attr_values = $sku->sku_values;
+        //         if($sku_attr_values->count() >0){
+        //             $attr_values_str = $sku_attr_values->map(function($item){
+        //                 return $item->attr_value->attr_value_english;
+        //             });
+        //             // dump($attr_values_str);
+        //             $sku_desc_str .= $sku->sku_english. ' '.$attr_values_str->implode(',') .' x'. $order_sku->sku_nums;
+        //         }
 
-                $sku_desc_str .= "\r\n";
+        //         $sku_desc_str .= "\r\n";
 
-                //产品中文名称
-                $product_name_str .= $sku->sku_name;
-                $product_name_str .= "\r\n";
+        //         //产品中文名称
+        //         $product_name_str .= $sku->sku_name;
+        //         $product_name_str .= "\r\n";
 
-                //产品英文名称
-                $product_english_name_str .= $sku->sku_english;
-                $product_english_name_str .= "\r\n";
+        //         //产品英文名称
+        //         $product_english_name_str .= $sku->sku_english;
+        //         $product_english_name_str .= "\r\n";
 
-                //件数
-                $total_nums += $order_sku->sku_nums;
+        //         //件数
+        //         $total_nums += $order_sku->sku_nums;
 
-            }
+        //     }
 
-            $order->sku_ids = $sku_ids;
-            $order->sku_str = $sku_str;
-            $order->product_name_str = $product_name_str;
-            $order->product_english_name_str = $product_english_name_str;
-            $order->total_nums = $total_nums;
-            $order->sku_desc_str = $sku_desc_str;
+        //     $order->sku_ids = $sku_ids;
+        //     $order->sku_str = $sku_str;
+        //     $order->product_name_str = $product_name_str;
+        //     $order->product_english_name_str = $product_english_name_str;
+        //     $order->total_nums = $total_nums;
+        //     $order->sku_desc_str = $sku_desc_str;
 
-            $order->status_str = Arr::get($status, $order->status, '');
-            $country = Arr::get($country_list, $order->country_id, '');
-            $order->country_name = $country['name'];
-            $order->service_remark = $order->remark;
+        //     $order->status_str = Arr::get($status, $order->status, '');
+        //     $country = Arr::get($country_list, $order->country_id, '');
+        //     $order->country_name = $country['name'];
+        //     $order->service_remark = $order->remark;
 
-            unset(
-                $order->id,
-                $order->country_id,
-                $order->status,
-                $order->remark,
-                $order->order_skus
-            );
-        }
+        //     unset(
+        //         $order->id,
+        //         $order->country_id,
+        //         $order->status,
+        //         $order->remark,
+        //         $order->order_skus
+        //     );
+        // }
 
         // dd($orders->toArray());
 
