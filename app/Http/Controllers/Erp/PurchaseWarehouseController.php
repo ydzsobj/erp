@@ -209,6 +209,9 @@ class PurchaseWarehouseController extends Controller
             $inventory->stock_num = $inventory->stock_num + $value['goods_num'];
             $inventory->stock_price = $value['goods_price'];
             $inventory->stock_money = $inventory->stock_money + $value['goods_money'];
+            $inventory->in_num = $inventory->in_num + $value['goods_num'];
+            $inventory->in_price = $value['goods_price'];
+            $inventory->in_money = $inventory->in_money + $value['goods_money'];
             $inventory->save();
 
         }

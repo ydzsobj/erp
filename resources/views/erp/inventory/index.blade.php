@@ -182,7 +182,32 @@
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-                    ,{field: 'goods_id', title: 'GID', width:80, sort: true}
+                    ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
+                    ,{title: '商品名称', width:150,templet:function (res) {
+                            return res.product_goods.sku_name;
+                        }}
+                    ,{title: '属性名', width:100,templet:function (res) {
+                            return res.product_goods.sku_attr_names;
+                        }}
+                    ,{title: '属性值', width:100,templet:function (res) {
+                            return res.product_goods.sku_attr_value_names;
+                        }}
+                    ,{title: '仓库名', width:120,templet:function (res) {
+                            return res.warehouse.warehouse_name;
+                        }}
+                    ,{field: 'stock_num', title: '库存数量', width:100, style:'background-color: #eee; color: green;'}
+                    ,{field: 'stock_price', title: '库存单价', width:100}
+                    ,{field: 'stock_money', title: '库存金额', width:100}
+                    ,{field: 'afloat_num', title: '在途数量', width:100, style:'background-color: #eee; color: blue;'}
+                    ,{field: 'afloat_price', title: '在途单价', width:100}
+                    ,{field: 'afloat_money', title: '在途金额', width:100}
+                    ,{field: 'in_num', title: '入库数量', width:100}
+                    ,{field: 'in_price', title: '入库单价', width:100}
+                    ,{field: 'in_money', title: '入库金额', width:100}
+                    ,{field: 'out_num', title: '出库数量', width:100}
+                    ,{field: 'out_price', title: '出库单价', width:100}
+                    ,{field: 'out_money', title: '出库金额', width:100}
+                    ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
                 ]]
             });
 

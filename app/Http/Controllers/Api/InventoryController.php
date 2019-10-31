@@ -23,14 +23,14 @@ class InventoryController extends Controller
                 $query->where('id','like',"%{$keywords}%")
                     ->orWhere('goods_sku','like',"%{$keywords}%");
             })->count();
-            $data = Inventory::where(function ($query) use ($keywords){
+            $data = Inventory::with('warehouse','product_goods')->where(function ($query) use ($keywords){
                 $query->where('id','like',"%{$keywords}%")
                     ->orWhere('goods_sku','like',"%{$keywords}%");
             })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
 
         }else{
             $count = Inventory::count();
-            $data = Inventory::orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
+            $data = Inventory::with('warehouse','product_goods')->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
         }
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
