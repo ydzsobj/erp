@@ -71,6 +71,8 @@ class PurchaseOrderController extends Controller
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
+                $goods_money = $value['goods_num']*$value['goods_price'];
+                $tax = $goods_money*$value['tax_rate'];
                 $infoArr[$key]['purchase_order_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
@@ -79,10 +81,10 @@ class PurchaseOrderController extends Controller
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
                 $infoArr[$key]['goods_price'] = $value['goods_price'];
                 $infoArr[$key]['goods_num'] = $value['goods_num'];
-                $infoArr[$key]['goods_money'] = $value['goods_money'];
+                $infoArr[$key]['goods_money'] = $goods_money;
                 $infoArr[$key]['tax_rate'] = $value['tax_rate'];
-                $infoArr[$key]['tax'] = $value['tax'];
-                $infoArr[$key]['money_tax'] = $value['money_tax'];
+                $infoArr[$key]['tax'] = $tax;
+                $infoArr[$key]['money_tax'] = $goods_money + $tax;
 
             }
         }

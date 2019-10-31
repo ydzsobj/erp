@@ -204,8 +204,6 @@
                             var status = '';
                             if(row.purchase_warehouse_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add">入库</a>';
-                            }else if(row.purchase_warehouse_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="check">退货</a>';
                             }
                             return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                                 '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';

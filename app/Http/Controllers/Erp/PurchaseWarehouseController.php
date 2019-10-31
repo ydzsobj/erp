@@ -71,6 +71,8 @@ class PurchaseWarehouseController extends Controller
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
+                $goods_money = $value['goods_num']*$value['goods_price'];
+                $tax = $goods_money*$value['tax_rate'];
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
@@ -79,10 +81,10 @@ class PurchaseWarehouseController extends Controller
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
                 $infoArr[$key]['goods_price'] = $value['goods_price'];
                 $infoArr[$key]['goods_num'] = $value['goods_num'];
-                $infoArr[$key]['goods_money'] = $value['goods_money'];
+                $infoArr[$key]['goods_money'] = $goods_money;
                 $infoArr[$key]['tax_rate'] = $value['tax_rate'];
-                $infoArr[$key]['tax'] = $value['tax'];
-                $infoArr[$key]['money_tax'] = $value['money_tax'];
+                $infoArr[$key]['tax'] = $tax;
+                $infoArr[$key]['money_tax'] = $goods_money+$tax;
                 $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
                 //库存
@@ -90,15 +92,15 @@ class PurchaseWarehouseController extends Controller
                 $inventoryArr['goods_sku'] = $value['goods_sku'];
                 $inventoryArr['afloat_num'] = $value['goods_num'];
                 $inventoryArr['afloat_price'] = $value['goods_price'];
-                $inventoryArr['afloat_money'] = $value['goods_money'];
+                $inventoryArr['afloat_money'] = $goods_money;
                 $inventoryArr['warehouse_id'] = $request->warehouse_id;
                 $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
 
                 $inventory = Inventory::where(['goods_id'=>$value['id'],'warehouse_id'=>$request->warehouse_id])->first();
                 if($inventory){
                     $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
-                    $inventory->afloat_price = $inventory->afloat_price + $value['goods_price'];
-                    $inventory->afloat_money = $inventory->afloat_money + $value['goods_money'];
+                    $inventory->afloat_price = $value['goods_price'];
+                    $inventory->afloat_money = $inventory->afloat_money + $goods_money;
                     $inventory->save();
                 }else{
                     Inventory::insert($inventoryArr);
@@ -181,23 +183,39 @@ class PurchaseWarehouseController extends Controller
 
     //提交
     public function add(Request $request, $id){
-        $warehouse = PurchaseWarehouse::where('id',$id)->first(['warehouse_id','purchase_warehouse_code']);
+        $warehouse = PurchaseWarehouse::where('id',$id)->first();
         $info = PurchaseWarehouseInfo::where('purchase_warehouse_id',$id)->orderBy('id','asc')->get();
         foreach($info as $key=>$value){
-            $inventoryInfoArr[$key]['goods_id'] = $value['id'];
+            $inventory = Inventory::where(function ($query) use ($value,$warehouse){
+                $query->where('goods_id','=',$value['goods_id'])->where('warehouse_id','=',$warehouse['warehouse_id']);
+            })->first();
+
+            $inventoryInfoArr[$key]['goods_id'] = $value['goods_id'];
+            $inventoryInfoArr[$key]['warehouse_id'] = $warehouse['warehouse_id'];
             $inventoryInfoArr[$key]['goods_sku'] = $value['goods_sku'];
             $inventoryInfoArr[$key]['goods_name'] = $value['goods_name'];
             $inventoryInfoArr[$key]['in_num'] = $value['goods_num'];
             $inventoryInfoArr[$key]['in_price'] = $value['goods_price'];
             $inventoryInfoArr[$key]['in_money'] = $value['goods_money'];
             $inventoryInfoArr[$key]['stock_code'] = $warehouse['purchase_warehouse_code'];
+            $inventoryInfoArr[$key]['stock_num'] = $value['goods_num']+$inventory['stock_num'];
+            $inventoryInfoArr[$key]['stock_price'] = $value['goods_price'];
+            $inventoryInfoArr[$key]['stock_money'] = $value['goods_money']+$inventory['stock_money'];
+            $inventoryInfoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
-            $inventory = Inventory::where(['goods_id'=>$value['id'],'warehouse_id'=>$warehouse['warehouse_id']])->first();
-
+            $inventory->afloat_num = $inventory->afloat_num - $value['goods_num'];
+            $inventory->afloat_price = $value['goods_price'];
+            $inventory->afloat_money = $inventory->afloat_money - $value['goods_money'];
+            $inventory->stock_num = $inventory->stock_num + $value['goods_num'];
+            $inventory->stock_price = $value['goods_price'];
+            $inventory->stock_money = $inventory->stock_money + $value['goods_money'];
+            $inventory->save();
 
         }
-        dd($inventoryInfoArr);
-
+        $warehouse->purchase_warehouse_status = 1;
+        $warehouse->save();
+        $result = InventoryInfo::insert($inventoryInfoArr);
+        return $result ? '0' : '1';
 
     }
 

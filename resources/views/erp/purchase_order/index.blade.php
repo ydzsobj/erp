@@ -206,7 +206,7 @@
                             if(row.purchase_order_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
                             }else if(row.purchase_order_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">入库</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
                             }
                         return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                             '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
