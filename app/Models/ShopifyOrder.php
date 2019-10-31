@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ShopifyOrder extends Model
 {
@@ -215,7 +216,7 @@ class ShopifyOrder extends Model
                 'address1',
                 'address2',
                 // 'company',
-                'price',
+                DB::raw('(price - total_off) as price'),
                 'status',
                 'remark'
 
