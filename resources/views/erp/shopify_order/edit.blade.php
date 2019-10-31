@@ -65,25 +65,25 @@
             </div>
 
             <div class="layui-form-item">
-                <label class="layui-form-label"> <span style="color:red;">* </span>地址1</label>
+                <label class="layui-form-label"> <span style="color:red;">* </span>地址</label>
                 <div class="layui-input-inline">
                     <input type="text" name="address1" value="{{ $detail->address1 }}" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入" autocomplete="off" class="layui-input layui-input-width">
                 </div>
             </div>
 
-            <div class="layui-form-item">
+            {{-- <div class="layui-form-item">
                     <label class="layui-form-label"> 地址2</label>
                     <div class="layui-input-inline">
                         <input type="text" name="address2" value="{{ $detail->address2 }}" placeholder="请输入" autocomplete="off" class="layui-input layui-input-width">
                     </div>
-            </div>
+            </div> --}}
 
-            <div class="layui-form-item">
+            {{-- <div class="layui-form-item">
                     <label class="layui-form-label"> 公司名</label>
                     <div class="layui-input-inline">
                         <input type="text" name="company" value="{{ $detail->company }}" placeholder="请输入" autocomplete="off" class="layui-input layui-input-width">
                     </div>
-            </div>
+            </div> --}}
 
             <div class="layui-form-item">
                 <div class="layui-input-block">
