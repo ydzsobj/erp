@@ -6,6 +6,7 @@ use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Models\Admin;
+use App\Models\AdminLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -150,5 +151,20 @@ class AdminController extends CommonController
             return response()->json(['code'=>'0','msg'=>'密码修改成功~']);
         }
     }
+
+    /*
+     * 后台登录日志
+     */
+    public function log(Request $request){
+        if($request->isMethod('get')){
+            return view('erp.admin.log');
+        }else{
+            $page = $request->page ? $request->page : 1;
+            $limit = $request->limit ? $request->limit :50;
+            $data = AdminLog::orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
+            return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
+        }
+    }
+
 
 }

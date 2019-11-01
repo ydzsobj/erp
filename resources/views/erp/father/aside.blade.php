@@ -164,6 +164,9 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/salesman')}}">销售人员</a>
                     </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/admin/log')}}">登录日志</a>
+                    </dd>
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">

@@ -20,7 +20,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('logout','LoginController@logout')->name('logout');
     Route::get('index','IndexController@index');
     Route::get('home_page','IndexController@homePage');
-    Route::get('admin_info','AdminController@adminInfo');
+    Route::any('admin/log','AdminController@log');
     Route::any('password','AdminController@password');
 
     Route::get('product/sku/{id}', 'ProductController@sku')->name('product.sku');
