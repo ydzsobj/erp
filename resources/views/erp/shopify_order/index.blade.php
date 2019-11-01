@@ -18,14 +18,14 @@
         }
         .pane-top{
           /* background-color: palevioletred; */
-           height: calc(70% - 3px);
+           height: calc(65% - 3px);
           overflow: auto
 
         }
         .pane-bottom{
           /* background-color:pink; */
           bottom: 0;
-          top: calc(70% + 3px);
+          top: calc(65% + 3px);
           overflow: auto
         }
         .pane-trigger-con{
@@ -34,7 +34,7 @@
           position: absolute;
           z-index: 9;
           user-select: none;
-          top: calc(70% - 3px);
+          top: calc(65% - 3px);
           height: 6px;
           cursor: row-resize;
         }
