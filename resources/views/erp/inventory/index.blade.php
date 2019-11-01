@@ -181,6 +181,7 @@
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
+                    ,{title: '库位', width:80, fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
                     ,{title: '商品名称', width:150,templet:function (res) {
@@ -279,21 +280,24 @@
                 console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{url('api/purchase_order/goods')}}/"+data.id //数据接口
+                    ,url: "{{url('api/inventory/goods')}}/"+data.goods_id //数据接口
+                    ,where: {warehouse_id: data.warehouse_id}
+                    ,page: true //开启分页
+                    ,count: 10000
+                    ,limit: 50
+                    ,limits: [50,100,300,500,1000,2000,5000,10000]
                     ,cols: [[
                         {field:'id', title: 'ID', width:80, sort: true}
                         ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:180}
-                        ,{field:'goods_attr_name', title: '属性名', width:100}
-                        ,{field:'goods_attr_value', title: '属性值', width:100}
-                        ,{field:'goods_num', title: '数量',width:80}
-                        ,{field:'goods_price', title: '单价',width:80}
-                        ,{field:'goods_money', title: '总价',  width:80}
-                        ,{field:'tax_rate', title: '税率', width:80}
-                        ,{field:'tax', title: '税费', width:80}
-                        ,{field:'price_tax', title: '单税率', width:80}
-                        ,{field:'money_tax', title: '总金额', width:80}
-                        ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
+                        ,{field:'stock_num', title: '库存数量', width:100}
+                        ,{field:'stock_money', title: '库存金额', width:100}
+                        ,{field:'in_num', title: '入库数量',width:100}
+                        ,{field:'in_money', title: '入库金额',width:100}
+                        ,{field:'out_num', title: '出库数量',  width:100}
+                        ,{field:'out_money', title: '出库金额', width:100}
+                        ,{field:'created_at', title: '创建时间', width:180}
+                        ,{field:'stock_code', title: '编码', width:135, fixed: 'right'}
                     ]]
                     ,id: 'testReload'
                 });

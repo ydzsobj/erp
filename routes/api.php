@@ -49,6 +49,7 @@ $api->version('v1', function ($api) {
         $api->get('/product/sku/{id}','ProductController@sku');
         $api->get('/purchase_order/goods/{id}','PurchaseOrderController@goods');
         $api->get('/purchase_warehouse/goods/{id}','PurchaseWarehouseController@goods');
+        $api->get('/inventory/goods/{id}','InventoryController@goods');
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
 
         /******订单相关****/

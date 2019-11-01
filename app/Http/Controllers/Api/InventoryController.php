@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inventory;
+use App\Models\InventoryInfo;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -37,9 +38,13 @@ class InventoryController extends Controller
     }
 
     //获取单个信息
-    public function goods($id)
+    public function goods(Request $request,$goods_id)
     {
-        $data = PurchaseOrderInfo::where('purchase_order_id',$id)->get();
+        $page = $request->page ? $request->page : 1;
+        $limit = $request->limit ? $request->limit :50;
+        $data = InventoryInfo::where(function($query) use($goods_id,$request) {
+            $query->where(['goods_id'=>$goods_id,'warehouse_id'=>$request->warehouse_id]);
+        })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 }
