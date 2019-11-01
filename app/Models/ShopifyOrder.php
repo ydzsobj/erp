@@ -263,7 +263,7 @@ class ShopifyOrder extends Model
 
         foreach($shopify_orders as $shopify_order){
 
-            $sn = $shopify_order['id'];
+            $sn = 'D'.$shopify_order['id'];
 
             if($sn){
                 $order = new ShopifyOrder();
