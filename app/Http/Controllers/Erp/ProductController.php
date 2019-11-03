@@ -143,6 +143,11 @@ class ProductController extends Controller
     public function edit($id)
     {
         //
+        $category = (new Category())->tree();
+        $data = Product::find($id);
+        $brand = Brand::get();
+        $supplier = Supplier::get();
+        return view('erp.product.edit', compact('data', 'category','brand','supplier'));
     }
 
 
@@ -156,6 +161,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         //
+        dd($request);
     }
 
 

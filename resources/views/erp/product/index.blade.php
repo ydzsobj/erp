@@ -1,5 +1,11 @@
 @extends('erp.father.father')
 @section('content')
+    <style>
+        .layui-table-cell{
+            height:50px;
+            line-height: 50px;
+        }
+    </style>
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
@@ -59,14 +65,14 @@
                     ,{title: '产品编码', width:100,templet:'#category_code'}
                     ,{title: '产品类别', width:100,templet:'#category_name'}
                     ,{field: 'product_price', title: '销售价', width:100}
-                    ,{field: 'product_image', title: '产品图片', width: 150, event: 'show_img', align:'center',templet: function(res){
-                            return '<img src="'+ res.product_image +'"width="100px" height="100px" alt="">'
-                        }}
-                    ,{field:'text', title: 'SKU列表',event: 'show_sku',align:'center', width:100, templet: function(res){
+                    ,{field: 'product_image', title: '产品图片', width: 100, event: 'show_img', align:'center',templet: function(res){
+                            return '<img src="'+ res.product_image +'"width="50px" height="50px" alt="">'
+                    }}
+                    ,{field:'text', title: 'SKU列表',event: 'show_sku',align:'center', width:90, templet: function(res){
                         return '<span class="layui-btn layui-btn-radius layui-btn-xs layui-btn-primary"  style="background-color:#ccc;color:green;">查看</span>'
                     }}
                     ,{field: 'created_at', title: '发布时间', width: 160, sort: true}
-                    ,{field: 'button', title: '操作', toolbar:'#button'}
+                    ,{field: 'button', title: '操作', toolbar:'#button', width: 250, fixed:'right'}
                 ]]
             });
 

@@ -20,7 +20,7 @@
             table.render({
                 elem: '#list'
                 ,height: 500
-                ,url: "{{url('api/product/sku')}}/{{$data['id']}} "   //数据接口
+                ,url: "{{url('api/product/get_sku')}}/{{$data['id']}} "   //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']

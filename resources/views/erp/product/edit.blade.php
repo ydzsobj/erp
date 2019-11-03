@@ -58,19 +58,13 @@
                         </div>
                     </div>
                     <hr class="layui-bg-gray">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">产品货号</label>
-                        <div class="layui-input-inline" style="width: 300px;">
-                            <input type="text" name="product_spu" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
+
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品条形码</label>
                         <div class="layui-input-inline" style="width: 300px;">
                             <input type="text" name="product_barcode" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <hr class="layui-bg-gray">
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">产品尺寸</label>
@@ -122,27 +116,44 @@
                         </div>
                     </div>
                     <hr class="layui-bg-gray">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">颜色图片</label>
-                        <div class="layui-input-block" id="attr_img">
-                        </div>
-                    </div>
-                    <div id="color_img" type="text/html">
-                        @forelse($img as $value)
-                        <div class="layui-inline">
-                            <label class="layui-form-label" style="text-align: center;padding: 9px 0 9px 8px;">{{$value['color_name']}}</label>
-                            <div class="layui-upload">
-                                <div class="layui-upload-list">
-                                    <!-- <p id="demoText">123</p> -->
-                                    <input type="hidden" name_id="color_image{{$value['id']}}" name="color_image[{{$value['id']}}]" autocomplete="off" class="layui-input" value="{{$value['product_color_image']}}">
-                                    <img class="layui-upload-img" id="pic{{$value['id']}}" src="{{$value['product_color_image']}}" style="width: 100px; height: 100px; margin: 10px 10px;">
-                                </div>
-                                <button type="button" class="layui-btn imgUpload" attr_id="{{$value['id']}}" id="imgUpload{{$value['id']}}">上传图片</button>
+                    <div id="view"></div>
+                    <!-- sku start-->
+                    <script id="info" type="text/html">
+                        <link rel="stylesheet" href="/admin/css/sku_style.css" />
+                        <fieldset class="layui-elem-field site-demo-button" style="padding:20px;">
+                            <legend>规格属性</legend>
+                            @{{#  layui.each(d, function(index, i){ }}
+                            <input type="hidden" name="sp_val[@{{i.id}}][attr_name]" value="@{{i.attr_name}}"/>
+                            <input type="hidden" name="sp_val[@{{i.id}}][attr_english]" value="@{{i.attr_english}}"/>
+                            <div class="layui-form-item">
+                                <ul class="SKU_TYPE">
+                                    <li class="layui-form-label" is_required='1' sku-type-name="@{{i.attr_name}}"><em>*</em> @{{i.attr_name}}：</li>
+                                </ul>
+                                <ul>
+                                    @{{#  layui.each(i.attributes, function(index_1, item){ }}
+                                    <li><label><input type="checkbox" propid='@{{i.id}}' name="sp_val[@{{i.id}}][attr_value][@{{ item.id }}]" class="sku_value" propvalid='@{{ item.id }}' value="@{{ item.attr_value_name }}" lay-ignore/>@{{ item.attr_value_name }}</label></li>
+                                    @{{#  }); }}
+                                </ul>
                             </div>
-                        </div>
-                        @empty
-                        @endforelse
-                    </div>
+                            <div class="clear"></div>
+                            @{{#  }); }}
+
+                            <li style="display: none;" id="onlySkuValCloneModel">
+                                <input type="checkbox" class="model_sku_val" propvalid='' value="" />
+                                <input type="text" class="cusSkuValInput" />
+                                <a href="javascript:void(0);" class="delCusSkuVal">删除</a>
+                            </li>
+                            <div class="clear"></div>
+                            <div id="skuTable"></div>
+
+                            <div class="clear"></div>
+
+                        </fieldset>
+
+                    </script>
+                    <script type="text/javascript" src="/admin/js/getSetSkuVals.js"></script>
+
+                    <!-- sku end-->
                     <hr class="layui-bg-gray">
                     <div class="layui-form-item">
                         <div class="layui-inline">
@@ -157,12 +168,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">产品详情</label>
-                        <div class="layui-input-block">
-                            <textarea id="content" name="product_content" style="display: none;">{{$data->product_content}}</textarea>
-                        </div>
-                    </div>
+
+
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">产品推荐</label>
@@ -196,11 +203,31 @@
                 //Demo
                 layui.config({
                     base: '{{asset("/admin/layuiadmin/")}}/' //静态资源所在路径
-                }).use(['form', 'upload', 'layedit'], function () {
+                }).use(['form', 'upload', 'layedit','jquery', 'table', 'laytpl'], function () {
                     var form = layui.form
-                        , upload = layui.upload;
+                        , upload = layui.upload
+                        , laytpl = layui.laytpl;
                     var layedit = layui.layedit;
-                    var $ = layui.$;
+                    var $ = layui.jquery;
+
+                    //表单初始赋值
+                    form.val('formData', {
+                        "product_name": "{{$data->product_name}}"
+                        ,"product_english": "{{$data->product_english}}"
+                        ,"product_cost_price": "{{$data->product_cost_price}}"
+                        ,"product_price": "{{$data->product_price}}"
+                        ,"brand_id": "{{$data->brand_id}}"
+                        ,"product_barcode": "{{$data->product_barcode}}"
+                        ,"product_size": "{{$data->product_size}}"
+                        ,"product_weight": "{{$data->product_weight}}"
+                        ,"product_image": "{{$data->product_image}}"
+                        ,"supplier_url": "{{$data->supplier_url}}"
+                        ,"supplier_burl": "{{$data->supplier_burl}}"
+                        ,"product_content": "{{$data->product_content}}"
+
+                    });
+
+
 
                     $('.iframe_scroll').parent().css('overflow', 'visible');
 
@@ -236,15 +263,7 @@
                         }
                     });
 
-                    layedit.set({
-                        height: '300px',
-                        uploadImage: {
-                            url: '/upload/',
-                            type: 'post'
-                        }
-                    });
 
-                    layedit.build('content'); //建立编辑器
 
 
                     function add(elem){
@@ -282,29 +301,29 @@
                     $('.imgUpload').each(function(i,elem){ add(elem)})
 
 
-                    //表单初始赋值
-                    form.val('formData', {
-                        "product_name": "{{$data->product_name}}"
-                        ,"product_english": "{{$data->product_english}}"
-                        ,"product_cost_price": "{{$data->product_cost_price}}"
-                        ,"product_price": "{{$data->product_price}}"
-                        ,"brand_id": "{{$data->brand_id}}"
-                        ,"product_spu": "{{$data->product_spu}}"
-                        ,"product_barcode": "{{$data->product_barcode}}"
-                        ,"product_size": "{{$data->product_size}}"
-                        ,"product_weight": "{{$data->product_weight}}"
-                        ,"product_image": "{{$data->product_image}}"
-                        ,"supplier_url": "{{$data->supplier_url}}"
-                        ,"supplier_burl": "{{$data->supplier_burl}}"
-
+                    $('#view').empty();
+                    $.ajax({
+                        url: "{{url('admins/data/get_attr')}}",
+                        type: 'get',
+                        data: {'category_id':'15'},
+                        datatype: 'json',
+                        success: function (msg) {
+                            console.log(msg);
+                            var getTpl = info.innerHTML
+                                ,view = $('#view');
+                            if(msg!=''){
+                                laytpl(getTpl).render(msg, function(html){
+                                    view.append(html)
+                                });
+                                form.render();
+                            }
+                        },
+                        error: function (XmlHttpRequest, textStatus, errorThrown) {
+                            layer.msg('error!', {icon: 2, time: 2000});
+                        }
                     });
 
-                    //监听
-                    // $('body').on('click','.imgUpload', function(data){
-                    //     var id=$(this).attr('attr_id')
-                    //     console.log(data);
-                    //     addimg(id)
-                    // });
+
 
                     //监听提交
                     form.on('submit(form)', function (data) {
@@ -340,4 +359,9 @@
                 });
 
             </script>
+            <script type="text/javascript" src="/admin/js/jquery.min.js"></script>
+            <script type="text/javascript" src="/admin/js/createSkuTable.js"></script>
+            <script type="text/javascript" src="/admin/js/customSku.js"></script>
+            <script type="text/javascript" src="/admin/js/layer.js"></script>
+
 @endsection

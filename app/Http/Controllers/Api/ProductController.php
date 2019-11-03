@@ -47,14 +47,14 @@ class ProductController extends Controller
     }
 
     //获取单个产品信息
-    public function sku($id)
+    public function get_sku($id)
     {
         $data = ProductGoods::where('product_id',$id)->get();
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
     //获取单个产品信息
-    public function get_sku($id)
+    public function sku($id)
     {
         $product_goods = ProductGoods::where('product_id',$id)->get();
         foreach ($product_goods as $key=>$value){
