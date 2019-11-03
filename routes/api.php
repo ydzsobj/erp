@@ -37,7 +37,7 @@ $api->version('v1', function ($api) {
         $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
         $api->resource('/attribute','AttributeController', ['only' => ['index']]);
         $api->resource('/attribute_value','AttributeValueController', ['only' => ['index']]);
-        $api->resource('/product','ProductController', ['only' => ['index']]);
+        $api->resource('/product','ProductController', ['only' => ['index','show']]);
         $api->resource('/product_goods','ProductGoodsController', ['only' => ['index']]);
         $api->resource('/purchase_order','PurchaseOrderController', ['only' => ['index']]);
         $api->resource('/purchase_warehouse','PurchaseWarehouseController', ['only' => ['index']]);

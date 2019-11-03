@@ -42,7 +42,7 @@ class ProductController extends Controller
     public function show($id)
     {
 
-        $data = Product::find($id);
+        $data = Product::with('productToAttr')->find($id);
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
@@ -50,6 +50,25 @@ class ProductController extends Controller
     public function sku($id)
     {
         $data = ProductGoods::where('product_id',$id)->get();
+        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
+    //获取单个产品信息
+    public function get_sku($id)
+    {
+        $product_goods = ProductGoods::where('product_id',$id)->get();
+        foreach ($product_goods as $key=>$value){
+            $data[$key]['sku_id'] = $value['id'];
+            $data[$key]['price'] = $value['sku_price'];
+            $data[$key]['stock'] = $value['sku_num'];
+            $data[$key]['sku_image_url'] = $value['sku_image'];
+            $ids = explode(',',$value['sku_attr_value_ids']);
+            $names = explode(';',$value['sku_attr_value_names']);
+            foreach ($ids as $k=>$v){
+                $data[$key]['attrs'][$k]['sku_value_id'] = $ids[$k];
+                $data[$key]['attrs'][$k]['sku_value_names'] = $names[$k];
+            }
+        }
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
