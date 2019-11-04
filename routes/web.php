@@ -28,7 +28,8 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('purchase_order/check/{id}', 'PurchaseOrderController@check')->name('purchase_order.check');
     Route::post('purchase_warehouse/add/{id}', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
 
-
+    //Route::get('test/index','TestController@index');
+    Route::get('test/index','TestController@index');
 
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');

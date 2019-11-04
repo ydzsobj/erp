@@ -41,7 +41,6 @@ class ProductController extends Controller
     //获取单个产品信息
     public function show($id)
     {
-
         $data = Product::with('productToAttr')->find($id);
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }

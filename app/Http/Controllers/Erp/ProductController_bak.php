@@ -23,7 +23,6 @@ class ProductController extends Controller
         //首页列表
         return view('erp.product.index');
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -37,7 +36,6 @@ class ProductController extends Controller
         $supplier = Supplier::where('supplier_status','1')->get();
         return view('erp.product.create', compact('category','brand','supplier'));
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -71,31 +69,22 @@ class ProductController extends Controller
             'product_status' => $request->product_status,
             'created_at' => date('Y-m-d H:i:s', time()),
         ];
-
         $lastId = DB::table('product')->insertGetId($arr);
-
-        /*
-         * 计算多个集合的笛卡尔积
-         */
         if(isset($request->sp_val)) {
-            $i=0;
             foreach ($request->sp_val as $key => $value) {
                 $productAttrArr[$key]['product_id'] = $lastId;
                 $productAttrArr[$key]['attr_id'] = $key;
                 foreach ($value['attr_value'] as $k => $v) {
-                    $productToAttrArr[$i]['attr_value_id'] = $k;
-                    $productToAttrArr[$i]['attr_value_name'] = $v;
-                    $productToAttrArr[$i]['product_id'] = $lastId;
-                    $productToAttrArr[$i]['attr_id'] = $key;
-                    $productToAttrArr[$i]['attr_name'] = $value['attr_name'];
-                    $i++;
+                    $productToAttrArr[$key]['attr_value_id'] = $k;
+                    $productToAttrArr[$key]['attr_value_name'] = $v;
                 }
-
+                $productToAttrArr[$key]['product_id'] = $lastId;
+                $productToAttrArr[$key]['attr_id'] = $key;
+                $productToAttrArr[$key]['attr_name'] = $value['attr_name'];
             }
         }else{
             $productToAttrArr = '';
         }
-
         if(isset($request->sku)) {
             foreach ($request->sku as $key => $value) {
                 $skuId = $spuId . str_pad($key, 4, '0', STR_PAD_LEFT);
@@ -113,8 +102,7 @@ class ProductController extends Controller
                 $skuArr[$key]['sku_attr_value_names'] = $value['propvalnames'];
                 $skuAttrArr[] = $this->doProp($key, $skuId, $value['propids'], $value['propnames'], $value['propvalids'], $value['propvalnames']);
             }
-
-            foreach ($skuAttrArr as $key => $val) {
+            foreach ($skuAttrArr as $ke => $val) {
                 SkuAttrValue::insert($val);
             }
         }else{
@@ -122,15 +110,12 @@ class ProductController extends Controller
             $productAttrArr = [];
             $productToAttrArr = [];
         }
-
         //数据插入
         ProductAttr::insert($productAttrArr);
         ProductToAttr::insert($productToAttrArr);
         $result = ProductGoods::insert($skuArr);
         return $result ? '0' : '1';
     }
-
-
     /**
      * Display the specified resource.
      *
@@ -141,7 +126,6 @@ class ProductController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -157,8 +141,6 @@ class ProductController extends Controller
         $supplier = Supplier::get();
         return view('erp.product.edit', compact('data', 'category','brand','supplier'));
     }
-
-
     /**
      * Update the specified resource in storage.
      *
@@ -171,8 +153,6 @@ class ProductController extends Controller
         //
         dd($request);
     }
-
-
     /**
      * Remove the specified resource from storage.
      *
@@ -183,7 +163,6 @@ class ProductController extends Controller
     {
         //
     }
-
     /*
      * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
      */
@@ -207,7 +186,6 @@ class ProductController extends Controller
         }
         return $codeStr.$category_code . $yid . $subCode;
     }
-
     public function doProp($key,$skuId,$pIds,$pNames,$pValIds,$pValNames){
         $propIds = explode(',',$pIds);
         $propNames = explode(';',$pNames);
@@ -222,7 +200,6 @@ class ProductController extends Controller
         }
         return $skuAttrArr;
     }
-
     /*
      * 正常php 处理二维数组中不需要的字段可能需要做遍历循环处理
      */
@@ -234,7 +211,6 @@ class ProductController extends Controller
         $data = $collection->toArray();
         return $data;
     }
-
     /*
      * 显示产品下的SKU
      */
@@ -244,7 +220,4 @@ class ProductController extends Controller
         $data['id'] = $id;
         return view('erp.product.sku',compact('data'));
     }
-
-
-
 }
