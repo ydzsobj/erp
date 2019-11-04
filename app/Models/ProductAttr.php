@@ -10,4 +10,8 @@ class ProductAttr extends Model
     protected $table = "product_attr";
 
     protected $guarded = [];
+
+    public function productToAttr(){
+        return $this->hasMany('App\Models\ProductToAttr','attr_id','attr_id');
+    }
 }

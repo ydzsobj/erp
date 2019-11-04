@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductGoods;
+use App\Models\ProductToAttr;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -41,7 +42,17 @@ class ProductController extends Controller
     //获取单个产品信息
     public function show($id)
     {
-        $data = Product::with('productAttr','productToAttr')->find($id);
+        $product = Product::with('productAttr')->find($id)->toArray();
+        $data = $product;
+        foreach($product['product_attr'] as $key=>$value){
+            //$data['attr'] = $value;
+            $product_attr = ProductToAttr::where(function ($query) use($value,$id){
+                $query->where('attr_id',$value['attr_id'])->where('product_id',$id);
+            })->get()->toArray();
+            foreach ($product_attr as $k=>$v){
+                    $data['attr'][] = $v;
+            }
+        }
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
