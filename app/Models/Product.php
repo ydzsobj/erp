@@ -23,4 +23,9 @@ class Product extends Model
     public function productToAttr(){
         return $this->hasMany('App\Models\ProductToAttr','product_id','id');
     }
+
+    public function productAttr(){
+        return $this->hasMany('App\Models\ProductAttr','product_id','id');
+    }
+
 }
