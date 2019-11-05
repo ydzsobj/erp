@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Product;
 use App\Models\ProductGoods;
 use App\Models\ProductToAttr;
@@ -55,6 +56,14 @@ class ProductController extends Controller
 
         foreach($data->productAttr as $obj){
             $obj->attr = Attribute::find($obj->attr_id);
+
+            $attr_values = $obj->attr_values->map(function($item){
+                $attr_value = AttributeValue::find($item->attr_value_id);
+                $item->attr_value_english = $attr_value->attr_value_english;
+                return $item;
+            });
+
+            $obj->attr_values = $attr_values;
         }
 
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
