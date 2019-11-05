@@ -14,4 +14,12 @@ class ProductAttr extends Model
     public function productToAttr(){
         return $this->hasMany('App\Models\ProductToAttr','attr_id','attr_id');
     }
+
+    public function attr(){
+        return $this->belongsTo(Attribute::class, 'attr_id');
+    }
+
+    public function attr_values(){
+        return $this->hasMany(ProductToAttr::class, 'attr_id', 'attr_id');
+    }
 }

@@ -25,4 +25,8 @@ class Attribute extends Model
         return $this->hasMany('App\Models\AttributeValue','attr_id','id');
     }
 
+    public function attr_values(){
+        return $this->hasMany(AttributeValue::class, 'attr_id');
+    }
+
 }

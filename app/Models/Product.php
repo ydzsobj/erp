@@ -25,7 +25,11 @@ class Product extends Model
     }
 
     public function productAttr(){
-        return $this->hasMany('App\Models\ProductAttr','product_id','id');
+        return $this->hasMany(ProductAttr::class,'product_id','id');
+    }
+
+    public function skus(){
+        return $this->hasMany(ProductGoods::class);
     }
 
 }
