@@ -181,7 +181,9 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //删除操作
+        $result = Product::find($id);
+        return $result->delete()?'0':'1';
     }
 
     /*
