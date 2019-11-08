@@ -99,7 +99,7 @@
         <div class="split-pane-warpper">
             <div class="pane pane-top" >
                 <div class="layui-card-body">
-                    <table id="data_list" lay-filter="list"></table>
+                    <table id="data_list" lay-filter="data_list"></table>
                 </div>
             </div>
             <div class="pane pane-trigger-con"></div>
@@ -181,7 +181,7 @@
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
-                    ,{title: '库位', width:80, fixed: 'left'}
+                    ,{field: 'goods_position',title: '库位', width:80, fixed: 'left',edit:true}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
                     ,{title: '商品名称', width:150,templet:function (res) {
@@ -275,7 +275,7 @@
             });
 
             //监听行单击事件（单击事件为：rowDouble）
-            table.on('row(list)', function(obj){
+            table.on('row(data_list)', function(obj){
                 var data = obj.data;
                 console.log(data);
                 table.render({
@@ -302,9 +302,43 @@
                     ,id: 'testReload'
                 });
 
+
+
                 //标注选中样式
                 obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
             });
+
+            //监听单元格编辑
+            table.on('edit(data_list)', function(obj){
+                var value = obj.value //得到修改后的值
+                    ,data = obj.data //得到所在行所有键值
+                    ,field = obj.field; //得到字段
+                console.log(obj);
+                $.ajax({
+                    type:'post',
+                    url:"/admins/inventory/" + obj.data.id + '/goods_position',
+                    data:{_token:"{{ csrf_token() }}", goods_position: obj.value},
+                    success:function(msg){
+                        if(msg=='0'){
+                            layer.msg('设置成功！',{icon:1,time:2000},function () {
+                                window.location = window.location;
+                                layer.close(index);
+                            });
+                        }else{
+                            layer.msg('设置失败！',{icon:2,time:2000});
+                        }
+                    },
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
+                    }
+                });
+            });
+
 
 
             //监听工具条

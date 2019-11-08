@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -83,4 +84,17 @@ class InventoryController extends Controller
     {
         //
     }
+
+    /*
+     *设置商品SKU所在仓位库位
+     */
+    public function goods_position(Request $request,$id){
+        //更新操作
+        $result = Inventory::find($id);
+        $result->goods_position = $request->goods_position;
+        return $result->save()?'0':'1';
+    }
+
+
+
 }
