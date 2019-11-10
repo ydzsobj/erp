@@ -48,12 +48,14 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('inventory','InventoryController');
     Route::resource('inventory_check','InventoryCheckController');
     Route::resource('inventory_transfer','InventoryTransferController');
+    Route::resource('order', 'OrderController');
 
 
 
     Route::get('data/get_admin','DataController@get_admin');
     Route::get('data/get_attr','DataController@get_attr');
     Route::post('uploader/pic_upload','UploaderController@picUpload');  //图片异步上传
+    Route::post('uploader/upload_data','UploaderController@upload_data');  //Excel异步上传
 
 
      /****订单相关****/

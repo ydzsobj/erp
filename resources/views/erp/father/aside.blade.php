@@ -56,7 +56,10 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{route('orders.index') }}">订单列表</a>
+                        <a lay-href="{{route('order.index') }}">订单列表</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{route('orders.index') }}">SHOPIFY订单</a>
                     </dd>
 
                 </dl>

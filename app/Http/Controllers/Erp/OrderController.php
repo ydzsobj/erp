@@ -3,20 +3,28 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Events\OrderAuditSuccessed;
+use App\Http\Controllers\CommonController;
+use App\Http\Requests\OrderRequest;
+use App\Imports\OrderImport;
 use App\Imports\OrdersImport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportOrderRequest;
 use App\Models\Order;
 use App\Models\OrderAuditLog;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
-class OrderController extends Controller
+class OrderController extends CommonController
 {
 
-    public function index(Request $request)
+    public function index()
+    {
+
+        return view('erp.order.index');
+    }
+
+    public function index2(Request $request)
     {
         $countries = config('order.country_list');
         $status_list = config('order.status_list');
@@ -36,6 +44,7 @@ class OrderController extends Controller
     public function create()
     {
         //
+        return view('erp.order.create');
     }
 
     /**
@@ -44,9 +53,13 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
         //
+        $filename = $request->upload_file;
+        $collection = Excel::import(new OrderImport(), $filename);
+        //$collection = Excel::toCollection(new OrderImport(), $filename);
+        dd($collection);
     }
 
     /**

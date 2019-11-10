@@ -44,6 +44,7 @@ $api->version('v1', function ($api) {
         $api->resource('/inventory','InventoryController', ['only' => ['index']]);
         $api->resource('/inventory_check','InventoryCheckController', ['only' => ['index']]);
         $api->resource('/inventory_transfer','InventoryTransferController', ['only' => ['index']]);
+        $api->resource('/order','OrderController', ['only' => ['index']]);
 
 
         $api->get('/product/sku/{id}','ProductController@sku');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CommonController extends Controller
 {
@@ -22,6 +23,16 @@ class CommonController extends Controller
     {
         $password = $this->doPassword($password);
         AdminLog::create(['username' => $username, 'admin_ip' => $admin_ip, 'status' => $status, 'password' => $password, 'todo' => $todo, 'message' => $message]);
+    }
+
+    //读取Excel数据
+    public function load_excel(Excel $excel,$filename)
+    {
+        $filePath = 'storage/app/' . $filename;
+        $reader = $excel->load($filePath);
+        $reader = $reader->getSheet(0);
+
+        return $reader->toArray();
     }
 
 

@@ -33,8 +33,8 @@ class QueryListener
                 // $fileName = storage_path('logs/sql/'.date('Y-m-d').'.log');
                 // Log::useFiles($fileName,'info');
                 $sql = str_replace("?", "'%s'", $event->sql);
-                $log = vsprintf($sql, $event->bindings);
-                Log::info($log);
+                //$log = vsprintf($sql, $event->bindings);
+                //Log::info($log);
             }
         }
     }

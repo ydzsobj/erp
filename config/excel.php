@@ -3,6 +3,13 @@
 use Maatwebsite\Excel\Excel;
 
 return [
+    'dates' => [
+        'enabled' => true,
+        # 'format' => 'U'
+        'format' => false,
+
+        'columns' => ['ordered_at']
+    ],
 
     'exports' => [
 

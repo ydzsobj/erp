@@ -43,6 +43,39 @@ class UploaderController extends Controller
     }
 
 
+    //excel 上传
+    public function upload_data(Request $request) {
+
+        $file = $request->file('file');
+
+        // 文件是否上传成功
+        if (!$file->isValid()) {
+            return response()->json(['code'=>1,'msg'=>'上传失败！']);
+        }
+
+        // 获取文件相关信息
+        $ext = $file->getClientOriginalExtension();    // 扩展名
+
+        //文件格式
+        $fileTypes = ['xls', 'xlsx'];
+        $isInFileType = in_array($ext, $fileTypes);
+
+        //文件格式是否成功
+
+        if (!$isInFileType) {
+            return response()->json(['code'=>1,'msg'=>'上传文件格式不正确！']);
+        }
+
+        // 上传文件
+        $filename = date('Ymd') . uniqid() . '.' . $ext;
+        //路径
+        $path = $request->file('file')->storeAs('excel', $filename);
+
+        return response()->json(['code'=>0,'msg'=>'上传成功！','path' =>$path]);
+
+    }
+
+
 
 
 }
