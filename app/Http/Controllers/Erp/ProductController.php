@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Erp;
 use App\Http\Controllers\Controller;
+use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -155,6 +156,7 @@ class ProductController extends Controller
         $data = Product::find($id);
         $brand = Brand::get();
         $supplier = Supplier::get();
+
         return view('erp.product.edit', compact('data', 'category','brand','supplier'));
     }
 
@@ -168,8 +170,28 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        dd($request);
+        //更新操作
+        $result = Product::find($id);
+        $product_spu = $result->product_spu;
+        $result->product_name = $request->product_name;
+        $result->product_english = $request->product_english;
+        $result->brand_id = $request->brand_id;
+        $result->product_barcode = $request->product_barcode;
+        $result->product_cost_price = $request->product_cost_price;
+        $result->product_price = $request->product_price;
+        $result->product_freight = $request->product_freight;
+        $result->product_size = $request->product_size;
+        $result->product_weight = $request->product_weight;
+        $result->product_image = $request->product_image;
+        $result->product_content = $request->product_content;
+        $result->supplier_id = $request->supplier_id;
+        $result->supplier_bid = $request->supplier_bid;
+        $result->supplier_url = $request->supplier_url;
+        $result->supplier_burl = $request->supplier_burl;
+        $result->product_commend = $request->product_commend;
+        $result->product_status = $request->product_status;
+
+        return $result->save() ? '0' : '1';
     }
 
 
@@ -245,6 +267,15 @@ class ProductController extends Controller
         //$data = ProductGoods::where('product_id',$id)->get();
         $data['id'] = $id;
         return view('erp.product.sku',compact('data'));
+    }
+
+    //编辑产品SKU
+    public function sku_edit($id)
+    {
+        $data = Product::find($id);
+        $attr = ProductAttr::with('attr_values')->where('product_id',$id)->orderBy('id','asc')->get();
+dd($attr);
+        //return view('erp.product.sku_edit',compact('data','category','attr'));
     }
 
 

@@ -195,7 +195,12 @@
                         </div>
                     </div>
 
-
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">产品详情</label>
+                        <div class="layui-input-block">
+                            <textarea id="content" name="product_content" style="display: none;">{{$data->product_content}}</textarea>
+                        </div>
+                    </div>
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">产品推荐</label>
@@ -206,8 +211,8 @@
                             <div class="layui-form-mid"></div>
                             <label class="layui-form-label">产品状态</label>
                             <div class="layui-input-inline">
-                                <input type="radio" name="product_state" value="0" title="下架" @if($data->product_state == '0') checked @endif>
-                                <input type="radio" name="product_state" value="1" title="正常"  @if($data->product_state == '1') checked @endif>
+                                <input type="radio" name="product_status" value="0" title="下架" @if($data->product_status == '0') checked @endif>
+                                <input type="radio" name="product_status" value="1" title="正常"  @if($data->product_status == '1') checked @endif>
                             </div>
                         </div>
                     </div>
@@ -249,11 +254,20 @@
                         ,"product_image": "{{$data->product_image}}"
                         ,"supplier_url": "{{$data->supplier_url}}"
                         ,"supplier_burl": "{{$data->supplier_burl}}"
-                        ,"product_content": "{{$data->product_content}}"
 
                     });
 
 
+                    //编辑器上传
+                    layedit.set({
+                        height: '300px',
+                        uploadImage: {
+                            url: '{{url('admins/uploader/pic_upload')}}'
+                            , type: 'post'
+                            , data: {"_token": myToken}
+                        }
+                    });
+                    var index = layedit.build('content'); //建立编辑器
 
                     $('.iframe_scroll').parent().css('overflow', 'visible');
 
@@ -291,7 +305,6 @@
 
 
 
-
                     function add(elem){
                         var id = $(elem).attr('attr_id');console.log(id);
                         var uploadInst = upload.render({
@@ -324,7 +337,7 @@
                     }
 
 
-                    $('.imgUpload').each(function(i,elem){ add(elem)})
+                    $('.imgUpload').each(function(i,elem){ add(elem)});
 
 
                     $('#view').empty();
@@ -354,6 +367,7 @@
                     //监听提交
                     form.on('submit(form)', function (data) {
                         //layer.msg(JSON.stringify(data.field));
+                        data.field.product_content = layedit.getContent(index);
                         $.ajax({
                             url: "{{url('admins/product/'.$data->id)}}",
                             type: 'put',
@@ -416,9 +430,10 @@
                     // $('.test1').each(function(i,elem){ add(elem)})
                     var alreadySetSkuVals = {};//已经设置的SKU值数据
 
-// $(function(){
+                    // $(function(){
                     //sku属性发生改变时,进行表格创建
                     $(document).on("change",'.sku_value',function(){
+                        //$(document).ready(function(){
                         getAlreadySetSkuVals();//获取已经设置的SKU值
                         console.log(alreadySetSkuVals);
                         var b = true;
@@ -518,15 +533,15 @@
                                 var alreadySetSkuPrice = "0";//已经设置的SKU价格
                                 var alreadySetSkuCostPrice = "0";//已经设置的SKU价格
                                 var alreadySetSkuStock = "0";//已经设置的SKU库存
-                                var alreadySetSkuImg = "";//已经设置的SKU库存
+                                var alreadySetSkuImg = "";//已经设置的图片
                                 //赋值
                                 if(alreadySetSkuVals){
                                     var currGroupSkuVal = alreadySetSkuVals[propvalids];//当前这组SKU值
                                     if(currGroupSkuVal){
                                         alreadySetSkuPrice = currGroupSkuVal.skuPrice;
                                         alreadySetSkuCostPrice = currGroupSkuVal.skuCostPrice;
-                                        alreadySetSkuStock = currGroupSkuVal.skuStock
-                                        alreadySetSkuImg = currGroupSkuVal.skuImg
+                                        alreadySetSkuStock = currGroupSkuVal.skuStock;
+                                        alreadySetSkuImg = currGroupSkuVal.skuImg;
                                     }
                                 }
                                 //console.log(propvalids);
@@ -546,7 +561,7 @@
                      * 获取已经设置的SKU值
                      */
                     function getAlreadySetSkuVals(){
-                        alreadySetSkuVals = {};
+                        alreadySetSkuVals = {'1,4':{'skuCostPrice': "123",'skuPrice': "123",'skuStock': "123",'skuImg':"456"},'1,6':{'skuCostPrice': "222",'skuPrice': "12223",'skuStock': "1223",'skuImg':"456"}};
                         //获取设置的SKU属性值
                         $("tr[class*='sku_table_tr']").each(function(){
                             var skuCostPrice = $(this).find("input[type='text'][class*='setting_sku_cost_price']").val();//SKU价格

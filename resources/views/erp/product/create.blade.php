@@ -517,15 +517,15 @@
                         var alreadySetSkuPrice = "0";//已经设置的SKU价格
                         var alreadySetSkuCostPrice = "0";//已经设置的SKU价格
                         var alreadySetSkuStock = "0";//已经设置的SKU库存
-                        var alreadySetSkuImg = "/admin/image/img.png";//已经设置的SKU库存
+                        var alreadySetSkuImg = "/admin/image/img.png";//已经设置的图片
                         //赋值
                         if(alreadySetSkuVals){
                             var currGroupSkuVal = alreadySetSkuVals[propvalids];//当前这组SKU值
                             if(currGroupSkuVal){
                                 alreadySetSkuPrice = currGroupSkuVal.skuPrice;
                                 alreadySetSkuCostPrice = currGroupSkuVal.skuCostPrice;
-                                alreadySetSkuStock = currGroupSkuVal.skuStock
-                                alreadySetSkuImg = currGroupSkuVal.skuImg
+                                alreadySetSkuStock = currGroupSkuVal.skuStock;
+                                alreadySetSkuImg = currGroupSkuVal.skuImg;
                             }
                         }
                         //console.log(propvalids);
