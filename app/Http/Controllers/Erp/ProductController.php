@@ -284,14 +284,88 @@ class ProductController extends Controller
         $sku_value = [];
         foreach($goods as $key=>$value){
             //$sku_value[$key][] = $value['sku_attr_value_ids'];
+            $sku_value[$value['sku_attr_value_ids']]['skuId'] = $value['id'];
             $sku_value[$value['sku_attr_value_ids']]['skuCostPrice'] = $value['sku_cost_price'];
             $sku_value[$value['sku_attr_value_ids']]['skuPrice'] = $value['sku_price'];
             $sku_value[$value['sku_attr_value_ids']]['skuStock'] = $value['sku_num'];
-
+            $sku_value[$value['sku_attr_value_ids']]['skuImg'] = $value['sku_image'];
         }
         $goods_sku = json_encode($sku_value);
 
         return view('erp.product.sku_edit',compact('data','attr','goods_sku'));
+    }
+
+
+    //更新产品SKU
+    public function sku_update(Request $request, $id)
+    {
+        //dd($request->sku);
+        $product = Product::where('id',$id)->first();
+        $spuId = $product->product_code;
+        $skuNum = ProductGoods::where('product_id',$id)->count();
+        /*
+         * 计算多个集合的笛卡尔积
+         */
+        if(isset($request->sp_val)) {
+            $i=0;
+            foreach ($request->sp_val as $key => $value) {
+                foreach ($value['attr_value'] as $k => $v) {
+                    $productToAttrArr[$i]['attr_value_id'] = $k;
+                    $productToAttrArr[$i]['attr_value_name'] = $v;
+                    $productToAttrArr[$i]['product_id'] = $id;
+                    $productToAttrArr[$i]['attr_id'] = $key;
+                    $productToAttrArr[$i]['attr_name'] = $value['attr_name'];
+                    $i++;
+                }
+
+            }
+        }else{
+            $productToAttrArr = '';
+        }
+
+        if(isset($request->sku)) {
+            foreach ($request->sku as $key => $value) {
+                if($value['sku_id'] != ''){
+                    $skuArr[$key]['id'] = $value['sku_id'];
+                    $skuArr[$key]['sku_cost_price'] = $value['sku_cost_price'] == 0 ? $product->product_cost_price : $value['sku_cost_price'];
+                    $skuArr[$key]['sku_price'] = $value['sku_price'] == 0 ? $product->product_price : $value['sku_price'];
+                    $skuArr[$key]['sku_num'] = $value['sku_num'] != 0 ? $value['sku_num'] : 0;
+                    $skuArr[$key]['sku_image'] = $value['sku_image'];
+                }else{
+                    $skuId = $spuId . str_pad($skuNum, 4, '0', STR_PAD_LEFT);
+                    $skuArr[$key]['product_id'] = $id;
+                    $skuArr[$key]['sku_name'] = $product->product_name;
+                    $skuArr[$key]['sku_english'] = $product->product_english;
+                    $skuArr[$key]['sku_code'] = $skuId;
+                    $skuArr[$key]['sku_cost_price'] = $value['sku_cost_price'] == 0 ? $product->product_cost_price : $value['sku_cost_price'];
+                    $skuArr[$key]['sku_price'] = $value['sku_price'] == 0 ? $product->product_price : $value['sku_price'];
+                    $skuArr[$key]['sku_num'] = $value['sku_num'] != 0 ? $value['sku_num'] : 0;
+                    $skuArr[$key]['sku_image'] = $value['sku_image'];
+                    $skuArr[$key]['sku_attr_ids'] = $value['propids'];
+                    $skuArr[$key]['sku_attr_names'] = $value['propnames'];
+                    $skuArr[$key]['sku_attr_value_ids'] = $value['propvalids'];
+                    $skuArr[$key]['sku_attr_value_names'] = $value['propvalnames'];
+                    $skuAttrArr[] = $this->doProp($key, $skuId, $value['propids'], $value['propnames'], $value['propvalids'], $value['propvalnames']);
+                    $skuNum++;dd($skuAttrArr);
+                    foreach ($skuAttrArr as $key => $val) {
+                        //SkuAttrValue::insert($val);
+                        SkuAttrValue::updateOrCreate();
+                    }
+                }
+
+            }
+
+
+        }else{
+            $skuArr = [];
+            $productAttrArr = [];
+            $productToAttrArr = [];
+        }
+
+        dd($skuArr);
+
+
+
     }
 
 

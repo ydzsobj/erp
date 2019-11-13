@@ -35,8 +35,15 @@
                                 </ul>
                                 <ul>
                                     @foreach($value->attribute_value as $k=>$v)
-                                            <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore />{{ $v->attr_value_name }}</label></li>
+                                        @foreach($value->product_to_attr as $s=>$p)
+                                            @if($v->id == $p->attr_value_id)
+                                                <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore checked disabled />{{ $v->attr_value_name }}</label></li>
+                                            @else
+                                                <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore />{{ $v->attr_value_name }}</label></li>
+                                            @endif
+                                        @endforeach
                                     @endforeach
+
                                 </ul>
                             </div>
                             <div class="clear"></div>
@@ -84,14 +91,9 @@
                     var $ = layui.jquery;
 
                     $(document).ready(function () {
+
                         getAlreadySetSkuVals();
-
-
-
-
-
-
-
+                        createSkuTable();
 
                     });
 
@@ -101,7 +103,40 @@
                     //sku属性发生改变时,进行表格创建
                     $(document).on("change",'.sku_value',function(){
                         getAlreadySetSkuVals();//获取已经设置的SKU值
-                        //console.log(alreadySetSkuVals);
+                        console.log(alreadySetSkuVals);
+                        createSkuTable();
+                    });
+// });
+
+                    /**
+                     * 获取已经设置的SKU值
+                     */
+                    function getAlreadySetSkuVals(){
+                        alreadySetSkuVals = {!! $goods_sku !!};
+                        //alreadySetSkuVals = {"15,9,19,21":{"skuCostPrice":"2.00","skuPrice":"2.00","skuStock":0},"15,9,19,22":{"skuCostPrice":"2.00","skuPrice":"2.00","skuStock":0}};
+
+
+                        //获取设置的SKU属性值
+                        $("tr[class*='sku_table_tr']").each(function(){
+                            var skuId = $(this).find("input[type='hidden'][class*='setting_sku_id']").val();//SKUID
+                            var skuCostPrice = $(this).find("input[type='text'][class*='setting_sku_cost_price']").val();//SKU价格
+                            var skuPrice = $(this).find("input[type='text'][class*='setting_sku_price']").val();//SKU价格
+                            var skuStock = $(this).find("input[type='text'][class*='setting_sku_stock']").val();//SKU库存
+                            var skuImg = $(this).find("input[type='hidden'][class*='setting_sku_img']").val();//SKU图
+                            if(skuPrice || skuStock){//已经设置了全部或部分值
+                                var propvalids = $(this).attr("propvalids");//SKU值主键集合
+                                alreadySetSkuVals[propvalids] = {
+                                    "skuId" : skuId,
+                                    "skuCostPrice" : skuCostPrice,
+                                    "skuPrice" : skuPrice,
+                                    "skuStock" : skuStock,
+                                    "skuImg" : skuImg
+                                }
+                            }
+                        });
+                    }
+
+                    function createSkuTable(){
                         var b = true;
                         var skuTypeArr =  [];//存放SKU类型的数组
                         var totalRow = 1;//总行数
@@ -196,6 +231,7 @@
 //				});
 
                                 var propvalids = propvalidArr.toString();
+                                var alreadySetSkuId = "";//已经设置的SKUID
                                 var alreadySetSkuPrice = "0";//已经设置的SKU价格
                                 var alreadySetSkuCostPrice = "0";//已经设置的SKU价格
                                 var alreadySetSkuStock = "0";//已经设置的SKU库存
@@ -204,6 +240,7 @@
                                 if(alreadySetSkuVals){
                                     var currGroupSkuVal = alreadySetSkuVals[propvalids];//当前这组SKU值
                                     if(currGroupSkuVal){
+                                        alreadySetSkuId = currGroupSkuVal.skuId;
                                         alreadySetSkuPrice = currGroupSkuVal.skuPrice;
                                         alreadySetSkuCostPrice = currGroupSkuVal.skuCostPrice;
                                         alreadySetSkuStock = currGroupSkuVal.skuStock;
@@ -214,42 +251,13 @@
                                 SKUTableDom += '<tr propvalids=\''+propvalids+'\' propids=\''+propIdArr.toString()+'\' propvalnames=\''+propvalnameArr.join(";")+'\'  propnames=\''+propNameArr.join(";")+'\' class="sku_table_tr">' +
                                     '<input type="hidden" name="sku['+i+'][propids]" value="'+propIdArr.toString()+'"/><input type="hidden" name="sku['+i+'][propnames]" value="'+propNameArr.join(";")+'"/><input type="hidden" name="sku['+i+'][propvalids]" value="'+propvalids+'"/><input type="hidden" name="sku['+i+'][propvalnames]" value="'+propvalnameArr.join(";")+'"/>'+
                                     '<input type="hidden" name="sku['+i+'][sku_attr_id]" value="'+skuValues[point].skuPropId+'"/><input type="hidden" name="sku['+i+'][sku_attr_name]" value=""/><input type="hidden" name="sku['+i+'][sku_attr_value_id]" value="'+skuValues[point].skuValueId+'"/><input type="hidden" name="sku['+i+'][sku_attr_value_name]" value="'+skuValues[point].skuValueTitle+'"/>'+
-                                    ''+currRowDoms+'<td><input type="text" class="setting_sku_cost_price" name="sku['+i+'][sku_cost_price]" value="'+alreadySetSkuCostPrice+'"/></td><td><input type="text" class="setting_sku_price" name="sku['+i+'][sku_price]" value="'+alreadySetSkuPrice+'"/></td><td><input type="text" name="sku['+i+'][sku_num]" class="setting_sku_stock" value="'+alreadySetSkuStock+'"/></td><td><div class="layui-upload sku_img"><div class="layui-upload-list test1"><img class="layui-upload-img demo1" src="'+alreadySetSkuImg+'"><p id="demoText"></p></div></div><input type="hidden" name="sku['+i+'][sku_image]" class="setting_sku_stocksetting_sku_img" value="'+alreadySetSkuImg+'"/></td></tr>';
+                                    ''+currRowDoms+'<td><input type="hidden" class="setting_sku_id" name="sku['+i+'][sku_id]" value="'+alreadySetSkuId+'"/><input type="text" class="setting_sku_cost_price" name="sku['+i+'][sku_cost_price]" value="'+alreadySetSkuCostPrice+'"/></td><td><input type="text" class="setting_sku_price" name="sku['+i+'][sku_price]" value="'+alreadySetSkuPrice+'"/></td><td><input type="text" name="sku['+i+'][sku_num]" class="setting_sku_stock" value="'+alreadySetSkuStock+'"/></td><td><div class="layui-upload sku_img"><div class="layui-upload-list test1"><img class="layui-upload-img demo1" src="'+alreadySetSkuImg+'"><p id="demoText"></p></div></div><input type="hidden" name="sku['+i+'][sku_image]" class="setting_sku_stocksetting_sku_img" value="'+alreadySetSkuImg+'"/></td></tr>';
                             }
                             SKUTableDom += "</table>";
                         }
                         $("#skuTable").html(SKUTableDom);
-                        $('.test1').each(function(i,elem){ add(elem)})
-                    });
-// });
-
-                    /**
-                     * 获取已经设置的SKU值
-                     */
-                    function getAlreadySetSkuVals(){
-                        alreadySetSkuVals = {!! $goods_sku !!};
-                        //alreadySetSkuVals = {"15,9,19,21":{"skuCostPrice":"2.00","skuPrice":"2.00","skuStock":0},"15,9,19,22":{"skuCostPrice":"2.00","skuPrice":"2.00","skuStock":0}};
-
-
-                        //获取设置的SKU属性值
-                        $("tr[class*='sku_table_tr']").each(function(){
-                            var skuCostPrice = $(this).find("input[type='text'][class*='setting_sku_cost_price']").val();//SKU价格
-                            var skuPrice = $(this).find("input[type='text'][class*='setting_sku_price']").val();//SKU价格
-                            var skuStock = $(this).find("input[type='text'][class*='setting_sku_stock']").val();//SKU库存
-                            var skuImg = $(this).find("input[type='hidden'][class*='setting_sku_img']").val();//SKU图
-                            if(skuPrice || skuStock){//已经设置了全部或部分值
-                                var propvalids = $(this).attr("propvalids");//SKU值主键集合
-                                alreadySetSkuVals[propvalids] = {
-                                    "skuCostPrice" : skuCostPrice,
-                                    "skuPrice" : skuPrice,
-                                    "skuStock" : skuStock,
-                                    "skuImg" : skuImg
-                                }
-                            }
-                        });
+                        //$('.test1').each(function(i,elem){ add(elem)});
                     }
-
-
 
 
 
@@ -263,7 +271,7 @@
                         //console.log(dataObj);
                         //layer.msg(JSON.stringify(data.field));
                         $.ajax({
-                            url: "{{url('admins/product')}}",
+                            url: "{{url('admins/product/sku_update/'.$data->id)}}",
                             type: 'post',
                             data: data.field,
                             datatype: 'json',
