@@ -27,15 +27,15 @@
                         <fieldset class="layui-elem-field site-demo-button" style="padding:20px;">
                             <legend>规格属性</legend>
                             @foreach ($attr as $value)
-                            <input type="hidden" name="sp_val[{{$value->id}}][attr_name]" value="{{$value->attr_name}}"/>
-                            <input type="hidden" name="sp_val[{{$value->id}}][attr_english]" value="{{$value->attr_english}}"/>
+                            <input type="hidden" name="sp_val[{{$value->id}}][attr_name]" value="{{$value->attribute->attr_name}}"/>
+                            <input type="hidden" name="sp_val[{{$value->id}}][attr_english]" value="{{$value->attribute->attr_english}}"/>
                             <div class="layui-form-item">
                                 <ul class="SKU_TYPE">
-                                    <li class="layui-form-label" is_required='1' sku-type-name="{{$value->attr_name}}"><em>*</em> {{$value->attr_name}}：</li>
+                                    <li class="layui-form-label" is_required='1' sku-type-name="{{$value->attribute->attr_name}}"><em>*</em> {{$value->attribute->attr_name}}：</li>
                                 </ul>
                                 <ul>
-                                    @foreach($value->attributes as $v)
-                                    <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore/>{{ $v->attr_value_name }}</label></li>
+                                    @foreach($value->attribute_value as $k=>$v)
+                                            <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore />{{ $v->attr_value_name }}</label></li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -83,15 +83,17 @@
                         ,table = layui.table;
                     var $ = layui.jquery;
 
+                    $(document).ready(function () {
+                        getAlreadySetSkuVals();
+                    });
 
 
                     var alreadySetSkuVals = {};//已经设置的SKU值数据
 
-// $(function(){
                     //sku属性发生改变时,进行表格创建
                     $(document).on("change",'.sku_value',function(){
                         getAlreadySetSkuVals();//获取已经设置的SKU值
-                        console.log(alreadySetSkuVals);
+                        //console.log(alreadySetSkuVals);
                         var b = true;
                         var skuTypeArr =  [];//存放SKU类型的数组
                         var totalRow = 1;//总行数
@@ -217,7 +219,7 @@
                      * 获取已经设置的SKU值
                      */
                     function getAlreadySetSkuVals(){
-                        alreadySetSkuVals = {};
+                        alreadySetSkuVals = '{{ $goods_sku }}';
                         //获取设置的SKU属性值
                         $("tr[class*='sku_table_tr']").each(function(){
                             var skuCostPrice = $(this).find("input[type='text'][class*='setting_sku_cost_price']").val();//SKU价格

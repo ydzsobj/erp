@@ -10,6 +10,7 @@ use App\Models\ProductGoods;
 use App\Models\ProductToAttr;
 use App\Models\SkuAttrValue;
 use App\Models\Supplier;
+use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
@@ -205,6 +206,7 @@ class ProductController extends Controller
     {
         //删除操作
         $result = Product::find($id);
+        $result->ProductGoods()->delete();
         return $result->delete()?'0':'1';
     }
 
@@ -273,9 +275,23 @@ class ProductController extends Controller
     public function sku_edit($id)
     {
         $data = Product::find($id);
-        $attr = ProductAttr::with('attr_values')->where('product_id',$id)->orderBy('id','asc')->get();
-dd($attr);
-        //return view('erp.product.sku_edit',compact('data','category','attr'));
+        $attr = ProductAttr::with(['product_to_attr'=>function($query) use ($id){
+            return $query->where('product_id',$id);
+        },'attribute','attribute_value'])->where('product_id',$id)->orderBy('id','asc')->get();
+
+        $goods = ProductGoods::where('product_id',$id)->orderBy('id','asc')->get();
+        $sku_attr = [];
+        $sku_value = [];
+        foreach($goods as $key=>$value){
+            //$sku_value[$key][] = $value['sku_attr_value_ids'];
+            $sku_value[$key][$value['sku_attr_value_ids']]['skuCostPrice'] = $value['sku_cost_price'];
+            $sku_value[$key][$value['sku_attr_value_ids']]['skuPrice'] = $value['sku_price'];
+            $sku_value[$key][$value['sku_attr_value_ids']]['skuStock'] = $value['sku_num'];
+
+        }
+        $goods_sku = json_encode($sku_value);
+//dd($attr);
+        return view('erp.product.sku_edit',compact('data','attr','goods_sku'));
     }
 
 

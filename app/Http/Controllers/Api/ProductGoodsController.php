@@ -30,7 +30,9 @@ class ProductGoodsController extends Controller
 
         }else{
             $count = ProductGoods::count();
-            $data = ProductGoods::orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
+            $data = ProductGoods::with(['product'=>function($query){
+                return $query->where('deleted_at','!=','');
+            }])->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
         }
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);

@@ -3,14 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductGoods extends Model
 {
-    //
+    //绑定数据库
+    use SoftDeletes;
+
     protected $table = 'product_goods';
+
+    protected $dates = ['deleted_at'];
+    protected $guarded = [];
 
     public function sku_values(){
         return $this->hasMany(SkuAttrValue::class,'sku_id','sku_code');
+    }
+
+    public function product(){
+        return $this->belongsTo(Product::class,'product_id','id');
     }
 
     /**
