@@ -85,6 +85,14 @@
 
                     $(document).ready(function () {
                         getAlreadySetSkuVals();
+
+
+
+
+
+
+
+
                     });
 
 
@@ -219,7 +227,10 @@
                      * 获取已经设置的SKU值
                      */
                     function getAlreadySetSkuVals(){
-                        alreadySetSkuVals = '{{ $goods_sku }}';
+                        alreadySetSkuVals = {!! $goods_sku !!};
+                        //alreadySetSkuVals = {"15,9,19,21":{"skuCostPrice":"2.00","skuPrice":"2.00","skuStock":0},"15,9,19,22":{"skuCostPrice":"2.00","skuPrice":"2.00","skuStock":0}};
+
+
                         //获取设置的SKU属性值
                         $("tr[class*='sku_table_tr']").each(function(){
                             var skuCostPrice = $(this).find("input[type='text'][class*='setting_sku_cost_price']").val();//SKU价格

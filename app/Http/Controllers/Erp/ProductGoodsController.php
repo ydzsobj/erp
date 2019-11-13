@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductGoods;
 use Illuminate\Http\Request;
 
 class ProductGoodsController extends Controller
@@ -81,6 +82,8 @@ class ProductGoodsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //删除操作
+        $result = ProductGoods::find($id);
+        return $result->delete()?'0':'1';
     }
 }

@@ -284,13 +284,13 @@ class ProductController extends Controller
         $sku_value = [];
         foreach($goods as $key=>$value){
             //$sku_value[$key][] = $value['sku_attr_value_ids'];
-            $sku_value[$key][$value['sku_attr_value_ids']]['skuCostPrice'] = $value['sku_cost_price'];
-            $sku_value[$key][$value['sku_attr_value_ids']]['skuPrice'] = $value['sku_price'];
-            $sku_value[$key][$value['sku_attr_value_ids']]['skuStock'] = $value['sku_num'];
+            $sku_value[$value['sku_attr_value_ids']]['skuCostPrice'] = $value['sku_cost_price'];
+            $sku_value[$value['sku_attr_value_ids']]['skuPrice'] = $value['sku_price'];
+            $sku_value[$value['sku_attr_value_ids']]['skuStock'] = $value['sku_num'];
 
         }
         $goods_sku = json_encode($sku_value);
-//dd($attr);
+
         return view('erp.product.sku_edit',compact('data','attr','goods_sku'));
     }
 
