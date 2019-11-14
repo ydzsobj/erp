@@ -278,6 +278,7 @@ class ProductController extends Controller
         $attr = ProductAttr::with(['product_to_attr'=>function($query) use ($id){
             return $query->where('product_id',$id);
         },'attribute','attribute_value'])->where('product_id',$id)->orderBy('id','asc')->get();
+        $attr_value = ProductToAttr::where('product_id',$id)->pluck('attr_value_name','attr_value_id')->toArray();
 
         $goods = ProductGoods::where('product_id',$id)->orderBy('id','asc')->get();
         $sku_attr = [];
@@ -292,14 +293,14 @@ class ProductController extends Controller
         }
         $goods_sku = json_encode($sku_value);
 
-        return view('erp.product.sku_edit',compact('data','attr','goods_sku'));
+        return view('erp.product.sku_edit',compact('data','attr','goods_sku','attr_value'));
     }
 
 
     //更新产品SKU
     public function sku_update(Request $request, $id)
     {
-        //dd($request->sku);
+        //dd($request->sp_val);
         $product = Product::where('id',$id)->first();
         $spuId = $product->product_code;
         $skuNum = ProductGoods::where('product_id',$id)->count();
@@ -315,6 +316,7 @@ class ProductController extends Controller
                     $productToAttrArr[$i]['product_id'] = $id;
                     $productToAttrArr[$i]['attr_id'] = $key;
                     $productToAttrArr[$i]['attr_name'] = $value['attr_name'];
+                    ProductToAttr::updateOrCreate(['product_id'=>$id,'attr_id'=>$key,'attr_value_id'=>$k],$productToAttrArr[$i]);
                     $i++;
                 }
 
@@ -325,8 +327,9 @@ class ProductController extends Controller
 
         if(isset($request->sku)) {
             foreach ($request->sku as $key => $value) {
-                if($value['sku_id'] != ''){
-                    $skuArr[$key]['id'] = $value['sku_id'];
+                if(isset($value['sku_id'])){
+                    $skuArr[$key]['product_id'] = $id;
+                    $skuArr[$key]['sku_name'] = $product->product_name;;
                     $skuArr[$key]['sku_cost_price'] = $value['sku_cost_price'] == 0 ? $product->product_cost_price : $value['sku_cost_price'];
                     $skuArr[$key]['sku_price'] = $value['sku_price'] == 0 ? $product->product_price : $value['sku_price'];
                     $skuArr[$key]['sku_num'] = $value['sku_num'] != 0 ? $value['sku_num'] : 0;
@@ -345,13 +348,14 @@ class ProductController extends Controller
                     $skuArr[$key]['sku_attr_names'] = $value['propnames'];
                     $skuArr[$key]['sku_attr_value_ids'] = $value['propvalids'];
                     $skuArr[$key]['sku_attr_value_names'] = $value['propvalnames'];
-                    $skuAttrArr[] = $this->doProp($key, $skuId, $value['propids'], $value['propnames'], $value['propvalids'], $value['propvalnames']);
-                    $skuNum++;dd($skuAttrArr);
-                    foreach ($skuAttrArr as $key => $val) {
-                        //SkuAttrValue::insert($val);
-                        SkuAttrValue::updateOrCreate();
+                    $skuAttrArr = $this->doProp($key, $skuId, $value['propids'], $value['propnames'], $value['propvalids'], $value['propvalnames']);
+                    $skuNum++;
+                    foreach ($skuAttrArr as $k => $v) {
+                        SkuAttrValue::create($v);
                     }
+
                 }
+                $result = ProductGoods::updateOrCreate(['id'=>$value['sku_id']],$skuArr[$key]);
 
             }
 
@@ -362,7 +366,7 @@ class ProductController extends Controller
             $productToAttrArr = [];
         }
 
-        dd($skuArr);
+        return $result ? '0' : '1';
 
 
 

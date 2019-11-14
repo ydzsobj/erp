@@ -8,6 +8,7 @@ class ProductToAttr extends Model
 {
     //绑定数据库
     protected $table = 'product_to_attr';
+    protected $guarded = [];
 
 
     public function productAttr(){

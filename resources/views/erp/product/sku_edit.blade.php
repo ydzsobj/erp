@@ -27,21 +27,19 @@
                         <fieldset class="layui-elem-field site-demo-button" style="padding:20px;">
                             <legend>规格属性</legend>
                             @foreach ($attr as $value)
-                            <input type="hidden" name="sp_val[{{$value->id}}][attr_name]" value="{{$value->attribute->attr_name}}"/>
-                            <input type="hidden" name="sp_val[{{$value->id}}][attr_english]" value="{{$value->attribute->attr_english}}"/>
+                            <input type="hidden" name="sp_val[{{$value->attr_id}}][attr_name]" value="{{$value->attribute->attr_name}}"/>
+                            <input type="hidden" name="sp_val[{{$value->attr_id}}][attr_english]" value="{{$value->attribute->attr_english}}"/>
                             <div class="layui-form-item">
                                 <ul class="SKU_TYPE">
                                     <li class="layui-form-label" is_required='1' sku-type-name="{{$value->attribute->attr_name}}"><em>*</em> {{$value->attribute->attr_name}}：</li>
                                 </ul>
                                 <ul>
                                     @foreach($value->attribute_value as $k=>$v)
-                                        @foreach($value->product_to_attr as $s=>$p)
-                                            @if($v->id == $p->attr_value_id)
-                                                <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore checked disabled />{{ $v->attr_value_name }}</label></li>
+                                            @if(array_key_exists($v->id,$attr_value))
+                                                <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->attr_id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore checked disabled />{{ $v->attr_value_name }}</label></li>
                                             @else
-                                                <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore />{{ $v->attr_value_name }}</label></li>
+                                                <li><label><input type="checkbox" propid='{{$value->id}}' name="sp_val[{{$value->attr_id}}][attr_value][{{ $v->id }}]" class="sku_value" propvalid='{{ $v->id }}' value="{{ $v->attr_value_name }}" lay-ignore />{{ $v->attr_value_name }}</label></li>
                                             @endif
-                                        @endforeach
                                     @endforeach
 
                                 </ul>
