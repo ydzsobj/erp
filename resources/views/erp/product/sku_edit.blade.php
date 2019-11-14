@@ -20,6 +20,9 @@
                         </div>
                     </div>
                     <hr class="layui-bg-gray">
+                    <div style="margin-left:180px;">
+                        <span style="color:red;">（请注意：已添加的商品属性和属性值不允许取消；如要取消请去产品SKU列表删除!）</span>
+                    </div>
                     @if($attr)
                     <div id="view"></div>
                     <!-- sku start-->

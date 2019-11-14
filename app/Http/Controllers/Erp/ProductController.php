@@ -49,7 +49,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        dd($request);
+        //dd($request);
 
         $spuId = $this->createSpuCode($request->category_id);
         //存储表单信息
