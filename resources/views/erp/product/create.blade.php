@@ -63,7 +63,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">英文名称</label>
                         <div class="layui-input-inline" style="width: 600px;">
-                            <input type="text" name="product_english" placeholder="请输入英文名称" autocomplete="off"
+                            <input type="text" name="product_english" lay-verify="required" placeholder="请输入英文名称" autocomplete="off"
                                    class="layui-input">
                         </div>
                         <div class="layui-form-mid" style="color: #ff0000">* 必填</div>
@@ -83,7 +83,7 @@
                             </div>
                             <label class="layui-form-label">销售价</label>
                             <div class="layui-input-inline" style="width: 150px;">
-                                <input type="text" name="product_price" placeholder="￥" autocomplete="off"
+                                <input type="text" name="product_price" lay-verify="required" placeholder="￥" autocomplete="off"
                                        class="layui-input">
                             </div>
                             <div class="layui-form-mid" style="color: #ff0000">* 必填</div>

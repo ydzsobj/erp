@@ -35,7 +35,7 @@ class AttributeController extends Controller
     //获取单个产品信息
     public function get_attr_value($id)
     {
-        $data = AttributeValue::where('attr_id',$id)->get();
+        $data = AttributeValue::where('attr_id',$id)->orderBy('id','desc')->get();
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 

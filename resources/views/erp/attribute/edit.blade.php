@@ -199,6 +199,21 @@
             });
 
 
+            //列事件
+            table.on('edit(dataTable)', function (obj) {
+                var oldData = table.cache[layTableId];
+                for(var i=0, row; i < oldData.length; i++){
+                    row = oldData[i];
+                    if(row.attr_value_name ==obj.data.attr_value_name&&row.id !=obj.data.id){
+                        obj.update({attr_value_name:''});
+                        $(this).val('');
+                        layer.msg("名称不能重复", { icon: 5 }); //提示
+                        return false;
+                    }
+                }
+            })
+
+
 
 
             //监听工具条

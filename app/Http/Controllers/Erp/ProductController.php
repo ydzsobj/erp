@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Erp;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
@@ -46,9 +47,10 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //dd($request);
+        dd($request);
+
         $spuId = $this->createSpuCode($request->category_id);
         //存储表单信息
         $arr = [

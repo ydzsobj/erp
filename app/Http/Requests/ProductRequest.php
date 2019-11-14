@@ -13,7 +13,7 @@ class ProductRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,21 @@ class ProductRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'product_name' => ['required','unique:product'],
+            'product_english' => ['required'],
+            'product_price' => ['required'],
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'product_name.required'=>'产品名称不能为空',
+            'product_english.required'=>'英文名称不能为空',
+            'product_price.required'=>'销售价不能为空',
+            'product_name.unique'=>'产品名称重复',
+        ];
+    }
+
+
 }
