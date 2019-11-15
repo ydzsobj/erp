@@ -14,7 +14,7 @@ class OrderController extends Controller
 
         $keywords = $request->get('keywords');
         $page = $request->page ? $request->page : 1;
-        $limit = $request->limit ? $request->limit :50;
+        $limit = $request->limit ? $request->limit :100;
 
         if($keywords){
             $count = Order::where(function ($query) use ($keywords){

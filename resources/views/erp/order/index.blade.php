@@ -1,18 +1,54 @@
 @extends('erp.father.father')
 @section('content')
+    <div class="layui-row" style="margin-top:10px;">
+        <form class="layui-form" action="">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">请输入</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline" style="width:300px;">
+                            <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-inline">
+                        <select name="order_status" id="order_status">
+                            <option value="0">全部</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">下单时间</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                        </div>-
+                        <div class="layui-inline">
+                            <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-row demoTable">
+                <a class="layui-btn" data-type="reload" style="margin-left:600px;" id='search'>搜索</a>
+                &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+
+        </form>
+    </div>
+
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
                 <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
             </div>
         </script>
-        <div class="demoTable">
-            搜索ID或名称：
-            <div class="layui-inline">
-                <input class="layui-input" name="id" id="searchReload" autocomplete="off">
-            </div>
-            <button class="layui-btn" data-type="reload">搜索</button>
-        </div>
         <table id="list" lay-filter="list"></table>
     </div>
 
@@ -24,9 +60,10 @@
 @section('js')
     <script>
 
-        layui.use(['table','layer'], function(){
+        layui.use(['table','layer', 'laydate'], function(){
             var table = layui.table,
                 layer = layui.layer,
+                laydate = layui.laydate;
                 $=layui.jquery;
 
             //渲染实例
@@ -38,12 +75,14 @@
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '产品数据表'
                 ,count: 10000
-                ,limit: 50
-                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,limit: 100
+                ,limits: [100,300,500,1000,2000,5000,10000]
                 ,page: true //开启分页
+                ,height: 'full-200'
                 ,cols: [[ //表头
-                    {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+                    {type:'checkbox', fixed: 'left'}
                     ,{field: 'order_sn', title: '订单编码', width: 180, fixed: 'left'}
+                    ,{field: 'id', title: 'ID', width:80, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}
                     ,{field: 'order_phone', title: '电话', width:120}
                     ,{field: 'order_code', title: '邮编', width:80}
@@ -95,6 +134,9 @@
                         }
                         ,where: {
                             keywords: searchReload.val(),
+                            order_status: $("#order_status").val(),
+                            start_date:$("#start_date").val(),
+                            end_date:$("#end_date").val(),
                         }
                     }, 'data');
                 }
@@ -102,6 +144,17 @@
             $('.demoTable .layui-btn').on('click', function(){
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
+            });
+
+            //渲染时间
+            laydate.render({
+                elem: '#start_date'
+                ,type: 'datetime'
+            });
+
+            laydate.render({
+                elem: '#end_date'
+                ,type: 'datetime'
             });
 
 
