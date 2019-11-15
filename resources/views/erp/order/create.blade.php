@@ -4,7 +4,7 @@
     <form  class="layui-form" method="post" action="">
         {{csrf_field()}}
         <div class="layui-form-item" >
-            <label class="layui-form-label">上传excel：</label>
+            <label class="layui-form-label">上传Excel：</label>
             <div class="layui-input-inline">
                 <div class="layui-upload">
                     <input type="hidden" name="upload_file" autocomplete="off" class="layui-input">
@@ -67,15 +67,15 @@
                     data:data.field,
                     datatype:'json',
                     success:function (msg) {
-                        if(msg=='0'){
-                            layer.msg('添加成功！',{icon:1,time:2000},function () {
+                        if(msg.code=='0'){
+                            layer.msg('导入成功！'+msg.msg,{icon:1,time:2000},function () {
                                 var index = parent.layer.getFrameIndex(window.name);
                                 //刷新
                                 parent.window.location = parent.window.location;
                                 parent.layer.close(index);
                             });
                         }else{
-                            layer.msg('添加失败！',{icon:2,time:2000});
+                            layer.msg('导入失败！',{icon:2,time:2000});
                         }
                     },
                     error: function(data){

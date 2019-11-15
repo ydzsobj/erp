@@ -346,8 +346,11 @@
             form.on('submit(form)', function (data) {
                 //console.log(table.cache);
                 data.field.table = table.cache;
-                //console.log(dataObj);
                 //layer.msg(JSON.stringify(data.field));
+                if(data.field.product_image==''||data.field.product_image==null){
+                    layer.msg('产品图片错误，请重新传图！');
+                    return false;
+                }
                 data.field.product_content = layedit.getContent(index);
                 $.ajax({
                     url: "{{url('admins/product')}}",

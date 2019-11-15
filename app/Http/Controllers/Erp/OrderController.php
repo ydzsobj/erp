@@ -59,7 +59,8 @@ class OrderController extends CommonController
         $filename = $request->upload_file;
         $collection = Excel::import(new OrderImport(), $filename);
         //$collection = Excel::toCollection(new OrderImport(), $filename);
-        dd($collection);
+        //dump($collection);
+        return response()->json(['code'=>0,'msg'=>'订单导入成功！']);
     }
 
     /**
