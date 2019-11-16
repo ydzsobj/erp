@@ -43,7 +43,7 @@ class OrderImport implements ToCollection
             $data = Order::create([
 
                 'ordered_at' => Carbon::parse(FormatDate::excelToDateTimeObject($row[0])),  //下单时间
-                'checked_at' => Carbon::parse(FormatDate::excelToDateTimeObject($row[1])),  //审核时间
+                'order_checked_at' => Carbon::parse(FormatDate::excelToDateTimeObject($row[1])),  //审核时间
                 'order_sn' => trim($row[2]),  //订单SN
                 'order_name' => trim($row[3]),  //收件人
                 'order_code' => intval($row[4]),  //收件人邮编

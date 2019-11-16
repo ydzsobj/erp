@@ -23,6 +23,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::any('admin/log','AdminController@log');
     Route::any('password','AdminController@password');
 
+
     Route::get('product/sku/{id}', 'ProductController@sku')->name('product.sku');
     Route::get('product/sku_edit/{id}', 'ProductController@sku_edit')->name('product.sku_edit');
     Route::post('product/sku_update/{id}', 'ProductController@sku_update')->name('product.sku_update');
@@ -31,8 +32,9 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('purchase_warehouse/add/{id}', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
     Route::post('inventory/{id}/goods_position', 'InventoryController@goods_position')->name('inventory.goodsPosition');
 
-    //Route::get('test/index','TestController@index');
-    Route::get('test/index','TestController@index');
+
+    Route::post('order/create_order_pool','OrderController@createOrderPool');
+
 
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');

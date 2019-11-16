@@ -8,7 +8,7 @@
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
                         <div class="layui-inline" style="width:300px;">
-                            <input class="layui-input" name="sku_name" id="demoReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
+                            <input class="layui-input" name="keywords" id="searchReload" placeholder="产品名称/订单编号/SKU编号"  autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -16,8 +16,9 @@
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
                         <select name="order_status" id="order_status">
-                            <option value="0">全部</option>
-
+                            <option value="0">未导入</option>
+                            <option value="1">已导入</option>
+                            <option value="2">已确定</option>
                         </select>
                     </div>
                 </div>
@@ -45,8 +46,11 @@
 
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
-            <div class="layui-btn-container">
-                <button class="layui-btn layuiadmin-btn-tags" data-type="add" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
+            <div class="layui-btn-container demoTable">
+                <button class="layui-btn" data-type="getCheckData">批量生成汇总单</button>
+                <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+                <button class="layui-btn" data-type="isAll">验证是否全选</button>
+                <button class="layui-btn layuiadmin-btn-tags" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
             </div>
         </script>
         <table id="list" lay-filter="list"></table>
@@ -124,6 +128,7 @@
 
 
             var active = {
+                //search
                 reload: function(){
                     var searchReload = $('#searchReload');
 
@@ -139,7 +144,44 @@
                             end_date:$("#end_date").val(),
                         }
                     }, 'data');
+                },
+                //批量审核
+                getCheckData:function(){
+                    var checkStatus = table.checkStatus('listReload');
+                    if(checkStatus.data.length==0){
+                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                        return ;
+                    }
+                    var codeId= "";
+                    for(var i=0;i<checkStatus.data.length;i++){
+                        codeId += checkStatus.data[i].id+",";
+                    }
+                    parent.layer.msg('生成中...', {icon: 16,shade: 0.3,time:5000});
+
+                    $.ajax({
+                        type:"POST",
+                        url: "{{url('admins/order/create_order_pool')}}",
+                        data:{"ids":codeId,"_token":"{{csrf_token()}}"},
+                        success:function (data) {
+                            layer.closeAll('loading');
+                            if(data==0){
+                                parent.layer.msg('生成成功！', {icon: 1,time:2000,shade:0.2},function () {
+                                    location.reload(true);
+                                });
+                            }else{
+                                parent.layer.msg('生成失败！', {icon: 2,time:3000,shade:0.2});
+                            }
+                        },
+                        end: function () {
+                            var data1 = table.cache["list"];
+                            t.where = data1.field;
+                            //重新加载数据表格
+                            table.reload('listReload',t);
+                        }
+                    })
+
                 }
+
             };
             $('.demoTable .layui-btn').on('click', function(){
                 var type = $(this).data('type');

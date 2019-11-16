@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportOrderRequest;
 use App\Models\Order;
 use App\Models\OrderAuditLog;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -106,6 +107,21 @@ class OrderController extends CommonController
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * @批量生成汇总单
+     */
+    public function createOrderPool(Request $request){
+        $ids = $request->get('ids');
+        $ids=explode(',',$ids);
+        $data = [
+            'checked_at' => Carbon::now(),
+            'order_status' => 1,
+            'checked_id' => Auth::user()->id
+        ];
+        $res = Order::whereIn('id', $ids)->update($data);
+        return $res ? '0':'1';
     }
 
     public function import(ImportOrderRequest $request){
