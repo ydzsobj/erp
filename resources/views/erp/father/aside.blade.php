@@ -103,7 +103,7 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_all')}}">采购汇总</a>
+                        <a lay-href="{{url('/admins/purchase_pool')}}">采购汇总</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>

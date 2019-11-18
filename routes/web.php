@@ -34,7 +34,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
 
 
     Route::post('order/create_order_pool','OrderController@createOrderPool');
-
+    Route::any('order/order_pool','OrderController@orderPool');
 
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');
@@ -47,6 +47,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('attribute_value','AttributeValueController');
     Route::resource('product','ProductController');
     Route::resource('product_goods','ProductGoodsController');
+    Route::resource('purchase_pool','PurchasePoolController');
     Route::resource('purchase_order','PurchaseOrderController');
     Route::resource('purchase_warehouse','PurchaseWarehouseController');
     Route::resource('inventory','InventoryController');

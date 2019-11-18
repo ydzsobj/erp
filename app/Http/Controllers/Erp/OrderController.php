@@ -125,13 +125,18 @@ class OrderController extends CommonController
     }
 
     public function import(ImportOrderRequest $request){
-
         $file_path = $request->post('path');
-
         $country_id = $request->post('country_id');
-
         Excel::import(new OrdersImport($country_id), str_replace('storage','',$file_path), 'public');
+    }
 
+    /*
+     * 查看采购汇总单
+     */
+    public function orderPool(Request $request){
+        if($request->method('GET')){
+            return view('erp.order.order_pool');
+        }
     }
 
     /**

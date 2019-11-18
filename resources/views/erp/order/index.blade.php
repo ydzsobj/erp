@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="layui-inline">
-                    <label class="layui-form-label">下单时间</label>
+                    <label class="layui-form-label">导入时间</label>
                     <div class="layui-input-block">
                         <div class="layui-inline">
                             <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
@@ -48,8 +48,7 @@
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
                 <button class="layui-btn" data-type="getCheckData">批量生成汇总单</button>
-                <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
-                <button class="layui-btn" data-type="isAll">验证是否全选</button>
+                <button class="layui-btn layui-btn-warm" onclick="show('查看采购汇总单','{{url("admins/order/order_pool")}}',2,'100%','100%');">查看采购汇总单</button>
                 <button class="layui-btn layuiadmin-btn-tags" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
             </div>
         </script>
@@ -95,9 +94,8 @@
                     ,{field: 'order_county', title: '县', width:120}
                     ,{field: 'order_area', title: '区', width:120}
                     ,{field: 'order_address', title: '详细地址', width:220}
-
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
-                    ,{field: 'button', title: '操作', toolbar:'#button', width: 250, fixed:'right'}
+                    ,{field: 'created_at', title: '导入时间', width: 160, sort: true}
                 ]]
             });
 
@@ -213,14 +211,14 @@
                         area:['600px','100%'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/product/')}}/"+data.id
+                        content:"{{url('admins/order/')}}/"+data.id
                     });
                     //layer.msg('ID：'+ data.id + ' 的查看操作');
-                } else if(obj.event === 'del'){
+                }else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
                         $.ajax({
-                            url:"{{url('admins/product/')}}/"+data.id,
+                            url:"{{url('admins/order/')}}/"+data.id,
                             type:'delete',
                             data:{"_token":"{{csrf_token()}}"},
                             datatype:'json',
@@ -249,7 +247,7 @@
                         area:['100%','100%'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/product/')}}/"+data.id+"/edit"
+                        content:"{{url('admins/order/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }
