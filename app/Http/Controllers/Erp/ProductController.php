@@ -216,7 +216,7 @@ class ProductController extends Controller
      * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
      */
     public function createSpuCode($category_id){
-        $product = Product::where('category_id',$category_id)->orderByDesc('product_code')->first();
+        $product = Product::withTrashed()->where('category_id',$category_id)->orderByDesc('product_code')->first();
         $category = Category::where('id',$category_id)->first();
         $category_code = $category->category_code;
         $yid = substr(date('Y'),-2);
