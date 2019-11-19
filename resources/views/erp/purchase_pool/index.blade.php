@@ -3,8 +3,14 @@
     <div class="layui-fluid">
         <table id="data_list" lay-filter="list"></table>
     </div>
-
-
+    <div class="layui-fluid">
+        <script type="text/html" id="toolbar">
+            <div class="layui-btn-container demoTable">
+                <button class="layui-btn" data-type="getCheckData">生成采购单</button>
+            </div>
+        </script>
+        <table id="list" lay-filter="list"></table>
+    </div>
 @endsection
 @section('js')
     <script>
@@ -17,66 +23,60 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/product_pool')}}" //数据接口
+                ,url: "{{url('api/purchase_pool')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '计量单位数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 50
-                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,limit: 100
+                ,limits: [100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
-                    {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'unit_name', title: '计量单位', width:180}
-                    ,{field: 'unit_code', title: '编码', width:100}
-                    ,{field: 'unit_status', title: '状态', width: 180,templet:function(res){
-                        return res.unit_status==1?'启用':'禁用';
-                    }}
-                    ,{field: 'button', title: '操作', toolbar:'#button'}
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field: 'goods_sku', title: 'SKU编码', width: 150}
+                    ,{field: 'goods_name', title: '商品名称', width:180}
+                    ,{field: 'goods_num', title: '订单数量', width:120}
+                    ,{field: 'goods_num', title: '建议采购数量', width:120}
+                    ,{field: 'goods_num', title: '库存数量', width:120}
+                    ,{field: 'goods_num', title: '在途数量', width:120}
                 ]]
             });
 
 
-            create_show = function create_show(title,url,type,w,h) {
-                if(layui.device().android||layui.device().ios){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:['375px','667px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }else {
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:[w,h],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }
-            };
+
 
 
             var active = {
-                reload: function(){
-                    var searchReload = $('#searchReload');
 
-                    //执行重载
-                    table.reload('listReload', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                        ,where: {
-                            keywords: searchReload.val()
-                        }
-                    }, 'data');
+                //批量审核
+                getCheckData:function(){
+                    var checkStatus = table.checkStatus('listReload');
+                    if(checkStatus.data.length==0){
+                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                        return ;
+                    }
+                    var codeId= "";
+                    for(var i=0;i<checkStatus.data.length;i++){
+                        codeId += checkStatus.data[i].id+",";
+                    }
+                    layui.use('layer', function () {
+                        layer.open({
+                            skin:'layui-layer-nobg',
+                            type:2,
+                            title:'编辑信息',
+                            area:['100%','100%'],
+                            fixed:false,
+                            maxmin:true,
+                            content:"{{url('admins/purchase_pool/create')}}",
+                            success:function (layero,index) {
+                                var iframe = window['layui-layer-iframe' + index];
+                                iframe.child('我是父布局传到子布局的值')
+                            }
+                        });
+                    });
                 }
+
             };
             $('.demoTable .layui-btn').on('click', function(){
                 var type = $(this).data('type');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class PurchasePoolController extends Controller
@@ -25,7 +26,9 @@ class PurchasePoolController extends Controller
      */
     public function create()
     {
-        //
+        //创建操作
+        $supplier = Supplier::where('supplier_status','1')->get();
+        return view('erp.purchase_pool.create',compact('supplier'));
     }
 
     /**
