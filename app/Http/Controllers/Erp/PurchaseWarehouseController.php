@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Erp;
 
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseWarehouseRequest;
 use App\Models\Inventory;
 use App\Models\InventoryInfo;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderWarehouse;
 use App\Models\PurchaseWarehouse;
 use App\Models\PurchaseWarehouseInfo;
 use App\Models\Supplier;
@@ -14,7 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class PurchaseWarehouseController extends Controller
+class PurchaseWarehouseController extends CommonController
 {
     /**
      * Display a listing of the resource.
@@ -48,9 +51,10 @@ class PurchaseWarehouseController extends Controller
      */
     public function store(PurchaseWarehouseRequest $request)
     {
-        //dd($request);
+        //dd($request->table);
         //存储表单信息
-        $purchase_warehouse_code = $this->createPurchaseWarehouseCode();
+        $purchase_warehouse_code = $this->createPurchaseWarehouseCode('R');
+        $purchase_order_id = $request->purchase_order_id;
         $arr = [
             'purchase_warehouse_code' => $purchase_warehouse_code,
             'payment_type' => $request->payment_type,
@@ -69,6 +73,14 @@ class PurchaseWarehouseController extends Controller
 
         $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
 
+        if(isset($purchase_order_id)){
+            PurchaseOrderWarehouse::create([
+                'purchase_order_id'=>$purchase_order_id,
+                'purchase_warehouse_id'=>$lastId
+            ]);
+            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'2']);
+        }
+
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
                 $goods_money = $value['goods_num']*$value['goods_price'];
@@ -76,7 +88,7 @@ class PurchaseWarehouseController extends Controller
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
-                $infoArr[$key]['goods_name'] = $value['sku_name'];
+                $infoArr[$key]['goods_name'] = $value['goods_name'];
                 $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
                 $infoArr[$key]['goods_price'] = $value['goods_price'];
@@ -159,27 +171,7 @@ class PurchaseWarehouseController extends Controller
     }
 
 
-    /*
-     * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
-     */
-    public function createPurchaseWarehouseCode(){
-        $purchase = PurchaseWarehouse::orderBy('id','desc')->first();
-        $purchaseWarehouse = $purchase['purchase_warehouse_code'];
-        $ymd = substr(date('Ymd'),2);
-        $codeLength = 5;
-        $codeStr = 'R';
-        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
-        if ($purchaseWarehouse) {
-            if(strstr($purchaseWarehouse,$codeStr)){
-                $code = substr($purchaseWarehouse,1);
-            }else{
-                $code = $purchaseWarehouse;
-            }
-            $number = intval(substr($code,strlen($ymd))) + 1;
-            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
-        }
-        return $codeStr . $ymd . $subCode;
-    }
+
 
     //提交
     public function add(Request $request, $id){

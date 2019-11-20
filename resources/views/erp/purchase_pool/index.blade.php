@@ -11,6 +11,9 @@
         </script>
         <table id="list" lay-filter="list"></table>
     </div>
+    <script type="text/html" id="button" >
+        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看商品库存</a>
+    </script>
 @endsection
 @section('js')
     <script>
@@ -34,12 +37,15 @@
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
+                    ,{field: 'id', title: 'ID', width: 80}
                     ,{field: 'goods_sku', title: 'SKU编码', width: 150}
+                    ,{field: 'goods_num', edit: true, title: '订单数量', width:120}
                     ,{field: 'goods_name', title: '商品名称', width:180}
-                    ,{field: 'goods_num', title: '订单数量', width:120}
-                    ,{field: 'goods_num', title: '建议采购数量', width:120}
-                    ,{field: 'goods_num', title: '库存数量', width:120}
-                    ,{field: 'goods_num', title: '在途数量', width:120}
+                    ,{field: 'goods_english', title: '英文名称', width:180}
+                    ,{field: 'goods_attr_name', title: '属性名', width: 100}
+                    ,{field: 'goods_attr_value', title: '属性值', width: 100}
+                    ,{field: 'goods_price', title: '销售价', width: 100}
+                    ,{field: 'button', title: '操作', toolbar:'#button', width: 120, fixed:'right'}
                 ]]
             });
 
@@ -56,10 +62,8 @@
                         parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
                         return ;
                     }
-                    var codeId= "";
-                    for(var i=0;i<checkStatus.data.length;i++){
-                        codeId += checkStatus.data[i].id+",";
-                    }
+                    json = JSON.stringify(checkStatus);
+
                     layui.use('layer', function () {
                         layer.open({
                             skin:'layui-layer-nobg',
@@ -71,7 +75,6 @@
                             content:"{{url('admins/purchase_pool/create')}}",
                             success:function (layero,index) {
                                 var iframe = window['layui-layer-iframe' + index];
-                                iframe.child('我是父布局传到子布局的值')
                             }
                         });
                     });
@@ -94,12 +97,12 @@
                         skin:'layui-layer-nobg',
                         type:2,
                         title:'基本信息',
-                        area:['350px','420px'],
+                        area:['800px','600px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/product_unit/')}}/"+data.id
+                        content:"{{url('admins/purchase_pool/')}}/"+data.goods_sku
                     });
-                    //layer.msg('ID：'+ data.id + ' 的查看操作');
+                    //layer.msg('ID：'+ data.goods_sku + ' 的查看操作');
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 

@@ -9,4 +9,7 @@ class PurchaseOrderWarehouse extends Model
     //绑定数据库
 
     protected $table = "purchase_order_warehouse";
+
+    protected $guarded = [];
+
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseWarehouse;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -35,6 +37,51 @@ class CommonController extends Controller
         return $reader->toArray();
     }
 
+    /*
+     * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
+     */
+    public function createPurchaseOrderCode($code){
+
+        $ymd = substr(date('Ymd'),2);
+        $codeLength = 5;
+        $codeStr = strtoupper($code);
+        $purchase = PurchaseOrder::Where('purchase_order_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
+        $purchaseOrder = $purchase['purchase_order_code'];
+        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
+        if ($purchaseOrder) {
+            if(strstr($purchaseOrder,$codeStr)){
+                $num = substr($purchaseOrder,1);
+            }else{
+                $num = $purchaseOrder;
+            }
+            $number = intval(substr($num,strlen($ymd))) + 1;
+            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
+        }
+        return $codeStr . $ymd . $subCode;
+    }
+
+
+    /*
+     * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
+     */
+    public function createPurchaseWarehouseCode($code){
+        $ymd = substr(date('Ymd'),2);
+        $codeLength = 5;
+        $codeStr = strtoupper($code);
+        $purchase = PurchaseWarehouse::Where('purchase_warehouse_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
+        $purchaseWarehouse = $purchase['purchase_warehouse_code'];
+        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
+        if ($purchaseWarehouse) {
+            if(strstr($purchaseWarehouse,$codeStr)){
+                $code = substr($purchaseWarehouse,1);
+            }else{
+                $code = $purchaseWarehouse;
+            }
+            $number = intval(substr($code,strlen($ymd))) + 1;
+            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
+        }
+        return $codeStr . $ymd . $subCode;
+    }
 
 
 }

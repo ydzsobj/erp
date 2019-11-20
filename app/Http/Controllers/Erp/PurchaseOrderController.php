@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Erp;
 
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\InventoryInfo;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderInfo;
 use App\Models\Supplier;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class PurchaseOrderController extends Controller
+class PurchaseOrderController extends CommonController
 {
     /**
      * Display a listing of the resource.
@@ -47,7 +49,7 @@ class PurchaseOrderController extends Controller
     {
         //dd($request);
         //存储表单信息
-        $purchase_order_code = $this->createPurchaseOrderCode();
+        $purchase_order_code = $this->createPurchaseOrderCode('C');
         $arr = [
             'purchase_order_code' => $purchase_order_code,
             'payment_type' => $request->payment_type,
@@ -105,7 +107,9 @@ class PurchaseOrderController extends Controller
     public function show($id)
     {
         //展示操作
-
+        $supplier = Supplier::where('supplier_status','1')->get();
+        $warehouse = Warehouse::where('warehouse_status','1')->get();
+        return view('erp.purchase_order.show',compact('supplier','warehouse','id'));
     }
 
     /**
@@ -147,29 +151,6 @@ class PurchaseOrderController extends Controller
         return view('erp.purchase_order.show_goods');
     }
 
-
-    /*
-     * 创建SPU编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
-     */
-    public function createPurchaseOrderCode(){
-
-        $ymd = substr(date('Ymd'),2);
-        $codeLength = 5;
-        $codeStr = 'C';
-        $purchase = PurchaseOrder::Where('purchase_order_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
-        $purchaseOrder = $purchase['purchase_order_code'];
-        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
-        if ($purchaseOrder) {
-            if(strstr($purchaseOrder,$codeStr)){
-                $code = substr($purchaseOrder,1);
-            }else{
-                $code = $purchaseOrder;
-            }
-            $number = intval(substr($code,strlen($ymd))) + 1;
-            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
-        }
-        return $codeStr . $ymd . $subCode;
-    }
 
     /*
      *审核

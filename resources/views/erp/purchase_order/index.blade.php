@@ -138,7 +138,7 @@
     </script>
 
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} 已入库 @{{# }  }}
+        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} <div style="color: #000">已入库</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -186,7 +186,7 @@
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-                    ,{field: 'purchase_order_status', title: '状态', width:60,templet:"#purchase_order_status"}
+                    ,{field: 'purchase_order_status', title: '状态', width:70,templet:"#purchase_order_status"}
                     ,{field: 'purchase_order_code', title: '采购单号', width:130}
                     ,{field: 'deliver_at', title: '交付日期', width:120}
                     ,{field: 'supplier_address', title: '供货地点', width:100}
@@ -206,7 +206,7 @@
                             if(row.purchase_order_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
                             }else if(row.purchase_order_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">生成入库单</a>';
                             }
                         return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                             '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
@@ -280,7 +280,7 @@
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(list)', function(obj){
                 var data = obj.data;
-                console.log(data);
+                //console.log(data);
                 table.render({
                     elem: '#table_list'
                     ,url: "{{url('api/purchase_order/goods')}}/"+data.id //数据接口
@@ -316,10 +316,10 @@
                         skin:'layui-layer-nobg',
                         type:2,
                         title:'基本信息',
-                        area:['350px','420px'],
+                        area:['100%','100%'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/supplier/')}}/"+data.id
+                        content:"{{url('admins/purchase_order/')}}/"+data.id
                     });
                     //layer.msg('ID：'+ data.id + ' 的查看操作');
                 } else if(obj.event === 'del'){
