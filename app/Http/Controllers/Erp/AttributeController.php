@@ -96,18 +96,14 @@ class AttributeController extends Controller
         $result = Attribute::find($id);
         if(isset($table['AttrValue'])){
             foreach ($table['AttrValue'] as $key=>$value){
-                $val['attr_id'] = $value['attr_id'];
-                $val['type_id'] = $value['type_id'];
-                $val['attr_value_code'] = $value['attr_value_code'];
-                $val['attr_value_status'] = $value['attr_value_status'];
-                $attr_result = AttributeValue::updateOrInsert(['id'=>$value['id']],$val);
+                AttributeValue::updateOrInsert(['id'=>$value['id']],$value);
             }
         };
 
         $result->attr_name = $request->attr_name;
         $result->attr_english = $request->attr_english;
         $result->attr_status = $request->attr_status;
-        return ( $result->save() && $attr_result )?'0':'1';
+        return $result->save()?'0':'1';
     }
 
     /**
