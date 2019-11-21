@@ -96,7 +96,7 @@ class AttributeController extends Controller
         $result = Attribute::find($id);
         if(isset($table['AttrValue'])){
             foreach ($table['AttrValue'] as $key=>$value){
-                AttributeValue::updateOrInsert(['id'=>$value['id']],$value);
+                AttributeValue::updateOrCreate(['id'=>$value['id']],$value);
             }
         };
 
