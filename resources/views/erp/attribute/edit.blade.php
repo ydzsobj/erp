@@ -114,12 +114,6 @@
                     {field: 'attr_value_english', title: '英文名（english）', edit: 'text'},
                     {field: 'attr_value_code', title: '编码（code）', edit: 'text',width:100},
                     {field: 'attr_value_sort', title: '排序（sort）', edit: 'text',width:100},
-                    {field: 'state', title: '是否启用（state）', event: 'state', templet: function(d){
-                            var html = ['<input type="checkbox" name="attr_value_status" lay-skin="switch" lay-text="是|否"'];
-                            html.push(d.attr_value_status > 0 ? ' checked' : '');
-                            html.push('>');
-                            return html.join('');
-                    }},
                     {field: 'tempId', title: '操作', templet: function(d){
                             return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="'+ d.id +'"><i class="layui-icon layui-icon-delete"></i>移除</a>';
                     }}
