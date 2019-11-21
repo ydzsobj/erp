@@ -255,7 +255,6 @@
             form.val('formData', {
                 "attr_name": "{{$data->attr_name}}"
                 ,"attr_english": "{{$data->attr_english}}"
-
                 ,"attr_status" : "{{$data->attr_status==1 ? 'on' : ''}}"
 
             });
