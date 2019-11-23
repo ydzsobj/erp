@@ -71,7 +71,7 @@ class UploaderController extends Controller
         //路径
         $path = $request->file('file')->storeAs('excel', $filename);
 
-        return response()->json(['code'=>0,'msg'=>'上传成功！','path' =>$path]);
+        return response()->json(['code'=>0,'msg'=>'上传成功！请点击提交！！','path' =>$path]);
 
     }
 

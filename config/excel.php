@@ -65,6 +65,7 @@ return [
             |
             */
             'formatter' => 'slug',
+
         ],
 
         /*

@@ -3,47 +3,62 @@
 namespace App\Imports;
 
 use App\Models\Order;
+use App\Models\OrderInfo;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date as FormatDate;
 
 class OrderImport implements ToCollection
 {
 
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $collection)
     {
         //
         $success = 0;
         $fail = 0;
         $exist = 0;
+        $sum = 0;
         $order = new Order();
 
+        $cell_id = 0;
 
-        foreach ($collection as $key=>$row)
-        {
-            if($key == 0){
+
+        foreach ($collection as $key => $row) {
+            if ($key == 0) {
                 continue;
             }
-
+            $goods_sku = trim($row[12]);
             $order_sn = trim($row[2]);   //订单sn
-            if(!$order_sn){
-                $fail++;
-                continue;
-            }
+
             $order_data = $order->order_sn($order_sn);
-            if($order_data){
+
+            if ($order_data) {
+                $order_id = $order_data->id;
                 $exist++;
+                $sum++;
                 continue;
             }
 
-            $data = Order::create([
+            if(isset($order_id)){
+                $order_info = OrderInfo::where(function ($query) use ($order_id,$goods_sku){
+                    $query->where('order_id','=',$order_id)
+                        ->where('goods_sku','=',$goods_sku);
+                })->first();
+                if ($order_info) {
+                    continue;
+                }
+            }
 
-                'ordered_at' => Carbon::parse(FormatDate::excelToDateTimeObject($row[0])),  //下单时间
-                'order_checked_at' => Carbon::parse(FormatDate::excelToDateTimeObject($row[1])),  //审核时间
+
+            $excel_order = [
+                'ordered_at' => $this->valid_date($row[0]) ? $row[0] : Carbon::parse(FormatDate::excelToDateTimeObject($row[0] ? $row[0] : '41039')),  //下单时间
+                'order_checked_at' => $this->valid_date($row[1]) ? $row[1] : Carbon::parse(FormatDate::excelToDateTimeObject($row[1] ? $row[1] : '41039')),  //审核时间
                 'order_sn' => trim($row[2]),  //订单SN
                 'order_name' => trim($row[3]),  //收件人
                 'order_code' => intval($row[4]),  //收件人邮编
@@ -59,36 +74,58 @@ class OrderImport implements ToCollection
                 'order_type' => '普通订单',  //订单类型
                 'coustomer_text' => trim($row[22]),  //客服备注
                 'order_from' => trim($row[11]),  //订单来源
+            ];
 
-            ]);
 
-            if($data && $row[12]){
+            //$data = Order::create($excel_order);
+            if ($order_sn && $row[0]) {
+                $lastId = DB::table('order')->insertGetId($excel_order);
+                $sum++;
+            }
 
-                $skuArr = [
-                    'goods_sku' => trim($row[12]),
-                    'goods_num' => intval(trim($row[13])),
-                    'goods_name' => trim($row[14]),
-                    'goods_english' => trim($row[18]),
-                ];
+            $skuArr = [
+                'goods_sku' => $goods_sku,
+                'goods_num' => intval(trim($row[13])),
+                'goods_name' => trim($row[14]),
+                'goods_english' => trim($row[18]),
+            ];
+            if(isset($order_id)) {
+                $skuArr['order_id'] = $order_id;
+            }else{
+                $skuArr['order_id'] = $lastId;
+            }
 
-                $result = $data->order_info()->create($skuArr);
+//            if (!$order_sn && !$row[0] && $row[12]) {
+//                $skuArr['order_id'] = $order_id;
+//            }else{
+//                $skuArr['order_id'] = $lastId;
+//            }
 
-                if($result){
-                    $success++;
-                }else{
-                    $fail++;
-                }
+            //$result = $data->order_info()->create($skuArr);
+            $result = OrderInfo::create($skuArr);
+            if ($result) {
+                $success++;
+            } else {
+                $fail++;
             }
 
 
         }
 
-        echo '共'. (count($row) -1).'个订单; 成功导入:'.$success .'个; 订单号已存在：'.$exist. '个; 失败：'.$fail. '个';
-
+        $message = '共' . $sum . '个订单; 订单号已存在：' . $exist . '个;   成功导入:' . $success . '个商品;失败：' . $fail . '个商品';
+        session()->flash('excel', $message);
     }
 
 
-
+    function valid_date($date)
+    {
+        //匹配日期格式
+        if (date('Y-m-d H:i:s', strtotime($date)) == $date) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
 }

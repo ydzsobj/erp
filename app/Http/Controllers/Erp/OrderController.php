@@ -58,10 +58,13 @@ class OrderController extends CommonController
     {
         //
         $filename = $request->upload_file;
-        $collection = Excel::import(new OrderImport(), $filename);
-        //$collection = Excel::toCollection(new OrderImport(), $filename);
-        //dump($collection);
-        return response()->json(['code'=>0,'msg'=>'订单导入成功！']);
+        $import = new OrderImport();
+
+        $collection = Excel::import($import, $filename);
+        //$collection = Excel::toCollection($import, $filename);
+        //dd($collection);
+        $msg = session()->get('excel');
+        return response()->json(['code'=>'0','msg'=>$msg]);
     }
 
     /**

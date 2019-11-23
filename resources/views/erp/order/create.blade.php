@@ -68,7 +68,7 @@
                     datatype:'json',
                     success:function (msg) {
                         if(msg.code=='0'){
-                            layer.msg('导入成功！'+msg.msg,{icon:1,time:2000},function () {
+                            layer.msg(msg.msg,{icon:1,time:5000},function () {
                                 var index = parent.layer.getFrameIndex(window.name);
                                 //刷新
                                 parent.window.location = parent.window.location;
