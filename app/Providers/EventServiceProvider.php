@@ -26,6 +26,10 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\OrderAuditSuccessed' => [
             'App\Listeners\OrderAuditSuccessedListener',
         ],
+
+        'App\Events\OrderEvent' => [
+            'App\Listeners\OrderEventListener',
+        ],
     ];
 
     /**
