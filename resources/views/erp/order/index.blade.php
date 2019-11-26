@@ -48,8 +48,8 @@
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
                 <button class="layui-btn" data-type="getCheckData">批量生成汇总单</button>
-                <button class="layui-btn layui-btn-warm" onclick="show('查看采购汇总单','{{url("admins/order/order_pool")}}',2,'100%','100%');">查看采购汇总单</button>
-                <button class="layui-btn layuiadmin-btn-tags" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
+{{--                <button class="layui-btn layui-btn-warm" onclick="show('查看采购汇总单','{{url("admins/order/order_pool")}}',2,'100%','100%');">查看采购汇总单</button>--}}
+                <button class="layui-btn layuiadmin-btn-tags layui-btn-normal" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
             </div>
         </script>
         <table id="list" lay-filter="list"></table>

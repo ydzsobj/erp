@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Erp;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Models\Inventory;
+use App\Models\OrderInfo;
 use App\Models\PurchaseOrderInfo;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -85,6 +86,10 @@ class PurchasePoolController extends CommonController
                 $infoArr[$key]['tax_rate'] = $tax_rate;
                 $infoArr[$key]['tax'] = $tax;
                 $infoArr[$key]['money_tax'] = $goods_money + $tax;
+
+                //订单详情商品采购状态
+                $ids=explode(',',$value['ids']);
+                OrderInfo::whereIn('id',$ids)->update(['goods_status'=>'1']);
 
             }
         }

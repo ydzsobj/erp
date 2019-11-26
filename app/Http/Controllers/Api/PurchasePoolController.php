@@ -17,15 +17,19 @@ class PurchasePoolController extends Controller
         $page = $request->page ? $request->page : 1;
         $limit = $request->limit ? $request->limit :100;
 
-        $order = Order::with('order_info')->where('order_status',1)->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get()->toArray();
+        $order = Order::with(['order_info'=>function($query){
+            $query->where('goods_status','0');
+        }])->where('order_status',1)->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get()->toArray();
         $data = [];
         foreach ($order as $key=>$value){
             foreach ($value['order_info'] as $k=>$v){
                 $sku = ProductGoods::where('sku_code',$v['goods_sku'])->first();
                 if(array_key_exists($v['goods_sku'],$data)){
                     $data[$v['goods_sku']]['goods_num'] += $v['goods_num'];
+                    $data[$v['goods_sku']]['ids'] = $data[$v['goods_sku']]['ids'].','.$v['id'];
                 }else{
                     $data[$v['goods_sku']]['id'] = $sku['id'];
+                    $data[$v['goods_sku']]['ids'] = $v['id'];
                     $data[$v['goods_sku']]['goods_sku'] = $v['goods_sku'];
                     $data[$v['goods_sku']]['goods_num'] = $v['goods_num'];
                     $data[$v['goods_sku']]['goods_name'] = $sku['sku_name'];

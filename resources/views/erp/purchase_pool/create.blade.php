@@ -4,7 +4,7 @@
         <form class="layui-form" action="">
             {{csrf_field()}}
             <fieldset class="layui-elem-field layui-field-title">
-                <legend>采购配置单</legend>
+                <legend>采购需求配置单</legend>
             </fieldset>
             <div class="layui-form-item">
                 <div class="layui-inline">

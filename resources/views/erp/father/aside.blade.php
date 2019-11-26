@@ -65,15 +65,23 @@
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
-                <a href="javascript:;" lay-tips="shopify店铺管理" lay-direction="2">
+                <a href="javascript:;" lay-tips="采购管理" lay-direction="2">
                     <i class="layui-icon layui-icon-util"></i>
-                    <cite>shopify配置</cite>
+                    <cite>采购管理</cite>
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{route('shopify_accounts.index') }}">店铺管理</a>
+                        <a lay-href="{{url('/admins/purchase_pool')}}">采购汇总</a>
                     </dd>
-
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
+                    </dd>
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
@@ -93,26 +101,6 @@
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
-                    </dd>
-                </dl>
-            </li>
-            <li data-name="home" class="layui-nav-item ">
-                <a href="javascript:;" lay-tips="采购管理" lay-direction="2">
-                    <i class="layui-icon layui-icon-util"></i>
-                    <cite>采购管理</cite>
-                </a>
-                <dl class="layui-nav-child">
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_pool')}}">采购汇总</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
                     </dd>
                 </dl>
             </li>
@@ -189,7 +177,18 @@
                     </dd>
                 </dl>
             </li>
+            <li data-name="home" class="layui-nav-item ">
+                <a href="javascript:;" lay-tips="shopify店铺管理" lay-direction="2">
+                    <i class="layui-icon layui-icon-util"></i>
+                    <cite>shopify配置</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="console">
+                        <a lay-href="{{route('shopify_accounts.index') }}">店铺管理</a>
+                    </dd>
 
+                </dl>
+            </li>
             <li data-name="home" class="layui-nav-item ">
                 <a href="javascript:;" lay-tips="辅助工具" lay-direction="2">
                     <i class="layui-icon layui-icon-util"></i>
