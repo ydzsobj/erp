@@ -26,7 +26,6 @@ class OrderImport implements ToCollection
         $sum = 0;
         $order = new Order();
 
-        $cell_id = 0;
 
 
         foreach ($collection as $key => $row) {

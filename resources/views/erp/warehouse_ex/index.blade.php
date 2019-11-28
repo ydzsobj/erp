@@ -16,9 +16,9 @@
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
                         <select name="order_status" id="order_status">
-                            <option value="0">未导入</option>
-                            <option value="1">已导入</option>
-                            <option value="2">已确定</option>
+                            <option value="0">未出库</option>
+                            <option value="1">拣货中</option>
+                            <option value="2">已出库</option>
                         </select>
                     </div>
                 </div>
@@ -47,15 +47,18 @@
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
-                <button class="layui-btn" data-type="getCheckData">批量生成汇总单</button>
+                <button class="layui-btn" data-type="getCheckData">批量生成拣货单</button>
 {{--                <button class="layui-btn layui-btn-warm" onclick="show('查看采购汇总单','{{url("admins/order/order_pool")}}',2,'100%','100%');">查看采购汇总单</button>--}}
-                <button class="layui-btn layuiadmin-btn-tags layui-btn-normal" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
+                <button class="layui-btn layuiadmin-btn-tags layui-btn-normal" onclick="show('导入出库运单','{{url("admins/warehouse_ex/create")}}',2,'500px','500px');">导入出库运单</button>
             </div>
         </script>
         <table id="list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="status">
-        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">未导入</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">已导入</div>  @{{# }else{  }} <div style="color: #008000">已确定</div> @{{# }  }}
+        @{{# if(d.ex_status == 0){ }} <div style="color: #ff0000">未出库</div> @{{# }else if(d.ex_status == 1){  }} <div style="color: #0000FF">拣货中</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
+    </script>
+    <script type="text/html" id="order_lock">
+        @{{# if(d.order_lock == 0){ }} <div style="color: #ff0000">未锁定</div> @{{# }else{  }} <div style="color: #008000">已锁定</div> @{{# }  }}
     </script>
 
 @endsection
@@ -71,7 +74,7 @@
             //渲染实例
             table.render({
                 elem: '#list'
-                ,url: "{{url('api/order')}}" //数据接口
+                ,url: "{{url('api/warehouse_ex')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
@@ -83,8 +86,10 @@
                 ,height: 'full-200'
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
-                    ,{field: 'order_sn', title: '订单编码', width: 180, fixed: 'left'}
+                    ,{field: 'order_sn', title: '订单号', width: 150, fixed: 'left'}
+                    ,{field: 'yunlu_sn', title: '运单号', width: 150, fixed: 'left'}
                     ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
+                    ,{title: '锁定', width: 80, fixed: 'left',templet:'#order_lock'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}
                     ,{field: 'order_phone', title: '电话', width:120}
@@ -95,7 +100,6 @@
                     ,{field: 'order_area', title: '区', width:120}
                     ,{field: 'order_address', title: '详细地址', width:220}
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
-                    ,{field: 'created_at', title: '导入时间', width: 160, sort: true}
                 ]]
             });
 
@@ -158,7 +162,7 @@
 
                     $.ajax({
                         type:"POST",
-                        url: "{{url('admins/order/create_order_pool')}}",
+                        url: "{{url('admins/warehouse_ex/create_ex')}}",
                         data:{"ids":codeId,"_token":"{{csrf_token()}}"},
                         success:function (data) {
                             layer.closeAll('loading');

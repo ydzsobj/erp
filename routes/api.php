@@ -34,7 +34,6 @@ $api->version('v1', function ($api) {
         $api->resource('/brand','BrandController', ['only' => ['index']]);
         $api->resource('/product_unit','ProductUnitController', ['only' => ['index']]);
         $api->resource('/supplier','SupplierController', ['only' => ['index']]);
-        $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
         $api->resource('/attribute','AttributeController', ['only' => ['index']]);
         $api->resource('/attribute_value','AttributeValueController', ['only' => ['index']]);
         $api->resource('/product','ProductController', ['only' => ['index','show']]);
@@ -46,6 +45,9 @@ $api->version('v1', function ($api) {
         $api->resource('/inventory_check','InventoryCheckController', ['only' => ['index']]);
         $api->resource('/inventory_transfer','InventoryTransferController', ['only' => ['index']]);
         $api->resource('/order','OrderController', ['only' => ['index']]);
+        $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
+        $api->resource('/warehouse_ex','WarehouseExController', ['only' => ['index']]);
+        $api->resource('/warehouse_pick','WarehousePickController', ['only' => ['index']]);
 
 
         $api->get('/product/sku/{id}','ProductController@sku');

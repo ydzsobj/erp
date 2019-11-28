@@ -35,6 +35,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
 
     Route::post('order/create_order_pool','OrderController@createOrderPool');
     Route::any('order/order_pool','OrderController@orderPool');
+    Route::post('warehouse_ex/create_ex','WarehouseExController@createEx');
 
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');
@@ -42,7 +43,6 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('brand','BrandController');
     Route::resource('product_unit','ProductUnitController');
     Route::resource('supplier','SupplierController');
-    Route::resource('warehouse','WarehouseController');
     Route::resource('attribute','AttributeController');
     Route::resource('attribute_value','AttributeValueController');
     Route::resource('product','ProductController');
@@ -54,6 +54,9 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('inventory_check','InventoryCheckController');
     Route::resource('inventory_transfer','InventoryTransferController');
     Route::resource('order', 'OrderController');
+    Route::resource('warehouse','WarehouseController');
+    Route::resource('warehouse_ex', 'WarehouseExController');
+    Route::resource('warehouse_pick', 'WarehousePickController');
 
 
 

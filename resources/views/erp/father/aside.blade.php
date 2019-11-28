@@ -105,6 +105,20 @@
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
+                <a href="javascript:;" lay-tips="物流管理" lay-direction="2">
+                    <i class="layui-icon layui-icon-util"></i>
+                    <cite>物流管理</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/warehouse_ex')}}">出库列表</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/warehouse_pick')}}">拣货列表</a>
+                    </dd>
+                </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item ">
                 <a href="javascript:;" lay-tips="供应商管理" lay-direction="2">
                     <i class="layui-icon layui-icon-util"></i>
                     <cite>供应商管理</cite>
@@ -124,18 +138,6 @@
                 <dl class="layui-nav-child">
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/product')}}">财务列表</a>
-                    </dd>
-
-                </dl>
-            </li>
-            <li data-name="home" class="layui-nav-item ">
-                <a href="javascript:;" lay-tips="物流管理" lay-direction="2">
-                    <i class="layui-icon layui-icon-util"></i>
-                    <cite>物流管理</cite>
-                </a>
-                <dl class="layui-nav-child">
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/product')}}">物流列表</a>
                     </dd>
 
                 </dl>
