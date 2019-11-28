@@ -56,8 +56,8 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('order', 'OrderController');
     Route::resource('warehouse','WarehouseController');
     Route::resource('warehouse_ex', 'WarehouseExController');
+    Route::resource('warehouse_out', 'WarehouseOutController');
     Route::resource('warehouse_pick', 'WarehousePickController');
-
 
 
     Route::get('data/get_admin','DataController@get_admin');

@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers\Erp;
 
-use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\Warehouse;
-use App\Models\WarehousePick;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class WarehousePickController extends CommonController
+class WarehouseOutController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +15,7 @@ class WarehousePickController extends CommonController
     public function index()
     {
         //
-        return view('erp.warehouse_pick.index');
+        return view('erp.warehouse_out.index');
     }
 
     /**
@@ -31,8 +26,6 @@ class WarehousePickController extends CommonController
     public function create()
     {
         //
-        $warehouse = Warehouse::where('warehouse_status','1')->get();
-        return view('erp.warehouse_pick.create',compact('warehouse'));
     }
 
     /**
@@ -43,34 +36,7 @@ class WarehousePickController extends CommonController
      */
     public function store(Request $request)
     {
-        //dd($request);
-        //存储表单信息
-        $pick_code = $this->createWarehousePickCode('J');
-
-        $pick_ids=array();
-        if(isset($request->table)) {
-            foreach ($request->table['dataTable'] as $key => $value) {
-                $pick_ids[] = $value['id'];
-                Order::where('id',$value['id'])->update(['ex_status'=>1]);
-            }
-        }
-
-        $arr = [
-            'pick_code' => $pick_code,
-            'pick_ids' => implode(',',$pick_ids),
-            'pick_name' => $request->pick_name,
-            'pick_phone' => $request->pick_phone,
-            'warehouse_id' => $request->warehouse_id,
-            'user_id' => Auth::guard('admin')->user()->id,
-            'pick_text' => $request->pick_text,
-            'picked_at' => $request->picked_at,
-            'picked_status' => 0,
-            'created_at' => date('Y-m-d H:i:s', time()),
-        ];
-
-        $result = WarehousePick::insert($arr);
-        return $result ? '0' : '1';
-
+        //
     }
 
     /**

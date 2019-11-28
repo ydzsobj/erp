@@ -47,6 +47,7 @@ $api->version('v1', function ($api) {
         $api->resource('/order','OrderController', ['only' => ['index']]);
         $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
         $api->resource('/warehouse_ex','WarehouseExController', ['only' => ['index']]);
+        $api->resource('/warehouse_out','WarehouseOutController', ['only' => ['index']]);
         $api->resource('/warehouse_pick','WarehousePickController', ['only' => ['index']]);
 
 
@@ -56,6 +57,7 @@ $api->version('v1', function ($api) {
         $api->get('/purchase_warehouse/goods/{id}','PurchaseWarehouseController@goods');
         $api->get('/inventory/goods/{id}','InventoryController@goods');
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
+        $api->get('/warehouse_pick/order/{id}','WarehousePickController@order');
 
         /******订单相关****/
         // $api->get('/orders','OrderController@index')->name('api.orders.index');

@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(60% - 3px);
+            height: calc(75% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(60% + 3px);
+            top: calc(75% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(60% - 3px);
+            top: calc(75% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -128,7 +128,7 @@
     </script>
 
     <script type="text/html" id="status">
-        @{{# if(d.pick_status == 0){ }} <div style="color: #ff0000">未完成</div>  @{{# }else{  }} <div style="color: #008000">已完成</div> @{{# }  }}
+        @{{# if(d.ex_status == 0){ }} <div style="color: #ff0000">未出库</div> @{{# }else if(d.ex_status == 1){  }} <div style="color: #0000FF">拣货中</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -166,7 +166,7 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/warehouse_pick')}}" //数据接口
+                ,url: "{{url('api/warehouse_out')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
@@ -178,16 +178,19 @@
                 ,height: 'full-200'
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
-                    ,{field: 'pick_code', title: '拣货单号', width: 150, fixed: 'left'}
+                    ,{field: 'order_sn', title: '订单号', width: 150, fixed: 'left'}
+                    ,{field: 'yunlu_sn', title: '运单号', width: 150, fixed: 'left'}
                     ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
-                    ,{field: 'pick_name', title: '拣货人', width:100}
-                    ,{field: 'pick_phone', title: '电话', width:120}
-                    ,{ title: '仓库', width:120,templet:function (res) {
-                        return res.warehouse.warehouse_name;
-                    }}
-                    ,{field: 'pick_text', title: '备注'}
-                    ,{field: 'created_at', title: '创建时间', width: 160, sort: true}
+                    ,{field: 'order_name', title: '收件人', width:100}
+                    ,{field: 'order_phone', title: '电话', width:120}
+                    ,{field: 'order_code', title: '邮编', width:80}
+                    ,{field: 'order_province', title: '省', width:120}
+                    ,{field: 'order_city', title: '市', width:120}
+                    ,{field: 'order_county', title: '县', width:120}
+                    ,{field: 'order_area', title: '区', width:120}
+                    ,{field: 'order_address', title: '详细地址', width:220}
+                    ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
                 ]]
             });
 
@@ -258,20 +261,21 @@
                 //console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{url('api/warehouse_pick/order')}}/"+data.id //数据接口
+                    ,url: "{{url('api/order/goods')}}/"+data.id //数据接口
                     ,cols: [[
-                        {field: 'order_sn', title: '订单号', width: 150, fixed: 'left'}
-                        ,{field: 'yunlu_sn', title: '运单号', width: 150, fixed: 'left'}
-                        ,{field: 'id', title: 'ID', width:80, sort: true,}
-                        ,{field: 'order_name', title: '收件人', width:100}
-                        ,{field: 'order_phone', title: '电话', width:120}
-                        ,{field: 'order_code', title: '邮编', width:80}
-                        ,{field: 'order_province', title: '省', width:120}
-                        ,{field: 'order_city', title: '市', width:120}
-                        ,{field: 'order_county', title: '县', width:120}
-                        ,{field: 'order_area', title: '区', width:120}
-                        ,{field: 'order_address', title: '详细地址', width:220}
-                        ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
+                        {field:'id', title: 'ID', width:80, sort: true}
+                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
+                        ,{field:'goods_name', title: '商品名称', width:180}
+                        ,{field:'goods_attr_name', title: '属性名', width:100}
+                        ,{field:'goods_attr_value', title: '属性值', width:100}
+                        ,{field:'goods_num', title: '数量',width:80}
+                        ,{field:'goods_price', title: '单价',width:80}
+                        ,{field:'goods_money', title: '总价',  width:80}
+                        ,{field:'tax_rate', title: '税率', width:80}
+                        ,{field:'tax', title: '税费', width:80}
+                        ,{field:'price_tax', title: '单税率', width:80}
+                        ,{field:'money_tax', title: '总金额', width:80}
+                        ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
                     ]]
                     ,id: 'testReload'
                 });

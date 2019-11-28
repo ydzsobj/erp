@@ -111,7 +111,10 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/warehouse_ex')}}">出库列表</a>
+                        <a lay-href="{{url('/admins/warehouse_ex')}}">运单列表</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/warehouse_out')}}">出库列表</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/warehouse_pick')}}">拣货列表</a>

@@ -38,7 +38,7 @@ class Order extends Model
         return $orders;
     }
 
-    //出库订单搜索
+    //运单订单搜索
     public function searchEx($request){
 
         $keywords = $request->get('keywords')?:'';
@@ -62,8 +62,8 @@ class Order extends Model
         return $orders;
     }
 
-    //拣货单搜索
-    public function searchPick($request){
+    //出库单搜索
+    public function searchOut($request){
 
         $keywords = $request->get('keywords')?:'';
         $status = $request->get('order_status')?: 1;
