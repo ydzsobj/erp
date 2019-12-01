@@ -34,7 +34,7 @@ class ExImport implements ToCollection
             $order_sn = trim($row[1]);   //订单sn
             $yun_sn = trim($row[0]);   //运单sn
 
-            $order_data = $order->order_sn($order_sn);dd($order_data);
+            $order_data = $order->order_sn($order_sn);
             if (is_null($order_data)===true){
                 $err++;
                 $sum++;
