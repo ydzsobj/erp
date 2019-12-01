@@ -65,6 +65,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('uploader/pic_upload','UploaderController@picUpload');  //图片异步上传
     Route::post('uploader/upload_data','UploaderController@upload_data');  //Excel异步上传
 
+    Route::get('warehouse_pick/export/{id}', 'WarehousePickController@export');  //拣货单导出
 
      /****订单相关****/
     // Route::group(['middleware' => [] ],

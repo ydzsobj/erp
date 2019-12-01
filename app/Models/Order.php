@@ -114,17 +114,20 @@ class Order extends Model
         $query->whereBetween('created_at', [$start_date, $end_date]);
     }
 
-
-    //
-    public function order_info(){
-        return $this->hasMany(OrderInfo::class,'order_id','id');
-    }
-
+    //获取订单编号
     public function order_sn($order_sn){
         return self::where('order_sn', $order_sn)->first();
     }
 
+    //一对多关联订单信息
+    public function order_info(){
+        return $this->hasMany(OrderInfo::class,'order_id','id');
+    }
 
+    //远程一对多关联库存
+    public function inventory(){
+        return $this->hasManyThrough('App\Models\Inventory','App\Models\OrderInfo','order_id','goods_sku','id','goods_sku');
+    }
 
 
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Erp;
 
+use App\Exports\OrderExport;
+use App\Exports\UsersExport;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
@@ -9,6 +11,7 @@ use App\Models\Warehouse;
 use App\Models\WarehousePick;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Excel;
 
 class WarehousePickController extends CommonController
 {
@@ -117,4 +120,17 @@ class WarehousePickController extends CommonController
     {
         //
     }
+
+
+    //拣货单导出
+    public function export(Request $request,$id)
+    {
+        $pick = WarehousePick::where('id',$id)->first();
+        $ids = explode(',',$pick->pick_ids);
+        $order = Order::with('order_info','inventory')->whereIn('id',$ids)->get();
+
+        return Excel::download(new OrderExport($order), $id.'_拣货单导出'.date('y-m-d H_i_s').'.xlsx');
+
+    }
+
 }

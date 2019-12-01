@@ -50,9 +50,12 @@ class WarehousePick extends Model
         $query->whereBetween('created_at', [$start_date, $end_date]);
     }
 
+    //关联仓库
     public function warehouse(){
         return $this->hasOne(Warehouse::class,'id','warehouse_id');
     }
+
+
 
 
 }

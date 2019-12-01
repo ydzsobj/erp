@@ -122,8 +122,7 @@
     </div>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">提交审核</button>
-            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加采购单','{{url("admins/purchase_order/create")}}',2,'100%','100%');">添加采购单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">导出拣货单</button>
         </div>
     </script>
 
@@ -177,7 +176,7 @@
                 ,page: true //开启分页
                 ,height: 'full-200'
                 ,cols: [[ //表头
-                    {type:'checkbox', fixed: 'left'}
+                    {type:'radio', fixed: 'left'}
                     ,{field: 'pick_code', title: '拣货单号', width: 150, fixed: 'left'}
                     ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
@@ -188,6 +187,15 @@
                     }}
                     ,{field: 'pick_text', title: '备注'}
                     ,{field: 'created_at', title: '创建时间', width: 160, sort: true}
+                    ,{field: 'button', title: '操作', width: 200, fixed: 'right',
+                        templet: function(row){
+                            var status = '';
+                            if(row.pick_status == 0){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">出库</a>';
+                            }
+                            return status;
+                        }
+                    }
                 ]]
             });
 
@@ -247,7 +255,25 @@
                 switch(obj.event){
                     case 'getCheckData':
                         var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
+                        //layer.alert(JSON.stringify(data[0].id));
+                        $.ajax({
+                            url:"{{url('admins/warehouse_pick/export/')}}/"+data[0].id,
+                            type:'get',
+                            datatype:'json',
+                            success:function (msg) {
+                                if(msg=='0'){
+                                    layer.msg('导出成功！',{icon:1,time:2000},function () {
+                                        window.location = window.location;
+                                        layer.close(index);
+                                    });
+                                }else{
+                                    layer.msg('导出失败！',{icon:2,time:2000});
+                                }
+                            },
+                            error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.msg('error!',{icon:2,time:2000});
+                            }
+                        });
                         break;
                 };
             });
@@ -271,7 +297,7 @@
                         ,{field: 'order_county', title: '县', width:120}
                         ,{field: 'order_area', title: '区', width:120}
                         ,{field: 'order_address', title: '详细地址', width:220}
-                        ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
+                        ,{field: 'ordered_at', title: '下单时间', width: 160}
                     ]]
                     ,id: 'testReload'
                 });
@@ -352,6 +378,26 @@
                                 layer.msg('error!',{icon:2,time:2000});
                             }
                         });
+
+                }else if(obj.event === 'export'){
+                    $.ajax({
+                        url:"{{url('admins/warehouse_pick/export/')}}/"+data.id,
+                        type:'get',
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('导出成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('导出失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
 
                 }
             });

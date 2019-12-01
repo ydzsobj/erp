@@ -19,9 +19,9 @@ class WarehousePickController extends Controller
     }
 
     //获取数据列表
-    public function order(Request $request)
+    public function order(Request $request,$id)
     {
-        $pick = (new WarehousePick())->first();
+        $pick = WarehousePick::where('id',$id)->first();
         $ids=explode(',',$pick->pick_ids);
         $data = Order::whereIn('id', $ids)->get();
         $count = $data->count();
