@@ -19,5 +19,9 @@ class OrderInfo extends Model
         return $this->belongsTo(ProductGoods::class,'goods_sku','sku_code');
     }
 
+    public function inventory(){
+        return $this->hasMany(Inventory::class,'goods_sku','goods_sku');
+    }
+
 
 }
