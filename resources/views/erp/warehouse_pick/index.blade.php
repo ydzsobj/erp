@@ -122,7 +122,7 @@
     </div>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">导出拣货单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData" id="export">导出拣货单</button>
         </div>
     </script>
 
@@ -256,24 +256,8 @@
                     case 'getCheckData':
                         var data = checkStatus.data;  //获取选中行数据
                         //layer.alert(JSON.stringify(data[0].id));
-                        $.ajax({
-                            url:"{{url('admins/warehouse_pick/export/')}}/"+data[0].id,
-                            type:'get',
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('导出成功！',{icon:1,time:2000},function () {
-                                        window.location = window.location;
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('导出失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
+                        href = "{{url('admins/warehouse_pick/export/')}}/"+data[0].id;
+                        location.href = href;
                         break;
                 };
             });
@@ -380,7 +364,7 @@
                         });
 
                 }else if(obj.event === 'export'){
-                    $.ajax({
+                    /*$.ajax({
                         url:"{{url('admins/warehouse_pick/export/')}}/"+data.id,
                         type:'get',
                         datatype:'json',
@@ -397,7 +381,7 @@
                         error: function(XmlHttpRequest, textStatus, errorThrown){
                             layer.msg('error!',{icon:2,time:2000});
                         }
-                    });
+                    });*/
 
                 }
             });
