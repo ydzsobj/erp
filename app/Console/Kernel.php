@@ -14,8 +14,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //抓取订单
-        ImportShopifyOrder::class,
+        \App\Console\Commands\OrderLock::class,
+        //ImportShopifyOrder::class,   //抓取订单
     ];
 
     /**
@@ -28,9 +28,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+         $schedule->command('order:lock')
+             ->everyMinute();
         //抓取订单
-        $import_order_log_path = storage_path('logs/import_order.log');
-        $schedule->command('import:order')->everyFiveMinutes()->appendOutputTo($import_order_log_path);;
+//        $import_order_log_path = storage_path('logs/import_order.log');
+//        $schedule->command('import:order')->everyFiveMinutes()->appendOutputTo($import_order_log_path);;
     }
 
     /**

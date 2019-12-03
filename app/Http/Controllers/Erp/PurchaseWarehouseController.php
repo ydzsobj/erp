@@ -72,7 +72,7 @@ class PurchaseWarehouseController extends CommonController
         ];
 
         $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
-
+        $lastId = 112;
         if(isset($purchase_order_id)){
             PurchaseOrderWarehouse::create([
                 'purchase_order_id'=>$purchase_order_id,
@@ -88,7 +88,7 @@ class PurchaseWarehouseController extends CommonController
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
-                $infoArr[$key]['goods_name'] = $value['goods_name'];
+                $infoArr[$key]['goods_name'] = $value['sku_name'];
                 $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
                 $infoArr[$key]['goods_price'] = $value['goods_price'];
