@@ -59,7 +59,7 @@
                         skin:'layui-layer-nobg',
                         type:type,
                         title:title,
-                        area:['375px','667px'],
+                        area:['375px','467px'],
                         fixed:false,
                         maxmin:true,
                         content:url
