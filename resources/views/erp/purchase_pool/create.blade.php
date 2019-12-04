@@ -9,16 +9,10 @@
             <div class="layui-form-item">
                 <div class="layui-inline">
                     <label class="layui-form-label">订单编号</label>
-                    <div class="layui-form-mid" style="color: #ff0000">* 订单编号自动生成</div>
-                    <div class="layui-form-mid"></div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">交货日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="deliver_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
-                        </div>
+                    <div class="layui-input-inline">
+                        <div class="layui-form-mid" style="color: #ff0000">* 订单编号自动生成</div>
                     </div>
-                    <div class="layui-form-mid"></div>
-                    <label class="layui-form-label">供应商</label>
+                    <label class="layui-form-label">供应商家</label>
                     <div class="layui-input-inline">
                         <select name="supplier_id">
                             <option value="0">请选择供应商</option>
@@ -27,36 +21,31 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 90px">预计出货日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="expect_out_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="layui-form-item">
-                <label class="layui-form-label">交货地址</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_address" placeholder="请输入供货交货地址" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">联系人</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_contacts" placeholder="请输入供货联系人" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">电话</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_phone" placeholder="请输入供货电话" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">传真</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_fax" placeholder="请输入供货地点" autocomplete="off" class="layui-input">
-                </div>
                 <label class="layui-form-label">付款方式</label>
                 <div class="layui-input-inline">
                     <select name="payment_type">
                         <option value="0">记应付账款</option>
                     </select>
                 </div>
-                <label class="layui-form-label">备注</label>
+                <label class="layui-form-label">采购备注</label>
                 <div class="layui-input-inline">
                     <input type="text" name="purchase_text" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: 90px">预计到货日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="expect_deliver_at" lay-verify="required" class="layui-input" id="dateTime2" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
                 </div>
             </div>
             <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
@@ -100,6 +89,12 @@
                 elem: '#dateTime'
                 ,type: 'datetime'
             });
+            laydate.render({
+                elem: '#dateTime2'
+                ,type: 'datetime'
+            });
+
+
 
             var parent_json = eval('('+parent.json+')');
 
@@ -109,14 +104,14 @@
                 data: parent_json.data,
                 cols: [[
                     //{title: '序号', type: 'numbers'},
-                    {field: 'id', title: 'ID',  edit: 'text',totalRow: true,event:'modify', width: 80},
-                    {field: 'goods_sku', title: 'SKU编码',  edit: 'text',totalRow: true, width: 135},
+                    {field: 'id', title: 'ID', totalRow: true, width: 80},
+                    {field: 'goods_sku', title: 'SKU编码', totalRow: true, width: 135},
                     {field: 'goods_name', title: '商品名称', width: 180},
                     {field: 'goods_attr_name', title: '属性名', width: 100},
                     {field: 'goods_attr_value', title: '属性值', width: 100},
-                    {field: 'goods_price', title: '销售价', width: 100},
-                    {field: 'goods_num', title: '数量', edit:'text', width: 80},
-                    // {field: 'goods_money', title: '金额', width: 100},
+                    {field: 'stock_num', title: '备货数量', edit:'text', width: 100},
+                    {field: 'order_num', title: '订单数量A', edit:'text', width: 100},
+                    {field: 'goods_money', title: '金额', edit:'text', width: 100},
                     // {field: 'tax_rate', title: '税率', edit:'text', width: 80},
                     // {field: 'tax', title: '税费', width: 100},
                     // {field: 'money_tax', title: '税金小计', width: 100},
@@ -124,6 +119,10 @@
                 ]],
             });
 
+            //表初始化
+            var tableIns = function () {
+                table.init('stock_num', 0);
+            };
 
             //监听提交
             form.on('submit(form)', function(data){

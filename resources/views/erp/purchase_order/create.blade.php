@@ -29,24 +29,13 @@
                     </div>
                 </div>
             </div>
+
             <div class="layui-form-item">
-                <label class="layui-form-label">交货地址</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_address" placeholder="请输入供货交货地址" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">联系人</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_contacts" placeholder="请输入供货联系人" autocomplete="off" class="layui-input">
-                </div>
-                <label class="layui-form-label">电话</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_phone" placeholder="请输入供货电话" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">传真</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="supplier_fax" placeholder="请输入供货地点" autocomplete="off" class="layui-input">
+                <div class="layui-inline">
+                    <label class="layui-form-label">交货日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="deliver_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
                 </div>
                 <label class="layui-form-label">付款方式</label>
                 <div class="layui-input-inline">

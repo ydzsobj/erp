@@ -39,7 +39,7 @@
                     {type:'checkbox', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width: 80}
                     ,{field: 'goods_sku', title: 'SKU编码', width: 150}
-                    ,{field: 'goods_num', edit: true, title: '订单数量', width:120}
+                    ,{field: 'order_num', edit: true, title: '订单数量', width:120}
                     ,{field: 'goods_name', title: '商品名称', width:180}
                     ,{field: 'goods_english', title: '英文名称', width:180}
                     ,{field: 'goods_attr_name', title: '属性名', width: 100}

@@ -71,6 +71,9 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
+                        <a lay-href="{{url('/admins/purchase_order')}}">采购订单查询</a>
+                    </dd>
+                    <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_pool')}}">采购汇总</a>
                     </dd>
                     <dd data-name="console">
@@ -82,6 +85,9 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
                     </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/supplier')}}">供应商列表</a>
+                    </dd>
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
@@ -91,7 +97,7 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
+                        <a lay-href="{{url('/admins/warehouse')}}">验收入库</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory')}}">产品库存</a>
@@ -101,6 +107,9 @@
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
                     </dd>
                 </dl>
             </li>
@@ -119,18 +128,6 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/warehouse_pick')}}">拣货列表</a>
                     </dd>
-                </dl>
-            </li>
-            <li data-name="home" class="layui-nav-item ">
-                <a href="javascript:;" lay-tips="供应商管理" lay-direction="2">
-                    <i class="layui-icon layui-icon-util"></i>
-                    <cite>供应商管理</cite>
-                </a>
-                <dl class="layui-nav-child">
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/supplier')}}">供应商列表</a>
-                    </dd>
-
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">

@@ -45,7 +45,7 @@ class PurchasePoolController extends CommonController
      */
     public function store(Request $request)
     {
-        //dd($request);
+        dd($request);
         //存储表单信息
         $purchase_order_code = $this->createPurchaseOrderCode('C');
         $arr = [
@@ -56,13 +56,10 @@ class PurchasePoolController extends CommonController
             'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
             'money_tax' => isset($request->money_tax)?$request->money_tax:0,
             'supplier_id' => $request->supplier_id,
-            'supplier_address' => $request->supplier_address,
-            'supplier_contacts' => $request->supplier_contacts,
-            'supplier_phone' => $request->supplier_phone,
-            'supplier_fax' => $request->supplier_fax,
             'user_id' => Auth::guard('admin')->user()->id,
             'purchase_text' => $request->purchase_text,
-            'deliver_at' => $request->deliver_at,
+            'expect_out_at' => $request->expect_out_at,
+            'expect_deliver_at' => $request->expect_deliver_at,
             'purchase_order_status' => '0',
             'created_at' => date('Y-m-d H:i:s', time()),
         ];
@@ -71,21 +68,27 @@ class PurchasePoolController extends CommonController
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
-                $goods_money = $value['goods_num']*$value['goods_price'];
-                $tax_rate = isset($value['tax_rate'])?:0;
-                $tax = $goods_money*$tax_rate;
+                $stock_num = intval($value['stock_num']);
+                $order_num = intval($value['order_num']);
                 $infoArr[$key]['purchase_order_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
                 $infoArr[$key]['goods_name'] = $value['goods_name'];
                 $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
-                $infoArr[$key]['goods_price'] = $value['goods_price'];
-                $infoArr[$key]['goods_num'] = $value['goods_num'];
-                $infoArr[$key]['goods_money'] = $goods_money;
-                $infoArr[$key]['tax_rate'] = $tax_rate;
-                $infoArr[$key]['tax'] = $tax;
-                $infoArr[$key]['money_tax'] = $goods_money + $tax;
+                $infoArr[$key]['stock_num'] = $stock_num;
+                $infoArr[$key]['order_num'] = $order_num;
+                $infoArr[$key]['goods_num'] = $stock_num+$order_num;
+                $infoArr[$key]['goods_money'] = $value['goods_money']??0;
+
+
+                //$goods_money = $value['goods_num']*$value['goods_price'];
+                //$tax_rate = isset($value['tax_rate'])?:0;
+                //$tax = $goods_money*$tax_rate;
+                //$infoArr[$key]['goods_price'] = $value['goods_price'];
+                //$infoArr[$key]['tax_rate'] = $tax_rate;
+                //$infoArr[$key]['tax'] = $tax;
+                //$infoArr[$key]['money_tax'] = $goods_money + $tax;
 
                 //订单详情商品采购状态
                 $ids=explode(',',$value['ids']);

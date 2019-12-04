@@ -25,13 +25,13 @@ class PurchasePoolController extends Controller
             foreach ($value['order_info'] as $k=>$v){
                 $sku = ProductGoods::where('sku_code',$v['goods_sku'])->first();
                 if(array_key_exists($v['goods_sku'],$data)){
-                    $data[$v['goods_sku']]['goods_num'] += $v['goods_num'];
+                    $data[$v['goods_sku']]['order_num'] += $v['goods_num'];
                     $data[$v['goods_sku']]['ids'] = $data[$v['goods_sku']]['ids'].','.$v['id'];
                 }else{
                     $data[$v['goods_sku']]['id'] = $sku['id'];
                     $data[$v['goods_sku']]['ids'] = $v['id'];
                     $data[$v['goods_sku']]['goods_sku'] = $v['goods_sku'];
-                    $data[$v['goods_sku']]['goods_num'] = $v['goods_num'];
+                    $data[$v['goods_sku']]['order_num'] = $v['goods_num'];
                     $data[$v['goods_sku']]['goods_name'] = $sku['sku_name'];
                     $data[$v['goods_sku']]['goods_english'] = $sku['sku_english'];
                     $data[$v['goods_sku']]['goods_attr_name'] = $sku['sku_attr_names'];
