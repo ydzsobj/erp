@@ -56,7 +56,13 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{route('order.index') }}">订单列表</a>
+                        <a lay-href="{{ url('/admins/order/list') }}">订单列表</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{ url('/admins/order/import') }}">订单导入</a>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{ url('/admins/order') }}">新订单汇总</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{route('orders.index') }}">SHOPIFY订单</a>
@@ -71,16 +77,13 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_order')}}">采购订单查询</a>
-                    </dd>
-                    <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_pool')}}">采购汇总</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>
                     </dd>
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_warehouse')}}">采购入库</a>
+                        <a lay-href="{{url('/admins/purchase_warehouse')}}">验收入库</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
@@ -96,9 +99,7 @@
                     <cite>仓库管理</cite>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/warehouse')}}">验收入库</a>
-                    </dd>
+
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory')}}">产品库存</a>
                     </dd>
@@ -136,8 +137,19 @@
                     <cite>财务管理</cite>
                 </a>
                 <dl class="layui-nav-child">
+                    <dd data-name="grid">
+                        <a href="javascript:;">栅格<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="list">
+                                <a lay-href="component/grid/list.html">等比例列表排列</a>
+                            </dd>
+                            <dd data-name="mobile">
+                                <a lay-href="component/grid/mobile.html">按移动端排列</a>
+                            </dd>
+                        </dl>
+                    </dd>
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/product')}}">财务列表</a>
+                        <a lay-href="component/button/index.html">按钮</a>
                     </dd>
 
                 </dl>

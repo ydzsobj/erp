@@ -11,8 +11,11 @@
         </script>
         <table id="list" lay-filter="list"></table>
     </div>
-    <script type="text/html" id="button" >
-        <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看商品库存</a>
+    <script type="text/html" id="inventory">
+        @{{# d.inventory.map(item=>{ }}
+
+        <div style="color: #ff0000">@{{ item.warehouse.warehouse_name }}:[库存数量@{{ item.stock_num }};在途：@{{ item.afloat_num }}]</div>
+        @{{# }) }}
     </script>
 @endsection
 @section('js')
@@ -35,17 +38,19 @@
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
+                ,height: 'full-50'
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width: 80}
                     ,{field: 'goods_sku', title: 'SKU编码', width: 150}
-                    ,{field: 'order_num', edit: true, title: '订单数量', width:120}
+                    ,{field: 'purchase_num', title: '建议采购数量', width:120}
+                    ,{field: 'order_num', title: '订单数量', width:120}
                     ,{field: 'goods_name', title: '商品名称', width:180}
                     ,{field: 'goods_english', title: '英文名称', width:180}
                     ,{field: 'goods_attr_name', title: '属性名', width: 100}
                     ,{field: 'goods_attr_value', title: '属性值', width: 100}
                     ,{field: 'goods_price', title: '销售价', width: 100}
-                    ,{field: 'button', title: '操作', toolbar:'#button', width: 120, fixed:'right'}
+                    ,{title: '仓储数量', width:320 , templet:'#inventory', fixed: 'right'}
                 ]]
             });
 

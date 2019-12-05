@@ -12,9 +12,27 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $order = new Order();
-        $orders = $order->search($request);
-        $count = $orders->count();
+        list($orders,$count) = $order->search($request);
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$orders]);
     }
+
+    //获取订单导入列表
+    public function import(Request $request)
+    {
+        $order = new Order();
+        list($orders,$count) = $order->searchImport($request);
+
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$orders]);
+    }
+
+    //获取订单查询列表
+    public function list(Request $request)
+    {
+        $order = new Order();
+        list($orders,$count)  = $order->searchAll($request);
+
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$orders]);
+    }
+
 }

@@ -50,6 +50,8 @@ $api->version('v1', function ($api) {
         $api->resource('/warehouse_out','WarehouseOutController', ['only' => ['index']]);
         $api->resource('/warehouse_pick','WarehousePickController', ['only' => ['index']]);
 
+        $api->get('/order/list','OrderController@list');
+        $api->get('/order/import','OrderController@import');
 
         $api->get('/product/sku/{id}','ProductController@sku');
         $api->get('/product/get_sku/{id}','ProductController@get_sku');

@@ -32,7 +32,9 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('purchase_warehouse/add/{id}', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
     Route::post('inventory/{id}/goods_position', 'InventoryController@goods_position')->name('inventory.goodsPosition');
 
-
+    Route::get('order/list','OrderController@list')->name('order.list');
+    Route::get('order/import','OrderController@import')->name('order.import');
+    Route::post('order/match','OrderController@match')->name('order.match');
     Route::post('order/create_order_pool','OrderController@createOrderPool');
     Route::any('order/order_pool','OrderController@orderPool');
     Route::post('warehouse_ex/create_ex','WarehouseExController@createEx');
@@ -58,6 +60,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('warehouse_ex', 'WarehouseExController');
     Route::resource('warehouse_out', 'WarehouseOutController');
     Route::resource('warehouse_pick', 'WarehousePickController');
+
 
 
     Route::get('data/get_admin','DataController@get_admin');

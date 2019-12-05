@@ -60,8 +60,6 @@ class PurchaseWarehouseController extends CommonController
             'payment_type' => $request->payment_type,
             'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
             'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
-            'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
-            'money_tax' => isset($request->money_tax)?$request->money_tax:0,
             'supplier_id' => $request->supplier_id,
             'warehouse_id' => $request->warehouse_id,
             'user_id' => Auth::guard('admin')->user()->id,
@@ -69,10 +67,13 @@ class PurchaseWarehouseController extends CommonController
             'stored_at' => $request->stored_at,
             'purchase_warehouse_status' => '0',
             'created_at' => date('Y-m-d H:i:s', time()),
+
+            //'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
+            //'money_tax' => isset($request->money_tax)?$request->money_tax:0,
         ];
 
         $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
-        $lastId = 112;
+
         if(isset($purchase_order_id)){
             PurchaseOrderWarehouse::create([
                 'purchase_order_id'=>$purchase_order_id,
@@ -83,36 +84,39 @@ class PurchaseWarehouseController extends CommonController
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
-                $goods_money = $value['goods_num']*$value['goods_price'];
-                $tax = $goods_money*$value['tax_rate'];
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
-                $infoArr[$key]['goods_name'] = $value['sku_name'];
+                $infoArr[$key]['goods_name'] = $value['goods_name'];
                 $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
                 $infoArr[$key]['goods_price'] = $value['goods_price'];
                 $infoArr[$key]['goods_num'] = $value['goods_num'];
-                $infoArr[$key]['goods_money'] = $goods_money;
-                $infoArr[$key]['tax_rate'] = $value['tax_rate'];
-                $infoArr[$key]['tax'] = $tax;
-                $infoArr[$key]['money_tax'] = $goods_money+$tax;
+                $infoArr[$key]['order_num'] = $value['order_num'];
+                $infoArr[$key]['plan_num'] = $value['plan_num'];
+                $infoArr[$key]['goods_money'] = $value['goods_money'];;
                 $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
+
+//                $infoArr[$key]['tax_rate'] = $value['tax_rate'];
+//                $infoArr[$key]['tax'] = $tax;
+//                $infoArr[$key]['money_tax'] = $goods_money+$tax;
 
                 //库存
                 $inventoryArr['goods_id'] = $value['id'];
                 $inventoryArr['goods_sku'] = $value['goods_sku'];
                 $inventoryArr['afloat_num'] = $value['goods_num'];
-                $inventoryArr['afloat_price'] = $value['goods_price'];
-                $inventoryArr['afloat_money'] = $goods_money;
+                $inventoryArr['order_num'] = $value['order_num'];
+                $inventoryArr['plan_num'] = $value['plan_num'];
+                //$inventoryArr['afloat_price'] = $value['goods_price'];
+                //['afloat_money'] = $goods_money;
                 $inventoryArr['warehouse_id'] = $request->warehouse_id;
                 $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
 
                 $inventory = Inventory::where(['goods_id'=>$value['id'],'warehouse_id'=>$request->warehouse_id])->first();
                 if($inventory){
                     $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
-                    $inventory->afloat_price = $value['goods_price'];
-                    $inventory->afloat_money = $inventory->afloat_money + $goods_money;
+                    $inventory->order_num = $inventory->order_num + $value['order_num'];
+                    $inventory->plan_num = $inventory->plan_num + $value['plan_num'];
                     $inventory->save();
                 }else{
                     Inventory::insert($inventoryArr);

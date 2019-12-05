@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
+use App\Models\Inventory;
+use App\Models\Order;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseWarehouse;
 use App\Models\WarehousePick;
@@ -37,6 +39,50 @@ class CommonController extends Controller
 
         return $reader->toArray();
     }
+
+    /*
+     * 订单碰库存
+     */
+    public function doOrder($orderId){
+        $order = Order::with('order_info')->where('id',$orderId)->first();
+        $warehouse_ids = $this->checkCurrency($order->order_currency);
+        foreach($order->order_info as $key=>$value){
+            $match = $this->matchInventory($warehouse_ids,$value['goods_sku'],$value['goods_num']);
+
+        }
+
+    }
+
+    /*
+     * 库存碰订单
+     */
+
+
+    /*
+     * 处理库存数量
+     */
+    public function matchInventory($warehouse_ids,$goods_sku,$goods_num){
+        $inventory = Inventory::where(function ($query) use($warehouse_ids,$goods_sku){
+            $query->whereIn('warehouse_id',$warehouse_ids)->where('goods_sku',$goods_sku);
+        })->get();
+    }
+
+    /*
+     *检查国家标识
+     */
+    public function checkCurrency($order_currency){
+        switch ($order_currency){
+            case 'IDR' :    //印尼
+                return [2,1];
+                break;
+            case 'PHP' :    //菲律宾
+                break;
+            default :
+                return [1];
+                break;
+        }
+    }
+
 
     /*
      * 创建采购订单编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)

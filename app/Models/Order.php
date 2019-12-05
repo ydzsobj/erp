@@ -18,16 +18,49 @@ class Order extends Model
     public function search($request){
 
         $keywords = $request->get('keywords')?:'';
-        $status = $request->get('order_status')?:0;
+        $status = $request->get('order_status')?:1;
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
 
         $page = $request->page ?: 1;
         $limit = $request->limit ?: 100;
 
+        $count = static::where('order_status',$status)
+            ->keywords($keywords)
+            ->date($start_date, $end_date)
+            ->count();
         $orders = static::where('order_status',$status)
             ->keywords($keywords)
             //->status($status)
+            ->date($start_date, $end_date)
+            //->select('orders.*')
+            ->orderBy('id','asc')
+            ->offset(($page-1)*$limit)
+            ->limit($limit)
+            ->get();
+
+
+        return [$orders,$count];
+    }
+
+    //入库订单搜索
+    public function searchAll($request){
+
+        $keywords = $request->get('keywords')?:'';
+        $status = $request->get('order_status')?:'';
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        $page = $request->page ?: 1;
+        $limit = $request->limit ?: 100;
+
+        $count = static::where('order_sn','!=','')
+            ->keywords($keywords)
+            ->date($start_date, $end_date)
+            ->count();
+        $orders = static::where('order_sn','!=','')
+            ->keywords($keywords)
+            ->status($status)
             ->date($start_date, $end_date)
             //->select('orders.*')
             ->orderBy('id','desc')
@@ -35,7 +68,36 @@ class Order extends Model
             ->limit($limit)
             ->get();
 
-        return $orders;
+        return [$orders,$count];
+    }
+
+    //入库订单搜索
+    public function searchImport($request){
+
+        $keywords = $request->get('keywords')?:'';
+        $status = $request->get('order_status')?:0;
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        $page = $request->page ?: 1;
+        $limit = $request->limit ?: 100;
+
+        $count = static::where('order_status',$status)
+            ->keywords($keywords)
+            ->date($start_date, $end_date)
+            ->count();
+        $orders = static::where('order_status',$status)
+            ->keywords($keywords)
+            //->status($status)
+            ->date($start_date, $end_date)
+            //->select('orders.*')
+            ->orderBy('id','asc')
+            ->offset(($page-1)*$limit)
+            ->limit($limit)
+            ->get();
+
+
+        return [$orders,$count];
     }
 
     //运单订单搜索
@@ -82,6 +144,8 @@ class Order extends Model
             ->offset(($page-1)*$limit)
             ->limit($limit)
             ->get();
+
+
 
         return $orders;
     }

@@ -156,8 +156,10 @@ class PurchaseOrderController extends CommonController
      *审核
      */
     public function check(Request $request, $id){
-        $result = PurchaseOrder::find($id);
-        $result->purchase_order_status = 1;
+
+        $id = $request->get('id');
+        $ids=explode(',',$id);
+dd($ids);
         return $result->save()?'0':'1';
     }
 

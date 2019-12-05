@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(50% - 3px);
+            height: calc(70% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(50% + 3px);
+            top: calc(70% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(50% - 3px);
+            top: calc(70% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -132,7 +132,6 @@
     </div>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getAddData">提交入库</button>
             <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加入库单','{{url("admins/purchase_warehouse/create")}}',2,'100%','100%');">添加入库单</button>
         </div>
     </script>
@@ -182,23 +181,20 @@
                 ,title: '采购数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 50
-                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,limit: 100
+                ,limits: [100,300,500,1000,2000,5000,10000]
+                ,height: 'full-400'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-                    ,{field: 'purchase_warehouse_status', title: '状态', width:60,templet:"#purchase_order_status"}
-                    ,{field: 'purchase_warehouse_code', title: '入库单号', width:130}
-                    ,{title: '仓库名', width:120,templet:function (res) {
+                    ,{field: 'purchase_warehouse_status', title: '状态', width:80,templet:"#purchase_order_status"}
+                    ,{field: 'purchase_warehouse_code', title: '入库单号', width:150}
+                    ,{title: '仓库名', width:150,templet:function (res) {
                             return res.warehouse.warehouse_name;
                         }}
-                    ,{field: 'purchase_num', title: '数量', width:60}
-                    ,{field: 'supplier_money', title: '金额', width:80}
-                    ,{field: 'supplier_tax', title: '税金', width:80}
-                    ,{field: 'money_tax', title: '总计', width:100}
-                    ,{field: 'created_at', title: '创建时间', width: 120}
-                    ,{field: 'checked_at', title: '审核时间', width: 120}
-                    ,{field: 'warehouse_text', title: '备注', width: 100}
+                    ,{field: 'created_at', title: '创建时间', width: 160}
+                    ,{field: 'checked_at', title: '审核时间', width: 160}
+                    ,{field: 'warehouse_text', title: '备注', width: 300}
                     ,{field: 'button', title: '操作', width: 220, fixed: 'right',
                         templet: function(row){
                             var status = '';
@@ -287,13 +283,10 @@
                         ,{field:'goods_name', title: '商品名称', width:180}
                         ,{field:'goods_attr_name', title: '属性名', width:100}
                         ,{field:'goods_attr_value', title: '属性值', width:100}
-                        ,{field:'goods_num', title: '数量',width:80}
-                        ,{field:'goods_price', title: '单价',width:80}
-                        ,{field:'goods_money', title: '总价',  width:80}
-                        ,{field:'tax_rate', title: '税率', width:80}
-                        ,{field:'tax', title: '税费', width:80}
-                        ,{field:'price_tax', title: '单税率', width:80}
-                        ,{field:'money_tax', title: '总金额', width:80}
+                        ,{field:'goods_num', title: '商品总数',width:120}
+                        ,{field:'order_num', title: '订单数量',width:120}
+                        ,{field:'plan_num', title: '备货数量',width:120}
+                        ,{field:'goods_money', title: '总价',  width:120}
                         ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
                     ]]
                     ,id: 'testReload'
