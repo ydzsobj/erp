@@ -104,8 +104,11 @@
         layui.use(['table', 'upload','layer', 'laydate'], function(){
             var table = layui.table,
                 layer = layui.layer,
-                $=layui.jquery;
+                $=layui.jquery
+                , tablePlug = layui.tablePlug //表格插件
+                , testTablePlug = layui.testTablePlug ;// 测试js模块
                 var upload = layui.upload;
+
             var conMove = false;
             $('.pane-trigger-con').mousedown(function(event){
                 conMove = true
@@ -141,6 +144,11 @@
                             "data": res.data.data //解析数据列表
                         };
                     }
+                ,primaryKey:'id'
+                , checkDisabled: {
+                    enabled: true,
+                    data: [42]
+                    }
                 ,defaultToolbar: []
                 ,title: '库存数据表'
                 ,page: true //开启分页
@@ -160,7 +168,7 @@
                     }}
 
                     ,{field: 'stock_num', title: '库存', style:'color: green;'}
-                    ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
+                    // ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
                     ,{field: 'goods_position', title: '库位'}
@@ -409,10 +417,10 @@
                         area:['600px','300px'],
                         content: $("#fm_import")
                     })
-                }else if(layEvent == 'batch_audit'){
-                    //批量审核
+                }else if(layEvent == 'batch_out'){
+                    //批量出库
                     if(checkStatus.data.length == 0){
-                        layer.msg('请先选择订单');
+                        layer.msg('请先勾选数据');
                         return false;
                     }
 
@@ -423,19 +431,20 @@
                     }
                     console.log(selected_ids);
 
-                    layer.confirm('确定要审核通过吗?', function(index){
+                    layer.confirm('确定要出库吗?', function(index){
                         layer.close(index);
                         //向服务端发送指令
                         $.ajax({
                             type:'POST',
-                            url: "{{ route('orders.batch_audit') }}",
-                            data:{ _token: "{{ csrf_token() }}" ,order_ids: selected_ids },
+                            url: "{{ route('inventory.yn_virtual_out') }}",
+                            data:{ _token: "{{ csrf_token() }}" ,out_data: selected_rows },
                             dataType:"json",
                             success:function(msg){
                                     console.log(msg);
                                     layer.msg(msg.msg);
                                     if(msg.success){
-                                    table.reload('demo');
+                                        table.reload('listReload');
+                                        table.reload('testReload');
                                     }
                             },
                             error: function(data){
@@ -518,6 +527,6 @@
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
       <button class="layui-btn layui-btn-sm" lay-event="import_order" >入库</button>
-      <button class="layui-btn layui-btn-sm" lay-event="" >出库</button>
+      <button class="layui-btn layui-btn-sm" lay-event="batch_out" >出库</button>
     </div>
   </script>

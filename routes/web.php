@@ -95,7 +95,14 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
             //抓取订单
             $router->post('/create_orders', 'ShopifyAccountController@create_order')->name('shopify_account.create_orders');
 
-    }
-);
- /****END****/
+        }
+    );
+    /****END****/
+
+    //虚拟仓库相关 by tian
+    //导入入库
+    Route::post('import_inventorys', 'InventoryController@import')->name('inventory.import');
+    //出库
+    Route::post('/yn_virtual_out', 'InventoryController@yn_virtual_out')->name('inventory.yn_virtual_out');
+
 });

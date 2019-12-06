@@ -65,6 +65,10 @@ $api->version('v1', function ($api) {
         $api->get('/orders/{id}','ShopifyOrderController@show')->name('api.orders.show');
         $api->get('/shopify_accounts','ShopifyAccountController@index')->name('api.shopify_accounts.index');
 
+        //仓库相关
+        //请求库存详情
+        $api->get('/inventory_info', 'InventoryController@api_info');
+
 
     });
 
