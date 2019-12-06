@@ -167,7 +167,15 @@
                             return res.sku.sku_attr_value_names;
                     }}
 
-                    ,{field: 'stock_num', title: '库存', style:'color: green;'}
+                    ,{field: 'stock_num', title: '库存', templet:function(row){
+                        if(row.stock_num <= 0){
+                            color = 'red';
+                        }else{
+                            color = 'green';
+                        }
+                        return '<span style=color:' + color +'>' + row.stock_num + '</span>';
+
+                    }}
                     // ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
@@ -176,6 +184,17 @@
 
 
                 ]]
+                ,done:function (res, curr, count) {
+                    var data = res.data;
+                    // $(".layui-table-body").find("input[name='layTableCheckbox']").each(function (i) {
+                    //     // console.log('i='+i);
+                    //     if (res.data[i].stock_num < 1) {//关键点如果当前行数据中score包含57那么就不可选
+                    //         $(this).attr("disabled", 'disabled').removeAttr("checked");
+                    //         // $(this).parent('div').remove();
+
+                    //     }
+                    // })
+                }
             });
 
 

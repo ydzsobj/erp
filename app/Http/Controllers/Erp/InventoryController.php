@@ -133,8 +133,11 @@ class InventoryController extends Controller
         $out_data = $request->post('out_data');
 
         foreach($out_data as $item){
-            DB::transaction(function () use ($item, $admin) {
 
+            if($item['stock_num'] < 1){
+                continue;
+            }
+            DB::transaction(function () use ($item, $admin) {
                 $inventory = Inventory::find($item['id']);
                 $inventory->stock_num -= $item['stock_num'];
                 $inventory->out_num += $item['stock_num'];
