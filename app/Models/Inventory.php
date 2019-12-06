@@ -11,7 +11,7 @@ class Inventory extends Model
 
     protected $table = "inventory";
 
-    protected $page_size = 20;
+    protected $page_size = 50;
 
     use SoftDeletes;
     protected $dates = ['deleted_at'];

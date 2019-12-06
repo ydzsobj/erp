@@ -406,11 +406,11 @@
                     layer.open({
                         skin:'layui-layer-nobg',
                         type:2,
-                        title:'待入库列表',
-                        area: ['960px', '600px'],
+                        title:'入库',
+                        area:['800px','700px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{ route('inventory.yn_in_create') }}?warehouse_id={{ $yn_virtual_warehouse_id }}",
+                        content:"{{ route('inventory.yn_in_index') }}?warehouse_id={{ $warehouse_id }}",
                         end :function(){
                             do_reload();
 
@@ -456,13 +456,18 @@
             });
 
             function do_reload(){
-            // var demoReload = $('#demoReload');
-                table.reload('listReload', {
+            var demoReload = $('#demoReload');
+            table.reload('demo', {
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
                     ,where: {
-
+                        keywords: demoReload.val(),
+                        status: $("#search_status").val(),
+                        country_id: $("#search_country_id").val(),
+                        start_date:$("#start_date").val(),
+                        end_date:$("#end_date").val(),
+                        select_date_type: $("#select_date_type").val(),
                     }
                 }, 'data');
         }

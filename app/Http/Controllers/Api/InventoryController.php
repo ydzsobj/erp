@@ -33,6 +33,9 @@ class InventoryController extends Controller
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
+    /**
+     * 库存详情
+     */
     public function api_info(Request $request){
 
         $info_obj = new InventoryInfo();
@@ -41,6 +44,5 @@ class InventoryController extends Controller
 
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data, 'count' => $data->total()]);
     }
-
 
 }
