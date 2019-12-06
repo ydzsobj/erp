@@ -110,9 +110,9 @@
                     ,{field:'sku_name', title: '商品名称', width:180,templet:function(res){return res.goods_name;}}
                     ,{field:'goods_attr_name', title: '属性名', width:100}
                     ,{field:'goods_attr_value', title: '属性值', width:100}
-                    ,{field:'plan_num', title: '备货数量', edit:'text', width: 100}
-                    ,{field:'order_num', title: '订单数量', edit:'text', width: 100}
-                    ,{field:'goods_money', title: '金额', edit:'text', width: 100}
+                    ,{field:'plan_num', title: '备货数量', width: 100}
+                    ,{field:'order_num', title: '订单数量', width: 100}
+                    ,{field:'goods_money', title: '金额', width: 100}
                     ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
                 ]]
             });

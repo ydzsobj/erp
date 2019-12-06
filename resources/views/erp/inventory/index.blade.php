@@ -197,17 +197,11 @@
                             return res.warehouse.warehouse_name;
                         }}
                     ,{field: 'stock_num', title: '库存数量', width:100, style:'background-color: #eee; color: green;'}
-                    ,{field: 'stock_price', title: '库存单价', width:100}
-                    ,{field: 'stock_money', title: '库存金额', width:100}
                     ,{field: 'afloat_num', title: '在途数量', width:100, style:'background-color: #eee; color: blue;'}
-                    ,{field: 'afloat_price', title: '在途单价', width:100}
-                    ,{field: 'afloat_money', title: '在途金额', width:100}
                     ,{field: 'in_num', title: '入库数量', width:100}
-                    ,{field: 'in_price', title: '入库单价', width:100}
-                    ,{field: 'in_money', title: '入库金额', width:100}
                     ,{field: 'out_num', title: '出库数量', width:100}
-                    ,{field: 'out_price', title: '出库单价', width:100}
-                    ,{field: 'out_money', title: '出库金额', width:100}
+                    ,{field: 'order_num', title: '在途订单数量', width:100}
+                    ,{field: 'plan_num', title: '在途备货数量', width:100}
                     ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
                 ]]
             });
@@ -289,13 +283,10 @@
                     ,cols: [[
                         {field:'id', title: 'ID', width:80, sort: true}
                         ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
-                        ,{field:'goods_name', title: '商品名称', width:180}
-                        ,{field:'stock_num', title: '库存数量', width:100}
-                        ,{field:'stock_money', title: '库存金额', width:100}
-                        ,{field:'in_num', title: '入库数量',width:100}
-                        ,{field:'in_money', title: '入库金额',width:100}
-                        ,{field:'out_num', title: '出库数量',  width:100}
-                        ,{field:'out_money', title: '出库金额', width:100}
+                        ,{field:'goods_name', title: '商品名称', width:220}
+                        ,{field:'stock_num', title: '库存数量', width:120}
+                        ,{field:'in_num', title: '入库数量',width:120}
+                        ,{field:'out_num', title: '出库数量',  width:120}
                         ,{field:'created_at', title: '创建时间', width:180}
                         ,{field:'stock_code', title: '编码', width:135, fixed: 'right'}
                     ]]

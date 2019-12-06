@@ -71,8 +71,7 @@
                 ,page: true //开启分页
                 ,height: 'full-150'
                 ,cols: [[ //表头
-                    {type:'checkbox', fixed: 'left'}
-                    ,{field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
+                    {field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
                     ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}

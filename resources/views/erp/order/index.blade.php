@@ -4,7 +4,7 @@
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
-                <button class="layui-btn" data-type="getCheckData">批量生成汇总单</button>
+                <button class="layui-btn" data-type="getCheckData">批量生成采购汇总单</button>
             </div>
         </script>
         <table id="list" lay-filter="list"></table>
@@ -42,7 +42,6 @@
                     ,{field: 'order_code', title: '邮编', width:80}
                     ,{field: 'order_province', title: '省', width:120}
                     ,{field: 'order_city', title: '市', width:120}
-                    ,{field: 'order_county', title: '县', width:120}
                     ,{field: 'order_area', title: '区', width:120}
                     ,{field: 'order_address', title: '详细地址', width:220}
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}

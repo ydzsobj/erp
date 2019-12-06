@@ -62,7 +62,7 @@
                         <a lay-href="{{ url('/admins/order/import') }}">订单导入</a>
                     </dd>
                     <dd data-name="console">
-                        <a lay-href="{{ url('/admins/order') }}">新订单汇总</a>
+                        <a lay-href="{{ url('/admins/order') }}">订单汇总</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{route('orders.index') }}">SHOPIFY订单</a>

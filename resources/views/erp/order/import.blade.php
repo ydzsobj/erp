@@ -3,8 +3,8 @@
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
-                <button class="layui-btn" data-type="getCheckData">上传匹配库存</button>
                 <button class="layui-btn layuiadmin-btn-tags layui-btn-normal" onclick="show('批量导入订单','{{url("admins/order/create")}}',2,'500px','500px');">批量导入订单</button>
+                <button class="layui-btn" data-type="getCheckData">上传匹配库存</button>
             </div>
         </script>
         <table id="list" lay-filter="list"></table>

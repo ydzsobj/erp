@@ -98,13 +98,7 @@ class PurchasePoolController extends CommonController
             }
         }
 
-        $purchase_order_trace = [
-            'purchase_order_id' => $lastId,
-            'purchase_order_log' => '采购订单创建成功！',
-            'created_at' => date('Y-m-d H:i:s', time()),
-        ];
-
-        PurchaseOrderTrace::create($purchase_order_trace);   //采购订单轨迹
+        $this->purchaseOrderLog($lastId,'采购订单创建成功！');
 
         $result = PurchaseOrderInfo::insert($infoArr);
 

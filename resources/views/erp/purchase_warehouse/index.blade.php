@@ -193,7 +193,7 @@
                             return res.warehouse.warehouse_name;
                         }}
                     ,{field: 'created_at', title: '创建时间', width: 160}
-                    ,{field: 'checked_at', title: '审核时间', width: 160}
+                    ,{field: 'stored_at', title: '入库时间', width: 160}
                     ,{field: 'warehouse_text', title: '备注', width: 300}
                     ,{field: 'button', title: '操作', width: 220, fixed: 'right',
                         templet: function(row){

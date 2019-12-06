@@ -137,7 +137,9 @@
     </script>
 
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} <div style="color: #000">已入库</div> @{{# }  }}
+        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>
+        @{{# }else if(d.purchase_order_status == 2){  }} <div style="color: #0000FF">已出货</div> @{{# }else if(d.purchase_order_status == 3){  }} <div style="color: #fcd000">已到货</div>
+        @{{# }else{  }} <div style="color: #000">已完成</div>@{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -201,7 +203,11 @@
                             if(row.purchase_order_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
                             }else if(row.purchase_order_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">生成入库单</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>';
+                            }
+                            else if(row.purchase_order_status == 2){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
+
                             }
                         return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                             '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
@@ -303,7 +309,7 @@
             table.on('tool(list)', function(obj){
                 var data = obj.data;
 
-                if(obj.event === 'detail'){
+                if(obj.event === 'add'){
                     layer.open({
                         skin:'layui-layer-nobg',
                         type:2,
@@ -371,7 +377,30 @@
                             }
                         });
 
+                }else if(obj.event === 'time'){
+                    $.ajax({
+                        url:"{{url('admins/purchase_order/time/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('操作成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('操作失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
                 }
+
+
             });
 
 

@@ -79,13 +79,14 @@ class PurchaseWarehouseController extends CommonController
                 'purchase_order_id'=>$purchase_order_id,
                 'purchase_warehouse_id'=>$lastId
             ]);
-            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'2']);
+            PurchaseOrder::where('id',$purchase_order_id)->update(['deliver_at'=>date('Y-m-d H:i:s', time()),'purchase_order_status'=>'3']);
+            $this->purchaseOrderLog($purchase_order_id,'采购订单已到货！');
         }
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
-                $infoArr[$key]['goods_id'] = $value['id'];
+                $infoArr[$key]['goods_id'] = $value['goods_id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
                 $infoArr[$key]['goods_name'] = $value['goods_name'];
                 $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
@@ -102,17 +103,18 @@ class PurchaseWarehouseController extends CommonController
 //                $infoArr[$key]['money_tax'] = $goods_money+$tax;
 
                 //库存
-                $inventoryArr['goods_id'] = $value['id'];
+                $inventoryArr['goods_id'] = $value['goods_id'];
                 $inventoryArr['goods_sku'] = $value['goods_sku'];
                 $inventoryArr['afloat_num'] = $value['goods_num'];
                 $inventoryArr['order_num'] = $value['order_num'];
                 $inventoryArr['plan_num'] = $value['plan_num'];
-                //$inventoryArr['afloat_price'] = $value['goods_price'];
-                //['afloat_money'] = $goods_money;
                 $inventoryArr['warehouse_id'] = $request->warehouse_id;
                 $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
 
-                $inventory = Inventory::where(['goods_id'=>$value['id'],'warehouse_id'=>$request->warehouse_id])->first();
+                //$inventoryArr['afloat_price'] = $value['goods_price'];
+                //['afloat_money'] = $goods_money;
+
+                $inventory = Inventory::where(['goods_sku'=>$value['goods_sku'],'warehouse_id'=>$request->warehouse_id])->first();
                 if($inventory){
                     $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
                     $inventory->order_num = $inventory->order_num + $value['order_num'];
@@ -124,6 +126,7 @@ class PurchaseWarehouseController extends CommonController
 
             }
         }
+
 
         $result = PurchaseWarehouseInfo::insert($infoArr);
         return $result ? '0' : '1';
@@ -177,13 +180,13 @@ class PurchaseWarehouseController extends CommonController
 
 
 
-    //提交
+    //提交入库
     public function add(Request $request, $id){
         $warehouse = PurchaseWarehouse::where('id',$id)->first();
         $info = PurchaseWarehouseInfo::where('purchase_warehouse_id',$id)->orderBy('id','asc')->get();
         foreach($info as $key=>$value){
             $inventory = Inventory::where(function ($query) use ($value,$warehouse){
-                $query->where('goods_id','=',$value['goods_id'])->where('warehouse_id','=',$warehouse['warehouse_id']);
+                $query->where('goods_sku','=',$value['goods_sku'])->where('warehouse_id','=',$warehouse['warehouse_id']);
             })->first();
 
             $inventoryInfoArr[$key]['goods_id'] = $value['goods_id'];
@@ -191,28 +194,33 @@ class PurchaseWarehouseController extends CommonController
             $inventoryInfoArr[$key]['goods_sku'] = $value['goods_sku'];
             $inventoryInfoArr[$key]['goods_name'] = $value['goods_name'];
             $inventoryInfoArr[$key]['in_num'] = $value['goods_num'];
-            $inventoryInfoArr[$key]['in_price'] = $value['goods_price'];
             $inventoryInfoArr[$key]['in_money'] = $value['goods_money'];
             $inventoryInfoArr[$key]['stock_code'] = $warehouse['purchase_warehouse_code'];
             $inventoryInfoArr[$key]['stock_num'] = $value['goods_num']+$inventory['stock_num'];
-            $inventoryInfoArr[$key]['stock_price'] = $value['goods_price'];
-            $inventoryInfoArr[$key]['stock_money'] = $value['goods_money']+$inventory['stock_money'];
             $inventoryInfoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
+//            $inventoryInfoArr[$key]['stock_price'] = $value['goods_price'];
+//            $inventoryInfoArr[$key]['in_price'] = $value['goods_price'];
+//            $inventoryInfoArr[$key]['stock_money'] = $value['goods_money']+$inventory['stock_money'];
+
 
             $inventory->afloat_num = $inventory->afloat_num - $value['goods_num'];
-            $inventory->afloat_price = $value['goods_price'];
-            $inventory->afloat_money = $inventory->afloat_money - $value['goods_money'];
             $inventory->stock_num = $inventory->stock_num + $value['goods_num'];
-            $inventory->stock_price = $value['goods_price'];
-            $inventory->stock_money = $inventory->stock_money + $value['goods_money'];
             $inventory->in_num = $inventory->in_num + $value['goods_num'];
-            $inventory->in_price = $value['goods_price'];
-            $inventory->in_money = $inventory->in_money + $value['goods_money'];
+//            $inventory->afloat_price = $value['goods_price'];
+//            $inventory->afloat_money = $inventory->afloat_money - $value['goods_money'];
+//            $inventory->stock_price = $value['goods_price'];
+//            $inventory->stock_money = $inventory->stock_money + $value['goods_money'];
+//            $inventory->in_price = $value['goods_price'];
+//            $inventory->in_money = $inventory->in_money + $value['goods_money'];
+
             $inventory->save();
 
         }
         $warehouse->purchase_warehouse_status = 1;
+        $warehouse->stored_id = Auth::guard('admin')->user()->id;
+        $warehouse->stored_at = date('Y-m-d H:i:s', time());
         $warehouse->save();
+
         $result = InventoryInfo::insert($inventoryInfoArr);
         return $result ? '0' : '1';
 

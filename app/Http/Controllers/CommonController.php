@@ -6,6 +6,7 @@ use App\Models\AdminLog;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
 use App\Models\WarehousePick;
 use Illuminate\Http\Request;
@@ -65,6 +66,7 @@ class CommonController extends Controller
         $inventory = Inventory::where(function ($query) use($warehouse_ids,$goods_sku){
             $query->whereIn('warehouse_id',$warehouse_ids)->where('goods_sku',$goods_sku);
         })->get();
+        //dd($inventory);
     }
 
     /*
@@ -83,6 +85,16 @@ class CommonController extends Controller
         }
     }
 
+    /*
+     * 采购订单轨迹记录
+     */
+    public function purchaseOrderLog($id,$msg){
+        PurchaseOrderTrace::create([
+            'purchase_order_id'=>$id,
+            'purchase_order_log'=>$msg,
+            'created_at' => date('Y-m-d H:i:s', time())
+        ]);
+    }
 
     /*
      * 创建采购订单编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)

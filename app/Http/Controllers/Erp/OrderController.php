@@ -144,7 +144,7 @@ class OrderController extends CommonController
         foreach ($ids as $key=>$value){
             if(empty($value)) continue;
 
-            //$num = $this->doOrder($value);dd($num);
+            //$num = $this->doOrder($value);
             $orderLogArr[] = [
                 'order_id' => intval($value),
                 'user_id' =>  Auth::guard('admin')->user()->id,
@@ -153,7 +153,7 @@ class OrderController extends CommonController
                 'created_at' => date('Y-m-d H:i:s', time()),
             ];
         }
-
+        //dd($ids);
         OrderLog::insert($orderLogArr);    //订单日志记录
 
         $res = Order::whereIn('id', $ids)->update($data);
