@@ -13,6 +13,7 @@ use App\Models\PurchaseWarehouse;
 use App\Models\PurchaseWarehouseInfo;
 use App\Models\Supplier;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -79,12 +80,13 @@ class PurchaseWarehouseController extends CommonController
                 'purchase_order_id'=>$purchase_order_id,
                 'purchase_warehouse_id'=>$lastId
             ]);
-            PurchaseOrder::where('id',$purchase_order_id)->update(['deliver_at'=>date('Y-m-d H:i:s', time()),'purchase_order_status'=>'3']);
-            $this->purchaseOrderLog($purchase_order_id,'采购订单已到货！');
+            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'3']);
+            $this->purchaseOrderLog($purchase_order_id,'入库订单已生成！');
         }
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
+                //采购入库
                 $infoArr[$key]['purchase_warehouse_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['goods_id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
@@ -95,7 +97,7 @@ class PurchaseWarehouseController extends CommonController
                 $infoArr[$key]['goods_num'] = $value['goods_num'];
                 $infoArr[$key]['order_num'] = $value['order_num'];
                 $infoArr[$key]['plan_num'] = $value['plan_num'];
-                $infoArr[$key]['goods_money'] = $value['goods_money'];;
+                $infoArr[$key]['goods_money'] = $value['goods_money'];
                 $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
 //                $infoArr[$key]['tax_rate'] = $value['tax_rate'];
@@ -108,6 +110,7 @@ class PurchaseWarehouseController extends CommonController
                 $inventoryArr['afloat_num'] = $value['goods_num'];
                 $inventoryArr['order_num'] = $value['order_num'];
                 $inventoryArr['plan_num'] = $value['plan_num'];
+                $inventoryArr['plan_unused_num'] = $value['plan_num'];
                 $inventoryArr['warehouse_id'] = $request->warehouse_id;
                 $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
 
@@ -119,6 +122,7 @@ class PurchaseWarehouseController extends CommonController
                     $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
                     $inventory->order_num = $inventory->order_num + $value['order_num'];
                     $inventory->plan_num = $inventory->plan_num + $value['plan_num'];
+                    $inventory->plan_unused_num = $inventory->plan_unused_num + $value['plan_num'];
                     $inventory->save();
                 }else{
                     Inventory::insert($inventoryArr);
@@ -177,7 +181,19 @@ class PurchaseWarehouseController extends CommonController
         //
     }
 
+    /*
+    *审核
+    */
+    public function check(Request $request, $id){
+        $result = PurchaseWarehouse::with('purchase_order_warehouse')->where('id',$id)->first();
+        $result->purchase_warehouse_status = 1;
+        $result->checked_id = Auth::guard('admin')->user()->id;
+        $result->checked_at = Carbon::now();
 
+        $this->purchaseOrderLog($result->purchase_order_warehouse->purchase_order_id,'采购订单已到货！');
+
+        return $result->save()?'0':'1';
+    }
 
 
     //提交入库
@@ -205,6 +221,11 @@ class PurchaseWarehouseController extends CommonController
 
             $inventory->afloat_num = $inventory->afloat_num - $value['goods_num'];
             $inventory->stock_num = $inventory->stock_num + $value['goods_num'];
+            $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'];
+            $inventory->stock_unused_num = $inventory->stock_unused_num + $value['plan_num'];
+            $inventory->plan_num = $inventory->plan_num - $value['plan_num'];
+            $inventory->order_num = $inventory->order_num - $value['order_num'];
+            $inventory->plan_unused_num = $inventory->plan_unused_num - $value['plan_num'];
             $inventory->in_num = $inventory->in_num + $value['goods_num'];
 //            $inventory->afloat_price = $value['goods_price'];
 //            $inventory->afloat_money = $inventory->afloat_money - $value['goods_money'];
@@ -216,7 +237,7 @@ class PurchaseWarehouseController extends CommonController
             $inventory->save();
 
         }
-        $warehouse->purchase_warehouse_status = 1;
+        $warehouse->purchase_warehouse_status = 2;
         $warehouse->stored_id = Auth::guard('admin')->user()->id;
         $warehouse->stored_at = date('Y-m-d H:i:s', time());
         $warehouse->save();

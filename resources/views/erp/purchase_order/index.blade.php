@@ -138,7 +138,7 @@
 
     <script type="text/html" id="purchase_order_status">
         @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>
-        @{{# }else if(d.purchase_order_status == 2){  }} <div style="color: #0000FF">已出货</div> @{{# }else if(d.purchase_order_status == 3){  }} <div style="color: #fcd000">已到货</div>
+        @{{# }else if(d.purchase_order_status == 2){  }} <div style="color: #0000FF">已出货</div> @{{# }else if(d.purchase_order_status == 3){  }} <div style="color: #fcd000">入库单</div>
         @{{# }else{  }} <div style="color: #000">已完成</div>@{{# }  }}
     </script>
 @endsection

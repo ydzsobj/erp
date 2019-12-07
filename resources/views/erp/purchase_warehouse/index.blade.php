@@ -138,7 +138,7 @@
 
 
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.purchase_warehouse_status == 1){  }} <div style="color: #008000">已入库</div>  @{{# }else{  }} <div style="color: #0000FF">已退货</div> @{{# }  }}
+        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.purchase_warehouse_status == 1){  }} <div style="color: #008000">验货中</div> @{{# }else if(d.purchase_warehouse_status == 2){  }} <div style="color: #0000FF">已入库</div>  @{{# }else{  }} <div>已退货</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -199,7 +199,9 @@
                         templet: function(row){
                             var status = '';
                             if(row.purchase_warehouse_status == 0){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add">入库</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">验货</a>';
+                            }else if(row.purchase_warehouse_status == 1){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="add">入库</a>';
                             }
                             return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                                 '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
@@ -362,6 +364,27 @@
                         shadeClose: true,
                         content:$('#show_big')
                     })
+                }else if(obj.event === 'check'){
+                    $.ajax({
+                        url:"{{url('admins/purchase_warehouse/check/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('操作成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('操作失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
                 }else if(obj.event === 'add'){
                     $.ajax({
                         url:"{{url('admins/purchase_warehouse/add/')}}/"+data.id,

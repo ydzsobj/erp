@@ -9,7 +9,9 @@
         </script>
         <table id="list" lay-filter="list"></table>
     </div>
-
+    <script type="text/html" id="order_used">
+        @{{# if(d.order_used == 0){ }} <div style="color: #ff0000">未占用</div> @{{# }else if(d.order_status == 2){  }} <div style="color: #0000FF">已占用</div>  @{{# }else{  }} <div style="color: #008000">部分占用</div> @{{# }  }}
+    </script>
 @endsection
 @section('js')
     <script>
@@ -36,6 +38,7 @@
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
                     ,{field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
+                    ,{field: 'order_used', title: '订单占用', width: 100, fixed: 'left',templet:'#order_used'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}
                     ,{field: 'order_phone', title: '电话', width:120}

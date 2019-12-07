@@ -1,5 +1,12 @@
 @extends('erp.father.father')
 @section('content')
+
+    <style type="text/css">
+        .layui-table-cell,.laytable-cell-checkbox,.layui-table-col-special {
+            height: auto;
+            line-height: 28px;
+        }
+    </style>
     <div class="layui-fluid">
         <table id="data_list" lay-filter="list"></table>
     </div>
@@ -12,10 +19,11 @@
         <table id="list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="inventory">
+        <span style="color: #ff0000">
         @{{# d.inventory.map(item=>{ }}
-
-        <div style="color: #ff0000">@{{ item.warehouse.warehouse_name }}:[库存数量@{{ item.stock_num }};在途：@{{ item.afloat_num }}]</div>
+        @{{ item.warehouse.warehouse_name }}：[库存可用：@{{ item.stock_unused_num }}； 在途备货可用：@{{ item.plan_unused_num }}；] <br/>
         @{{# }) }}
+        </span>
     </script>
 @endsection
 @section('js')
@@ -40,7 +48,7 @@
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,height: 'full-50'
                 ,cols: [[ //表头
-                    {type:'checkbox', fixed: 'left'}
+                    {type:'checkbox'}
                     ,{field: 'id', title: 'ID', width: 80}
                     ,{field: 'goods_sku', title: 'SKU编码', width: 150}
                     ,{field: 'purchase_num', title: '建议采购数量', width:120}
@@ -49,8 +57,8 @@
                     ,{field: 'goods_english', title: '英文名称', width:180}
                     ,{field: 'goods_attr_name', title: '属性名', width: 100}
                     ,{field: 'goods_attr_value', title: '属性值', width: 100}
-                    ,{field: 'goods_price', title: '销售价', width: 100}
-                    ,{title: '仓储数量', width:320 , templet:'#inventory', fixed: 'right'}
+                    ,{field: 'goods_price', title: '商品价格', width: 100}
+                    ,{title: '仓储数量', width:350 , templet:'#inventory'}
                 ]]
             });
 

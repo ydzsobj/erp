@@ -30,6 +30,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('purchase_order/show_goods','PurchaseOrderController@show_goods');
     Route::post('purchase_order/check/{id}', 'PurchaseOrderController@check')->name('purchase_order.check');
     Route::post('purchase_order/time/{id}', 'PurchaseOrderController@time')->name('purchase_order.time');
+    Route::post('purchase_warehouse/check/{id}', 'PurchaseWarehouseController@check')->name('purchase_warehouse.check');
     Route::post('purchase_warehouse/add/{id}', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
     Route::post('inventory/{id}/goods_position', 'InventoryController@goods_position')->name('inventory.goodsPosition');
 

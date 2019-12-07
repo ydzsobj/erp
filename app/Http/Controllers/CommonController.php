@@ -49,7 +49,7 @@ class CommonController extends Controller
         $warehouse_ids = $this->checkCurrency($order->order_currency);
         foreach($order->order_info as $key=>$value){
             $match = $this->matchInventory($warehouse_ids,$value['goods_sku'],$value['goods_num']);
-
+            dd($match);
         }
 
     }
@@ -66,7 +66,7 @@ class CommonController extends Controller
         $inventory = Inventory::where(function ($query) use($warehouse_ids,$goods_sku){
             $query->whereIn('warehouse_id',$warehouse_ids)->where('goods_sku',$goods_sku);
         })->get();
-        //dd($inventory);
+        dd($inventory);
     }
 
     /*

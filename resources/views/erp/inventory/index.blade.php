@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(50% - 3px);
+            height: calc(70% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(50% + 3px);
+            top: calc(70% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(50% - 3px);
+            top: calc(70% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -177,8 +177,9 @@
                 ,title: '库存数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 50
-                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,limit: 100
+                ,limits: [100,300,500,1000,2000,5000,10000]
+                ,height: 'full-400'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'goods_position',title: '库位', width:80, fixed: 'left',edit:true}
@@ -187,21 +188,25 @@
                     ,{title: '商品名称', width:150,templet:function (res) {
                             return res.product_goods.sku_name;
                         }}
+                    ,{title: '仓库名', width:120,templet:function (res) {
+                            return res.warehouse.warehouse_name;
+                        }}
+                    ,{field: 'stock_num', title: '库存数量', width:90, style:'background-color: #eee; color: green;'}
+                    ,{field: 'stock_used_num', title: '库存占用', width:90}
+                    ,{field: 'stock_unused_num', title: '库存未占', width:90}
+                    ,{field: 'afloat_num', title: '在途数量', width:90, style:'background-color: #eee; color: blue;'}
+                    ,{field: 'order_num', title: '在途订单', width:90}
+                    ,{field: 'plan_num', title: '在途备货', width:90}
+                    ,{field: 'plan_used_num', title: '备货占用', width:90}
+                    ,{field: 'plan_unused_num', title: '备货未占', width:90, style:'background-color: #eee; color: red;'}
+                    ,{field: 'in_num', title: '入库数量', width:90}
+                    ,{field: 'out_num', title: '出库数量', width:90}
                     ,{title: '属性名', width:100,templet:function (res) {
                             return res.product_goods.sku_attr_names;
                         }}
                     ,{title: '属性值', width:100,templet:function (res) {
                             return res.product_goods.sku_attr_value_names;
                         }}
-                    ,{title: '仓库名', width:120,templet:function (res) {
-                            return res.warehouse.warehouse_name;
-                        }}
-                    ,{field: 'stock_num', title: '库存数量', width:100, style:'background-color: #eee; color: green;'}
-                    ,{field: 'afloat_num', title: '在途数量', width:100, style:'background-color: #eee; color: blue;'}
-                    ,{field: 'in_num', title: '入库数量', width:100}
-                    ,{field: 'out_num', title: '出库数量', width:100}
-                    ,{field: 'order_num', title: '在途订单数量', width:100}
-                    ,{field: 'plan_num', title: '在途备货数量', width:100}
                     ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
                 ]]
             });
