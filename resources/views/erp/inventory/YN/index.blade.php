@@ -52,33 +52,16 @@
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
                         <div class="layui-inline" style="width:265px;">
-                            <input class="layui-input" name="keywords" id="demoReload" placeholder="产品名称/SKU编号"  autocomplete="off">
+                            <input class="layui-input" name="keywords" id="keywords" placeholder="产品名称/SKU编号"  autocomplete="off">
                         </div>
                     </div>
                 </div>
 
-                <div class="layui-inline">
-                        <div class="layui-input-block">
-                            <div class="layui-inline" style="width:100px;">
-                                <select id="select_date_type">
-                                    <option value="1">入库时间</option>
-                                    <option value="2">出库时间</option>
-                                </select>
-                            </div>
-
-                        </div>
-                    </div>
-
                     <div class="layui-inline">
-                            <a class="layui-btn" data-type="reload"  id='search'>查询</a>
-                            &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <a class="layui-btn" data-type="reload"  id='search'>查询</a>
+                        &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
                     </div>
             </div>
-
-            {{-- <div class="layui-row demoTable">
-                <a class="layui-btn" data-type="reload" style="margin-left:600px;" id='search'>搜索</a>
-                &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div> --}}
 
         </form>
 </div>
@@ -99,18 +82,38 @@
                         <div class="layui-col-md12">
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
+                                    <form class="layui-form" action="">
+                                        <ul class="layui-tab-title">
+                                            <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
+                                            <li>
 
-                                    <ul class="layui-tab-title">
-                                        <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
-                                        <li>
-                                            <div class="layui-inline" style="width:150px;">
-                                                <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
-                                            </div>-
-                                            <div class="layui-inline" style="width:150px;">
-                                                <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
-                                            </div>
-                                        </li>
-                                    </ul>
+                                                <label>
+                                                    业务时间 :
+                                                </label>
+                                                <div class="layui-inline" style="width:150px;">
+                                                    <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                                                </div>-
+                                                <div class="layui-inline" style="width:150px;">
+                                                    <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                                                </div>
+                                            </li>
+                                            <li>
+                                                    <label>
+                                                        SKU编码 :
+                                                    </label>
+                                                    <div class="layui-inline" style="width:150px;">
+                                                        <input class="layui-input" name="goods_sku" id="goods_sku" placeholder="请输入sku">
+                                                    </div>
+                                            </li>
+                                            <li>
+                                                <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
+                                            </li>
+                                            <li>
+                                                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+                                            </li>
+
+                                        </ul>
+                                    </form>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
                                             <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
@@ -161,12 +164,51 @@
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
                 console.log('11');
-                // table.reload('sku_table');
-                table.reload('sku_table', {
-                    data:[]
-                });
-                $("#sku_detail").text('');
+                //执行重载
+
             });
+
+            $('#sub_search').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+
+            });
+
+            var active = {
+                reload: function(){
+
+                    //执行重载
+                    table.reload('listReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            keywords: $("#keywords").val()
+                        }
+                    }, 'data');
+
+                    table.reload('testReload', {
+                       data:[]
+                    });
+                },
+
+                sub_reload: function(){
+
+                    //执行重载
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            start_date: $("#start_date").val(),
+                            end_date: $("#end_date").val(),
+                            goods_sku:$("#goods_sku").val(),
+                        }
+                    }, 'data');
+
+                }
+
+            };
 
             laydate.render({
                 elem: '#start_date'
@@ -224,104 +266,56 @@
                 ]]
             });
 
-
-            create_show = function create_show(title,url,type,w,h) {
-                if(layui.device().android||layui.device().ios){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:['375px','667px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }else {
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:[w,h],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }
-            };
-
-
-            var active = {
-                reload: function(){
-                    var searchReload = $('#searchReload');
-                    //执行重载
-                    table.reload('testReload', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                    }, 'data');
-                    //执行重载
-                    table.reload('listReload', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                        ,where: {
-                            keywords: searchReload.val()
-                        }
-                    }, 'data');
-                }
-            };
-            $('.demoTable .layui-btn').on('click', function(){
-                var type = $(this).data('type');
-                active[type] ? active[type].call(this) : '';
-            });
-
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(data_list)', function(obj){
                 var data = obj.data;
-                // console.log(data);
-                $("#target_product_info").text('[' + data.sku.sku_name + ']');
-                table.render({
-                    elem: '#table_list'
-                    ,url: "{{ url('api/inventory_info')}}"//数据接口
-                    ,where: {
-                        warehouse_id:  data.warehouse_id,
+
+                table.reload('testReload',{
+                    where: {
                         goods_sku: data.goods_sku
                     }
-                    ,page: true //开启分页
-                    ,parseData: function(res){ //res 即为原始返回的数据
-                        return {
-                            "code": res.code, //解析接口状态
-                            "msg": res.msg, //解析提示文本
-                            "count": res.count, //解析数据长度
-                            "data": res.data.data //解析数据列表
-                        };
-                    }
-                    ,count: 10000
-                    ,limit: 50
-                    ,limits: [50,100,300,500,1000,2000,5000,10000]
-                    ,cols: [[
-                        {field:'created_at', width:200, title: '业务时间', sort:true}
-                        ,{field:'in_num', width:120, title: '入库数量'}
-                        ,{field:'out_num', width:120, title: '出库数量'}
-                        ,{field:'goods_sku', title: 'SKU编码'}
-                        ,{title: '产品名称', wifth:260,  templet: function(res){
-                            return res.sku.sku_name;
-                        }}
-                        ,{title: '属性值',  templet: function(res){
-                            return res.sku.sku_attr_value_names;
-                        }}
-                        ,{field:'stock_type', title: '业务类型'}
-                        ,{field:'user_id', title: '操作人', templet: function(res){
-                            return res.admin.admin_name;
-                        }}
-                    ]]
-                    ,id: 'testReload'
-                });
-
-
-
+                })
+                // console.log(data);
+                // $("#target_product_info").text('[' + data.sku.sku_name + ']');
                 //标注选中样式
                 obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
+
+            table.render({
+                elem: '#table_list'
+                ,url: "{{ url('api/inventory_info')}}"//数据接口
+                ,where: {
+                    warehouse_id: {{ $warehouse_id }}
+                }
+                ,page: true //开启分页
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data.data //解析数据列表
+                    };
+                }
+                ,count: 10000
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,cols: [[
+                    {field:'created_at', width:200, title: '业务时间', sort:true}
+                    ,{field:'in_num', width:120, title: '入库数量'}
+                    ,{field:'out_num', width:120, title: '出库数量'}
+                    ,{field:'goods_sku', title: 'SKU编码'}
+                    ,{title: '产品名称', wifth:260,  templet: function(res){
+                        return res.sku.sku_name;
+                    }}
+                    ,{title: '属性值',  templet: function(res){
+                        return res.sku.sku_attr_value_names;
+                    }}
+                    ,{field:'stock_type', title: '业务类型'}
+                    ,{field:'user_id', title: '操作人', templet: function(res){
+                        return res.admin.admin_name;
+                    }}
+                ]]
+                ,id: 'testReload'
             });
 
             //监听单元格编辑

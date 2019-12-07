@@ -58,9 +58,21 @@ class Inventory extends Model
     public function get_data($request){
 
         $warehouse_id = $request->get('warehouse_id');
+        $keywords = $request->get('keywords');
 
-        return self::with(['warehouse','sku'])->where('warehouse_id', $warehouse_id)
-            ->orderBy('id','desc')
+        return self::with(['warehouse','sku'])
+            ->leftJoin('product_goods', 'product_goods.sku_code', 'inventory.goods_sku')
+
+            ->where('inventory.warehouse_id', $warehouse_id)
+            ->when($keywords, function($query) use ($keywords){
+                $query->where(function($sub_query) use ($keywords){
+                    $sub_query->where('product_goods.sku_name', 'like', '%'. $keywords. '%')
+                        ->orWhere('product_goods.sku_code', $keywords);
+                });
+            })
+
+            ->select('inventory.*')
+            ->orderBy('inventory.id','desc')
             ->paginate($this->page_size);
     }
 

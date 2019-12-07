@@ -43,22 +43,22 @@
     </style>
 @section('hidden_dom')
 
-<form class="layui-form" action="" id ="fm_import" style="display:none;">
-    <div class="layui-form-item">
-        <label class="layui-form-label">选择文件</label>
-        <div class="layui-input-block">
-            <button type="button" class="layui-btn" id="import">导入数据</button>
+<div class="layui-row" style="margin-top:10px;">
+    <form class="layui-form" action="" id ="fm_import" style="display:none;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择文件</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="import">导入数据</button>
+            </div>
+
+            <label class="layui-form-label">
+                <a href="{{ asset('templates/入库模板.xlsx') }}">
+                    <span style="color:red;">下载模板</span>
+                </a>
+            </label>
         </div>
-
-        <label class="layui-form-label">
-            <a href="{{ asset('templates/入库模板.xlsx') }}">
-                <span style="color:red;">下载模板</span>
-            </a>
-        </label>
-
-    </div>
-
-</form>
+    </form>
+</div>
 @endsection
 
 <!--筛选开始-->
@@ -70,7 +70,7 @@
                     <label class="layui-form-label">请输入</label>
                     <div class="layui-input-block">
                         <div class="layui-inline" style="width:265px;">
-                            <input class="layui-input" name="keywords" id="demoReload" placeholder="产品名称/SKU编号"  autocomplete="off">
+                            <input class="layui-input" name="keywords" id="keywords" placeholder="产品名称/SKU编号"  autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -98,10 +98,38 @@
                         <div class="layui-col-md12">
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
-                                    <ul class="layui-tab-title">
-                                        <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
+                                    <form class="layui-form" action="">
+                                            <ul class="layui-tab-title">
+                                                <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
+                                                <li>
 
-                                    </ul>
+                                                    <label>
+                                                        业务时间 :
+                                                    </label>
+                                                    <div class="layui-inline" style="width:150px;">
+                                                        <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                                                    </div>-
+                                                    <div class="layui-inline" style="width:150px;">
+                                                        <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                        <label>
+                                                            SKU编码 :
+                                                        </label>
+                                                        <div class="layui-inline" style="width:150px;">
+                                                            <input class="layui-input" name="goods_sku" id="goods_sku" placeholder="请输入sku">
+                                                        </div>
+                                                </li>
+                                                <li>
+                                                    <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
+                                                </li>
+                                                <li>
+                                                    <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+                                                </li>
+
+                                            </ul>
+                                        </form>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
                                             <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
@@ -130,6 +158,7 @@
                 , tablePlug = layui.tablePlug //表格插件
                 , testTablePlug = layui.testTablePlug ;// 测试js模块
                 var upload = layui.upload;
+                var laydate = layui.laydate;
 
             var conMove = false;
             $('.pane-trigger-con').mousedown(function(event){
@@ -208,115 +237,120 @@
                 ]]
                 ,done:function (res, curr, count) {
                     var data = res.data;
-                    // $(".layui-table-body").find("input[name='layTableCheckbox']").each(function (i) {
-                    //     // console.log('i='+i);
-                    //     if (res.data[i].stock_num < 1) {//关键点如果当前行数据中score包含57那么就不可选
-                    //         $(this).attr("disabled", 'disabled').removeAttr("checked");
-                    //         // $(this).parent('div').remove();
-
-                    //     }
-                    // })
                 }
             });
 
 
-            create_show = function create_show(title,url,type,w,h) {
-                if(layui.device().android||layui.device().ios){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:['375px','667px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }else {
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:[w,h],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }
-            };
+              //点击搜索
+              $('#search').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+                console.log('11');
+                //执行重载
 
+            });
+
+            $('#sub_search').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+
+            });
 
             var active = {
                 reload: function(){
-                    var searchReload = $('#searchReload');
-                    //执行重载
-                    table.reload('testReload', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                    }, 'data');
+
                     //执行重载
                     table.reload('listReload', {
                         page: {
                             curr: 1 //重新从第 1 页开始
                         }
                         ,where: {
-                            keywords: searchReload.val()
+                            keywords: $("#keywords").val()
                         }
                     }, 'data');
+
+                    table.reload('testReload', {
+                       data:[]
+                    });
+                },
+
+                sub_reload: function(){
+
+                    //执行重载
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            start_date: $("#start_date").val(),
+                            end_date: $("#end_date").val(),
+                            goods_sku:$("#goods_sku").val(),
+                        }
+                    }, 'data');
+
                 }
+
             };
-            $('.demoTable .layui-btn').on('click', function(){
-                var type = $(this).data('type');
-                active[type] ? active[type].call(this) : '';
+
+            laydate.render({
+                elem: '#start_date'
+                ,type: 'datetime'
             });
+
+            laydate.render({
+                elem: '#end_date'
+                ,type: 'datetime'
+            });
+
 
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(data_list)', function(obj){
                 var data = obj.data;
                 // console.log(data);
-                $("#target_product_info").text('[' + data.sku.sku_name + ']');
-                table.render({
-                    elem: '#table_list'
-                    ,url: "{{ url('api/inventory_info')}}"//数据接口
-                    ,where: {
-                        warehouse_id:  data.warehouse_id,
+                table.reload('testReload',{
+                    where: {
                         goods_sku: data.goods_sku
                     }
-                    ,page: true //开启分页
-                    ,parseData: function(res){ //res 即为原始返回的数据
-                        return {
-                            "code": res.code, //解析接口状态
-                            "msg": res.msg, //解析提示文本
-                            "count": res.count, //解析数据长度
-                            "data": res.data.data //解析数据列表
-                        };
-                    }
-                    ,count: 10000
-                    ,limit: 50
-                    ,limits: [50,100,300,500,1000,2000,5000,10000]
-                    ,cols: [[
-                        {field:'created_at', width:200, title: '业务时间', sort:true}
-                        ,{field:'in_num', width:120, title: '入库数量'}
-                        ,{field:'out_num', width:120, title: '出库数量'}
-                        ,{field:'goods_sku', title: 'SKU编码'}
-                        ,{title: '产品名称', wifth:260,  templet: function(res){
-                            return res.sku.sku_name;
-                        }}
-                        ,{title: '属性值',  templet: function(res){
-                            return res.sku.sku_attr_value_names;
-                        }}
-                        ,{field:'stock_type', title: '业务类型'}
-                        ,{field:'user_id', title: '操作人', templet: function(res){
-                            return res.admin.admin_name;
-                        }}
-                    ]]
-                    ,id: 'testReload'
-                });
-
-
-
+                })
                 //标注选中样式
                 obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
+
+            table.render({
+                elem: '#table_list'
+                ,url: "{{ url('api/inventory_info')}}"//数据接口
+                ,where: {
+                    warehouse_id:  {{ $warehouse_id }},
+                }
+                ,page: true //开启分页
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data.data //解析数据列表
+                    };
+                }
+                ,count: 10000
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,cols: [[
+                    {field:'created_at', width:200, title: '业务时间', sort:true}
+                    ,{field:'in_num', width:120, title: '入库数量'}
+                    ,{field:'out_num', width:120, title: '出库数量'}
+                    ,{field:'goods_sku', title: 'SKU编码'}
+                    ,{title: '产品名称', wifth:260,  templet: function(res){
+                        return res.sku.sku_name;
+                    }}
+                    ,{title: '属性值',  templet: function(res){
+                        return res.sku.sku_attr_value_names;
+                    }}
+                    ,{field:'stock_type', title: '业务类型'}
+                    ,{field:'user_id', title: '操作人', templet: function(res){
+                        return res.admin.admin_name;
+                    }}
+                ]]
+                ,id: 'testReload'
             });
 
             //监听单元格编辑
@@ -325,32 +359,8 @@
                     ,data = obj.data //得到所在行所有键值
                     ,field = obj.field; //得到字段
                 console.log(obj);
-                $.ajax({
-                    type:'post',
-                    url:"/admins/inventory/" + obj.data.id + '/goods_position',
-                    data:{_token:"{{ csrf_token() }}", goods_position: obj.value},
-                    success:function(msg){
-                        if(msg=='0'){
-                            layer.msg('设置成功！',{icon:1,time:2000},function () {
-                                window.location = window.location;
-                                layer.close(index);
-                            });
-                        }else{
-                            layer.msg('设置失败！',{icon:2,time:2000});
-                        }
-                    },
-                    error: function(data){
-                        var errors = JSON.parse(data.responseText).errors;
-                        var msg = '';
-                        for(var a in errors){
-                            msg += errors[a][0]+'<br />';
-                        }
-                        layer.msg(msg,{icon:2,time:2000});
-                    }
-                });
+
             });
-
-
 
             //监听工具条
             table.on('tool(data_list)', function(obj){
@@ -404,25 +414,6 @@
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }else if(obj.event === 'check'){
-                        $.ajax({
-                            url:"{{url('admins/purchase_order/check/')}}/"+data.id,
-                            type:'post',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('审核成功！',{icon:1,time:2000},function () {
-                                        window.location = window.location;
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('审核失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
 
                 }
             });
@@ -546,9 +537,6 @@
                     //请求异常回调
                 }
             });
-
-
-
         });
 
     </script>

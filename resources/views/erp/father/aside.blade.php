@@ -116,16 +116,16 @@
             <li data-name="home" class="layui-nav-item ">
                 <a href="javascript:;" lay-tips="仓库管理" lay-direction="2">
                     <i class="layui-icon layui-icon-util"></i>
-                    <cite>仓库管理-NEW</cite>
+                    <cite>海外仓管理</cite>
                 </a>
                 <dl class="layui-nav-child">
 
-                    <dd data-name="console">
+                    {{-- <dd data-name="console">
                         <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
-                    </dd>
-                    <dd data-name="console">
+                    </dd> --}}
+                    {{-- <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory?warehouse_id=1')}}">深圳仓</a>
-                    </dd>
+                    </dd> --}}
                     {{-- <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory?warehouse_id=2')}}">深圳虚拟仓</a>
                     </dd> --}}
@@ -135,12 +135,12 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory?warehouse_id=4')}}">印尼虚拟仓</a>
                     </dd>
-                    <dd data-name="console">
+                    {{-- <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory')}}">菲律宾仓</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory')}}">菲律宾虚拟仓</a>
-                    </dd>
+                    </dd> --}}
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
                     </dd>

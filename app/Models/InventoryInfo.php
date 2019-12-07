@@ -39,6 +39,8 @@ class InventoryInfo extends Model
         $warehouse_id = $request->get('warehouse_id');
         $goods_sku = $request->get('goods_sku');
         $in_status = $request->get('in_status');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
 
         return self::with(['admin','sku'])
             ->when($warehouse_id, function($query) use ($warehouse_id) {
@@ -53,6 +55,9 @@ class InventoryInfo extends Model
                     $query->where('in_status', $in_status)->where('out_num', '>', 0);
                 }
 
+            })
+            ->when($start_date && $end_date, function($query) use($start_date, $end_date){
+                $query->whereBetween('created_at', [$start_date, $end_date]);
             })
             ->orderBy('id','desc')
             ->paginate($this->page_size);
