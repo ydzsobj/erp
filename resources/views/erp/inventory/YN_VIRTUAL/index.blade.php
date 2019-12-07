@@ -309,7 +309,9 @@
                 // console.log(data);
                 table.reload('testReload',{
                     where: {
-                        goods_sku: data.goods_sku
+                        goods_sku: data.goods_sku,
+                        start_date: $("#start_date").val(),
+                        end_date: $("#end_date").val(),
                     }
                 })
                 //标注选中样式
