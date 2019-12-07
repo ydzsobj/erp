@@ -41,26 +41,49 @@
             padding: 9px 0
         }
     </style>
-@section('hidden_dom')
 
-<form class="layui-form" action="" id ="fm_import" style="display:none;">
-    <div class="layui-form-item">
-        <label class="layui-form-label">选择文件</label>
-        <div class="layui-input-block">
-            <button type="button" class="layui-btn" id="import">导入数据</button>
-        </div>
 
-        <label class="layui-form-label">
-            <a href="{{ asset('templates/入库模板.xlsx') }}">
-                <span style="color:red;">下载模板</span>
-            </a>
-        </label>
+<!--筛选开始-->
+<div class="layui-row" style="margin-top:10px;">
+        <form class="layui-form" action="">
 
-    </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">请输入</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline" style="width:265px;">
+                            <input class="layui-input" name="keywords" id="demoReload" placeholder="产品名称/SKU编号"  autocomplete="off">
+                        </div>
+                    </div>
+                </div>
 
-</form>
-@endsection
+                <div class="layui-inline">
+                        <div class="layui-input-block">
+                            <div class="layui-inline" style="width:100px;">
+                                <select id="select_date_type">
+                                    <option value="1">入库时间</option>
+                                    <option value="2">出库时间</option>
+                                </select>
+                            </div>
 
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                            <a class="layui-btn" data-type="reload"  id='search'>查询</a>
+                            &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+            </div>
+
+            {{-- <div class="layui-row demoTable">
+                <a class="layui-btn" data-type="reload" style="margin-left:600px;" id='search'>搜索</a>
+                &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div> --}}
+
+        </form>
+</div>
+
+<!--表格面板-->
     <div style="width: 100%;height: calc(100% - 92px);">
         <div class="split-pane-warpper">
             <div class="pane pane-top" >
@@ -76,9 +99,17 @@
                         <div class="layui-col-md12">
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
-                                    <ul class="layui-tab-title">
-                                        <li class="layui-this">库存明细</li>
 
+                                    <ul class="layui-tab-title">
+                                        <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
+                                        <li>
+                                            <div class="layui-inline" style="width:150px;">
+                                                <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                                            </div>-
+                                            <div class="layui-inline" style="width:150px;">
+                                                <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                                            </div>
+                                        </li>
                                     </ul>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
@@ -105,6 +136,7 @@
             var table = layui.table,
                 layer = layui.layer,
                 $=layui.jquery;
+                var laydate = layui.laydate;
                 var upload = layui.upload;
             var conMove = false;
             $('.pane-trigger-con').mousedown(function(event){
@@ -122,6 +154,28 @@
                     // console.log(event)
                     conMove = false
                 })
+            });
+
+             //点击搜索
+            $('#search').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+                console.log('11');
+                // table.reload('sku_table');
+                table.reload('sku_table', {
+                    data:[]
+                });
+                $("#sku_detail").text('');
+            });
+
+            laydate.render({
+                elem: '#start_date'
+                ,type: 'datetime'
+            });
+
+            laydate.render({
+                elem: '#end_date'
+                ,type: 'datetime'
             });
 
             //渲染实例
@@ -221,21 +275,11 @@
                 active[type] ? active[type].call(this) : '';
             });
 
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
-            });
-
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(data_list)', function(obj){
                 var data = obj.data;
-                console.log(data);
+                // console.log(data);
+                $("#target_product_info").text('[' + data.sku.sku_name + ']');
                 table.render({
                     elem: '#table_list'
                     ,url: "{{ url('api/inventory_info')}}"//数据接口
@@ -256,17 +300,16 @@
                     ,limit: 50
                     ,limits: [50,100,300,500,1000,2000,5000,10000]
                     ,cols: [[
-                        {field:'created_at', width:200, title: '创建时间', sort:true}
+                        {field:'created_at', width:200, title: '业务时间', sort:true}
+                        ,{field:'in_num', width:120, title: '入库数量'}
+                        ,{field:'out_num', width:120, title: '出库数量'}
+                        ,{field:'goods_sku', title: 'SKU编码'}
                         ,{title: '产品名称', wifth:260,  templet: function(res){
                             return res.sku.sku_name;
                         }}
                         ,{title: '属性值',  templet: function(res){
                             return res.sku.sku_attr_value_names;
                         }}
-                        ,{field:'goods_sku', title: 'SKU编码'}
-                        ,{field:'in_num', width:120, title: '入库数量'}
-                        ,{field:'out_num', width:120, title: '出库数量'}
-
                         ,{field:'stock_type', title: '业务类型'}
                         ,{field:'user_id', title: '操作人', templet: function(res){
                             return res.admin.admin_name;
@@ -332,25 +375,6 @@
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
-                        $.ajax({
-                            url:"{{url('admins/supplier/')}}/"+data.id,
-                            type:'delete',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('删除成功！',{icon:1,time:2000},function () {
-                                        obj.del();
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('删除失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
 
 
                     });
@@ -366,25 +390,7 @@
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }else if(obj.event === 'check'){
-                        $.ajax({
-                            url:"{{url('admins/purchase_order/check/')}}/"+data.id,
-                            type:'post',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('审核成功！',{icon:1,time:2000},function () {
-                                        window.location = window.location;
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('审核失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
+
 
                 }
             });

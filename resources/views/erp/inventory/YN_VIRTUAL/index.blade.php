@@ -61,6 +61,28 @@
 </form>
 @endsection
 
+<!--筛选开始-->
+<div class="layui-row" style="margin-top:10px;">
+        <form class="layui-form" action="">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">请输入</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline" style="width:265px;">
+                            <input class="layui-input" name="keywords" id="demoReload" placeholder="产品名称/SKU编号"  autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="layui-inline">
+                            <a class="layui-btn" data-type="reload"  id='search'>查询</a>
+                            &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+            </div>
+        </form>
+</div>
+
     <div style="width: 100%;height: calc(100% - 92px);">
         <div class="split-pane-warpper">
             <div class="pane pane-top" >
@@ -77,7 +99,7 @@
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
                                     <ul class="layui-tab-title">
-                                        <li class="layui-this">库存明细</li>
+                                        <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
 
                                     </ul>
                                     <div class="layui-tab-content">
@@ -248,21 +270,11 @@
                 active[type] ? active[type].call(this) : '';
             });
 
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
-            });
-
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(data_list)', function(obj){
                 var data = obj.data;
-                console.log(data);
+                // console.log(data);
+                $("#target_product_info").text('[' + data.sku.sku_name + ']');
                 table.render({
                     elem: '#table_list'
                     ,url: "{{ url('api/inventory_info')}}"//数据接口
@@ -283,17 +295,16 @@
                     ,limit: 50
                     ,limits: [50,100,300,500,1000,2000,5000,10000]
                     ,cols: [[
-                        {field:'created_at', width:200, title: '创建时间', sort:true}
+                        {field:'created_at', width:200, title: '业务时间', sort:true}
+                        ,{field:'in_num', width:120, title: '入库数量'}
+                        ,{field:'out_num', width:120, title: '出库数量'}
+                        ,{field:'goods_sku', title: 'SKU编码'}
                         ,{title: '产品名称', wifth:260,  templet: function(res){
                             return res.sku.sku_name;
                         }}
                         ,{title: '属性值',  templet: function(res){
                             return res.sku.sku_attr_value_names;
                         }}
-                        ,{field:'goods_sku', title: 'SKU编码'}
-                        ,{field:'in_num', width:120, title: '入库数量'}
-                        ,{field:'out_num', width:120, title: '出库数量'}
-
                         ,{field:'stock_type', title: '业务类型'}
                         ,{field:'user_id', title: '操作人', templet: function(res){
                             return res.admin.admin_name;
