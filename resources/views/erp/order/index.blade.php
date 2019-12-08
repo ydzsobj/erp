@@ -10,7 +10,7 @@
         <table id="list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="order_used">
-        @{{# if(d.order_used == 0){ }} <div style="color: #ff0000">未占用</div> @{{# }else if(d.order_status == 2){  }} <div style="color: #0000FF">已占用</div>  @{{# }else{  }} <div style="color: #008000">部分占用</div> @{{# }  }}
+        @{{# if(d.order_used == 0){ }} <div style="color: #ff0000">未占用</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #008000">已占用</div>  @{{# }else{  }} <div style="color: #0000FF">部分占用</div> @{{# }  }}
     </script>
 @endsection
 @section('js')

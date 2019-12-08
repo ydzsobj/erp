@@ -48,6 +48,12 @@
     <script type="text/html" id="status">
         @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">未导入</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">已导入</div>  @{{# }else{  }} <div style="color: #008000">已确定</div> @{{# }  }}
     </script>
+    <script type="text/html" id="order_lock">
+        @{{# if(d.order_lock == 0){ }} <div style="color: #ff0000">未锁定</div> @{{# }else if(d.order_lock == 1){  }} <div style="color: #008000">已锁定</div>  @{{# }else{  }} <div>未知</div> @{{# }  }}
+    </script>
+    <script type="text/html" id="order_used">
+        @{{# if(d.order_used == 0){ }} <div style="color: #ff0000">未占用</div> @{{# }else if(d.order_used == 1){  }} <div style="color: #008000">已占用</div>  @{{# }else{  }} <div>未知</div> @{{# }  }}
+    </script>
 
 @endsection
 @section('js')
@@ -83,6 +89,8 @@
                     ,{field: 'order_address', title: '详细地址', width:220}
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
                     ,{field: 'created_at', title: '导入时间', width: 160, sort: true}
+                    ,{title: '锁定', width: 80, fixed: 'right',templet:'#order_lock'}
+                    ,{title: '占用', width: 80, fixed: 'right',templet:'#order_used'}
                 ]]
             });
 

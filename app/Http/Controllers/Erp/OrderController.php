@@ -144,7 +144,7 @@ class OrderController extends CommonController
         foreach ($ids as $key=>$value){
             if(empty($value)) continue;
 
-            $num = $this->doOrder($value);
+            $this->doOrder($value);
             $orderLogArr[] = [
                 'order_id' => intval($value),
                 'user_id' =>  Auth::guard('admin')->user()->id,
