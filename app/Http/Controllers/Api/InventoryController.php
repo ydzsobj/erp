@@ -22,6 +22,32 @@ class InventoryController extends Controller
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
+    //库存总账
+    public function all(Request $request){
+        $keywords = $request->get('keywords');
+        $page = $request->page ? $request->page : 1;
+        $limit = $request->limit ? $request->limit :100;
+        //getSql();
+        if($keywords){
+            //$count = Product::where('id',$keywords)->orWhere('product_name','like',"%{$keywords}%")->count();
+            //$data = Product::where('id',$keywords)->orWhere('product_name','like',"%{$keywords}%")->offset(($page-1)*$limit)->limit($limit)->get();
+            $count = Inventory::where(function ($query) use ($keywords){
+                $query->where('id','like',"%{$keywords}%")
+                    ->orWhere('goods_sku','like',"%{$keywords}%");
+            })->count();
+            $data = Inventory::with('warehouse','product_goods')->where(function ($query) use ($keywords){
+                $query->where('id','like',"%{$keywords}%")
+                    ->orWhere('goods_sku','like',"%{$keywords}%");
+            })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
+
+        }else{
+            $count = Inventory::count();
+            $data = Inventory::with('warehouse','product_goods')->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
+        }
+
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
     //获取单个信息
     public function goods(Request $request,$goods_id)
     {

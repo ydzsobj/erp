@@ -54,6 +54,9 @@ class CommonController extends Controller
                 //这里不涉及一单多品
                 $value->where('id',$value['id'])->update(['goods_used'=>1,'goods_lock'=>1]);
                 $order->where('id',$orderId)->update(['order_lock'=>1,'order_used'=>1,'warehouse_id'=>$match['warehouse_id']]);
+            }elseif($match['code']=='2'){
+                $value->where('id',$value['id'])->update(['goods_used'=>1]);
+                $order->where('id',$orderId)->update(['order_used'=>1]);
             }
         }
 
@@ -92,11 +95,15 @@ class CommonController extends Controller
                 }
 
             }elseif($value['warehouse_id']==1 && $value['plan_unused_num']>=$goods_num){
-                return [
-                    'code'=>'1',   //备货占用
-                    'warehouse_id'=>$value['warehouse_id'],
-                    'used_num'=>$goods_num
-                ];
+                $value->plan_used_num += $goods_num;
+                $value->plan_unused_num -= $goods_num;
+                $result = $value->save();
+                if($result){
+                    return [
+                        'code'=>'2',   //在途备货占用 库存未锁定
+                        'warehouse_id'=>$value['warehouse_id'],
+                    ];
+                }
             }
 
 
@@ -113,10 +120,10 @@ class CommonController extends Controller
     public function checkCurrency($order_currency){
         switch ($order_currency){
             case 'IDR' :    //印尼
-                return [2,1];
+                return [3,1];
                 break;
             case 'PHP' :    //菲律宾
-                return [3,1];
+                return [5,1];
                 break;
             default :
                 return [1];

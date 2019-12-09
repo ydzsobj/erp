@@ -99,19 +99,38 @@
                     <cite>仓库管理</cite>
                 </a>
                 <dl class="layui-nav-child">
-
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory?warehouse_id=1')}}">产品库存</a>
+                    <dd data-name="grid">
+                        <a href="javascript:;">深圳仓<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/inventory?warehouse_id=1')}}">产品库存</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
+                            </dd>
+                            <dd data-name="mobile">
+                                <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
+                            </dd>
+                        </dl>
                     </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
+                    <dd data-name="grid">
+                        <a href="javascript:;">仓库总账<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/inventory/all')}}">产品库存</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
+                            </dd>
+                            <dd data-name="mobile">
+                                <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
+                            </dd>
+                        </dl>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
                     </dd>
+
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">

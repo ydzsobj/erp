@@ -23,7 +23,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::any('admin/log','AdminController@log');
     Route::any('password','AdminController@password');
 
-
+    Route::get('inventory/all', 'InventoryController@all')->name('inventory.all');
     Route::get('product/sku/{id}', 'ProductController@sku')->name('product.sku');
     Route::get('product/sku_edit/{id}', 'ProductController@sku_edit')->name('product.sku_edit');
     Route::post('product/sku_update/{id}', 'ProductController@sku_update')->name('product.sku_update');
@@ -33,6 +33,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('purchase_warehouse/check/{id}', 'PurchaseWarehouseController@check')->name('purchase_warehouse.check');
     Route::post('purchase_warehouse/add/{id}', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
     Route::post('inventory/{id}/goods_position', 'InventoryController@goods_position')->name('inventory.goodsPosition');
+
 
     Route::get('order/list','OrderController@list')->name('order.list');
     Route::get('order/import','OrderController@import')->name('order.import');

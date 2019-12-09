@@ -110,6 +110,13 @@ class InventoryController extends Controller
     }
 
     /*
+     * 库存总账
+     */
+    public function all(){
+        return view('erp.inventory.all.index');
+    }
+
+    /*
      *设置商品SKU所在仓位库位
      */
     public function goods_position(Request $request,$id){

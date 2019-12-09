@@ -24,7 +24,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label" style="width: 90px">预计出货日期</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="expect_out_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                            <input type="text" name="expect_out_at" autocomplete="off" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label" style="width: 90px">预计到货日期</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="expect_deliver_at" lay-verify="required" class="layui-input" id="dateTime2" placeholder="yyyy-MM-dd HH:mm:ss">
+                        <input type="text" name="expect_deliver_at" autocomplete="off" lay-verify="required" class="layui-input" id="dateTime2" placeholder="yyyy-MM-dd HH:mm:ss">
                     </div>
                 </div>
             </div>
