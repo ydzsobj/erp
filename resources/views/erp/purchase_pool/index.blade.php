@@ -2,14 +2,12 @@
 @section('content')
 
     <style type="text/css">
-        .layui-table-cell,.laytable-cell-checkbox,.layui-table-col-special {
+        .layui-table-cell,.layui-table-col-special {
             height: auto;
-            line-height: 28px;
         }
     </style>
-    <div class="layui-fluid">
-        <table id="data_list" lay-filter="list"></table>
-    </div>
+
+
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
@@ -36,7 +34,7 @@
 
             //渲染实例
             table.render({
-                elem: '#data_list'
+                elem: '#list'
                 ,url: "{{url('api/purchase_pool')}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'

@@ -57,6 +57,7 @@ $api->version('v1', function ($api) {
         $api->get('/product/get_sku/{id}','ProductController@get_sku');
         $api->get('/purchase_order/goods/{id}','PurchaseOrderController@goods');
         $api->get('/purchase_warehouse/goods/{id}','PurchaseWarehouseController@goods');
+        $api->get('/inventory/all','InventoryController@all');
         $api->get('/inventory/goods/{id}','InventoryController@goods');
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
         $api->get('/warehouse_pick/order/{id}','WarehousePickController@order');

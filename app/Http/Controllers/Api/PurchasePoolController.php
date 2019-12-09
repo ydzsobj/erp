@@ -47,6 +47,7 @@ class PurchasePoolController extends Controller
         $skuKey =  array_column( $data, 'goods_sku');
         array_multisort($skuKey, SORT_ASC, $data);
 
+
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
 

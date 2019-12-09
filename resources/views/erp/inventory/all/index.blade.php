@@ -41,26 +41,60 @@
             padding: 9px 0
         }
     </style>
-@section('hidden_dom')
 
-<form class="layui-form" action="" id ="fm_import" style="display:none;">
-    <div class="layui-form-item">
-        <label class="layui-form-label">选择文件</label>
-        <div class="layui-input-block">
-            <button type="button" class="layui-btn" id="import">导入数据</button>
+    <div class="layui-form" style="padding: 4px 0;height:40px;">
+        <div class="layui-inline">
+            <div class="">
+                <div class="layui-inline">
+                    <label class="layui-form-label">日期范围：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" id="test-laydate-start"
+                               placeholder="开始日期">
+                    </div>
+                    <!-- <div class="layui-form-mid"> -->
+                    -
+                    <!-- </div> -->
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" id="test-laydate-end"
+                               placeholder="结束日期">
+                    </div>
+                </div>
+                <!-- <span style="color: red">时间不选择默认为近10天</span> -->
+                <div class="layui-inline">
+                    <label class="layui-form-label">日期范围：</label>
+                    <div class="layui-inline">
+                        <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">选择框：</label>
+                    <div class="layui-input-inline">
+                        <select name="quiz">
+                            <option value="">请选择问题</option>
+                            <option value="0">北京</option>
+                            <option value="1">上海</option>
+                            <option value="2">广州</option>
+                            <option value="3">深圳</option>
+                            <option value="4">杭州</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品：</label>
+                    <div class="layui-inline">
+                        <input class="layui-input" name="id" id="commodity" autocomplete="off">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">日期范围：</label>
+                    <div class="layui-inline">
+                        <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+                    </div>
+                    <button class="layui-btn layui-btn-sm" data-type="reload">搜索</button>
+                </div>
+            </div>
         </div>
-
-        <label class="layui-form-label">
-            <a href="{{ asset('templates/入库模板.xlsx') }}">
-                <span style="color:red;">下载模板</span>
-            </a>
-        </label>
-
     </div>
-
-</form>
-@endsection
-
     <div style="width: 100%;height: calc(100% - 92px);">
         <div class="split-pane-warpper">
             <div class="pane pane-top" >
@@ -77,8 +111,8 @@
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
                                     <ul class="layui-tab-title">
-                                        <li class="layui-this">库存明细</li>
-
+                                        <li class="layui-this">商品信息</li>
+                                        <li>安全设置</li>
                                     </ul>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
@@ -96,21 +130,30 @@
             </div>
         </div>
     </div>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">生成采购入库单</button>
+        </div>
+    </script>
 
 @endsection
 @section('js')
     <script>
 
-        layui.use(['table', 'upload','layer', 'laydate'], function(){
+        layui.use(['table','layer'], function(){
             var table = layui.table,
                 layer = layui.layer,
                 $=layui.jquery;
-                var upload = layui.upload;
             var conMove = false;
             $('.pane-trigger-con').mousedown(function(event){
                 conMove = true
                 $(document).mousemove(function  (event){
                     if (!conMove) return
+                    // console.log(event)
+                    // console.log($('.split-pane-warpper').height())
+                    // console.log(event.pageY)
+                    // console.log($('.pane-top').height())
+                    // console.log($('.pane-bottom').height())
                     var pageY=event.pageY-92
                     if (pageY < 100) pageY = 100
                     if (pageY > $('.split-pane-warpper').height()-40) pageY = $('.split-pane-warpper').height()-40
@@ -127,21 +170,10 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/inventory')}}" //数据接口
-                ,where: {
-                    warehouse_id:  {{ $warehouse_id }}
-                }
+                ,url: "{{url('api/inventory/all')}}" //数据接口
                 ,id: 'listReload'
-                ,toolbar: '#toolbarDemo'
-                ,parseData: function(res){ //res 即为原始返回的数据
-                        return {
-                            "code": res.code, //解析接口状态
-                            "msg": res.msg, //解析提示文本
-                            "count": res.count, //解析数据长度
-                            "data": res.data.data //解析数据列表
-                        };
-                    }
-                ,defaultToolbar: []
+                ,toolbar: '#toolbar'
+                ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '库存数据表'
                 ,page: true //开启分页
                 ,count: 10000
@@ -149,9 +181,9 @@
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,height: 'full-400'
                 ,cols: [[ //表头
-                    {type: 'checkbox', width:50}
+                    {type: 'radio', fixed: 'left'}
+                    ,{field: 'goods_position',title: '库位', width:80, fixed: 'left',edit:true}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-<<<<<<< HEAD
                     ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
                     ,{title: '商品名称', width:150,templet:function (res) {
                             return res.product_goods.sku_name;
@@ -166,7 +198,7 @@
                     ,{field: 'order_num', title: '在途订单', width:90}
                     ,{field: 'plan_num', title: '在途备货', width:90}
                     ,{field: 'plan_used_num', title: '备货占用', width:90}
-                    ,{field: 'plan_unused_num', title: '备货未占', width:90, style:'background-color: #eee; color: red;'}
+                    ,{field: 'plan_unused_num', title: '备货未占', width:90, style:'background-color: #eee; color: blue;'}
                     ,{field: 'in_num', title: '入库数量', width:90}
                     ,{field: 'out_num', title: '出库数量', width:90}
                     ,{title: '属性名', width:100,templet:function (res) {
@@ -176,25 +208,6 @@
                             return res.product_goods.sku_attr_value_names;
                         }}
                     ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
-=======
-                    ,{title: '商品名称',width:220, templet:function (res) {
-                            return res.sku.sku_name;
-                    }}
-                    ,{field: 'goods_sku', title: 'SKU编码', width:160}
-
-                    ,{title: '属性值',templet:function (res) {
-                            return res.sku.sku_attr_value_names;
-                    }}
-
-                    ,{field: 'stock_num', title: '库存', style:'color: green;'}
-                    ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
-                    ,{field: 'in_num', title: '入库数量'}
-                    ,{field: 'out_num', title: '出库数量'}
-                    ,{field: 'goods_position', title: '库位'}
-                    ,{field: 'goods_text', title: '商品备注'}
-
-
->>>>>>> aec640dc4efbd88b7b6006a9b48349b40afd7944
                 ]]
             });
 
@@ -266,25 +279,13 @@
                 console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{ url('api/inventory_info')}}"//数据接口
-                    ,where: {
-                        warehouse_id:  data.warehouse_id,
-                        goods_sku: data.goods_sku
-                    }
+                    ,url: "{{url('api/inventory/goods')}}/"+data.goods_id //数据接口
+                    ,where: {warehouse_id: data.warehouse_id}
                     ,page: true //开启分页
-                    ,parseData: function(res){ //res 即为原始返回的数据
-                        return {
-                            "code": res.code, //解析接口状态
-                            "msg": res.msg, //解析提示文本
-                            "count": res.count, //解析数据长度
-                            "data": res.data.data //解析数据列表
-                        };
-                    }
                     ,count: 10000
                     ,limit: 50
                     ,limits: [50,100,300,500,1000,2000,5000,10000]
                     ,cols: [[
-<<<<<<< HEAD
                         {field:'id', title: 'ID', width:80, sort: true}
                         ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:220}
@@ -293,23 +294,6 @@
                         ,{field:'out_num', title: '出库数量',  width:120}
                         ,{field:'created_at', title: '创建时间', width:180}
                         ,{field:'stock_code', title: '编码', width:135, fixed: 'right'}
-=======
-                        {field:'created_at', width:200, title: '创建时间', sort:true}
-                        ,{title: '产品名称', wifth:260,  templet: function(res){
-                            return res.sku.sku_name;
-                        }}
-                        ,{title: '属性值',  templet: function(res){
-                            return res.sku.sku_attr_value_names;
-                        }}
-                        ,{field:'goods_sku', title: 'SKU编码'}
-                        ,{field:'in_num', width:120, title: '入库数量'}
-                        ,{field:'out_num', width:120, title: '出库数量'}
-
-                        ,{field:'stock_type', title: '业务类型'}
-                        ,{field:'user_id', title: '操作人', templet: function(res){
-                            return res.admin.admin_name;
-                        }}
->>>>>>> aec640dc4efbd88b7b6006a9b48349b40afd7944
                     ]]
                     ,id: 'testReload'
                 });
@@ -354,7 +338,7 @@
 
 
             //监听工具条
-            table.on('tool(data_list)', function(obj){
+            table.on('tool(list)', function(obj){
                 var data = obj.data;
 
                 if(obj.event === 'detail'){
@@ -405,145 +389,26 @@
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }else if(obj.event === 'check'){
-                        $.ajax({
-                            url:"{{url('admins/purchase_order/check/')}}/"+data.id,
-                            type:'post',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('审核成功！',{icon:1,time:2000},function () {
-                                        window.location = window.location;
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('审核失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
+                    $.ajax({
+                        url:"{{url('admins/purchase_order/check/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('审核成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('审核失败！',{icon:2,time:2000});
                             }
-                        });
-
-                }
-            });
-
-            //监听头部工具条
-            table.on('toolbar(data_list)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-                var data = obj.data; //获得当前行数据
-                console.log(obj);
-                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-                var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
-
-                var checkStatus = table.checkStatus(obj.config.id);
-
-                console.log(checkStatus.data);
-
-                if(layEvent === 'import_order'){ //
-                    //do somehing
-                    console.log('click import store');
-                    layer.open({
-                        title:'入库',
-                        type: 1,
-                        area:['600px','300px'],
-                        content: $("#fm_import")
-                    })
-                }else if(layEvent == 'batch_audit'){
-                    //批量审核
-                    if(checkStatus.data.length == 0){
-                        layer.msg('请先选择订单');
-                        return false;
-                    }
-
-                    var selected_rows = checkStatus.data;
-                    var selected_ids = [];
-                    for(var i=0;i<selected_rows.length;i++){
-                        selected_ids.push(selected_rows[i].id);
-                    }
-                    console.log(selected_ids);
-
-                    layer.confirm('确定要审核通过吗?', function(index){
-                        layer.close(index);
-                        //向服务端发送指令
-                        $.ajax({
-                            type:'POST',
-                            url: "{{ route('orders.batch_audit') }}",
-                            data:{ _token: "{{ csrf_token() }}" ,order_ids: selected_ids },
-                            dataType:"json",
-                            success:function(msg){
-                                    console.log(msg);
-                                    layer.msg(msg.msg);
-                                    if(msg.success){
-                                    table.reload('demo');
-                                    }
-                            },
-                            error: function(data){
-                                layer.msg('请求接口失败',{icon:2,time:2000});
-                            }
-
-                        })
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
                     });
 
-                }
-            });
-
-            // //执行实例
-            var uploadInst = upload.render({
-                elem: '#import' //绑定元素
-                ,url: '/admins/uploader/pic_upload' //上传接口
-                ,accept: 'file' //所有文件
-                ,exts: 'xls|xlsx' //后缀
-                ,data: {_token:"{{ csrf_token() }}"}
-                ,done: function(res){
-                    //上传完毕回调
-                    // console.log(res, $(".country_id:checked"));
-                    if(res.code == 0){
-                        $.ajax({
-                            type:'POST',
-                            url: "{{route('inventory.import')}}",
-                            data:{
-                                path:res.path,
-                                _token:"{{ csrf_token()}}",
-                                warehouse_id:{{ $warehouse_id }}
-                            },
-                            success:function(msg){
-                                console.log(msg);
-                                layer.open({
-                                    title: '提示',
-                                    content: msg,
-                                    yes:function(index, layero){
-                                        table.reload('listReload', {
-                                            where: { //设定异步数据接口的额外参数，任意设
-                                                aaaaaa: 'xxx'
-                                                ,bbb: 'yyy'
-                                                //…
-                                            }
-                                            ,page: {
-                                                curr: 1 //重新从第 1 页开始
-                                            }
-                                            }); //只重载数据
-
-                                        layer.closeAll();
-
-                                        // window.location.reload();
-                                    }
-                                });
-                            },
-                            error: function(data){
-                                var errors = JSON.parse(data.responseText).errors;
-                                var msg = '';
-                                for(var a in errors){
-                                    msg += errors[a][0]+'<br />';
-                                }
-                                    layer.msg(msg,{icon:2,time:2000});
-                            }
-                        })
-                    }else{
-                        layer.msg('上传失败，请重新上传');
-                    }
-                }
-                ,error: function(){
-                    //请求异常回调
                 }
             });
 
@@ -553,10 +418,3 @@
 
     </script>
 @endsection
-
-<script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
-      <button class="layui-btn layui-btn-sm" lay-event="import_order" >入库</button>
-      <button class="layui-btn layui-btn-sm" lay-event="" >出库</button>
-    </div>
-  </script>
