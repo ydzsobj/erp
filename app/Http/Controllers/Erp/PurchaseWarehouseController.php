@@ -221,11 +221,12 @@ class PurchaseWarehouseController extends CommonController
 
             $inventory->afloat_num = $inventory->afloat_num - $value['goods_num'];
             $inventory->stock_num = $inventory->stock_num + $value['goods_num'];
-            $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'];
-            $inventory->stock_unused_num = $inventory->stock_unused_num + $value['plan_num'];
+            $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'] + $value['plan_used_num'];
+            $inventory->stock_unused_num = $inventory->stock_unused_num + $value['plan_unused_num'];
             $inventory->plan_num = $inventory->plan_num - $value['plan_num'];
             $inventory->order_num = $inventory->order_num - $value['order_num'];
-            $inventory->plan_unused_num = $inventory->plan_unused_num - $value['plan_num'];
+            $inventory->plan_unused_num = $inventory->plan_unused_num - $value['plan_unused_num'];
+            $inventory->plan_used_num = $inventory->plan_used_num - $value['plan_used_num'];
             $inventory->in_num = $inventory->in_num + $value['goods_num'];
 //            $inventory->afloat_price = $value['goods_price'];
 //            $inventory->afloat_money = $inventory->afloat_money - $value['goods_money'];

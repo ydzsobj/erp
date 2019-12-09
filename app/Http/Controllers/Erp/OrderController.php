@@ -144,13 +144,13 @@ class OrderController extends CommonController
         foreach ($ids as $key=>$value){
             if(empty($value)) continue;
 
-            $this->doOrder($value);
+            $order = $this->doOrder($value);
             $orderLogArr[] = [
                 'order_id' => intval($value),
                 'user_id' =>  Auth::guard('admin')->user()->id,
-                'order_status' => 1,
-                'order_text' => '订单已处理',
-                'created_at' => date('Y-m-d H:i:s', time()),
+                'order_status' => $order['order_status'],
+                'order_text' => $order['order_text'],
+                'created_at' => Carbon::now(),
             ];
         }
         //dd($ids);

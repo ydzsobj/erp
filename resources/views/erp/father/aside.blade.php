@@ -62,7 +62,7 @@
                         <a lay-href="{{ url('/admins/order/import') }}">订单导入</a>
                     </dd>
                     <dd data-name="console">
-                        <a lay-href="{{ url('/admins/order') }}">订单汇总</a>
+                        <a lay-href="{{ url('/admins/order') }}">待采汇总</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{route('orders.index') }}">SHOPIFY订单</a>
@@ -81,9 +81,6 @@
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_order')}}">采购订单</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/purchase_warehouse')}}">验收入库</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/purchase_return')}}">采购退货出库</a>
@@ -106,6 +103,9 @@
                                 <a lay-href="{{url('/admins/inventory?warehouse_id=1')}}">产品库存</a>
                             </dd>
                             <dd data-name="console">
+                                <a lay-href="{{url('/admins/purchase_warehouse/1/in')}}">验收入库</a>
+                            </dd>
+                            <dd data-name="console">
                                 <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
                             </dd>
                             <dd data-name="mobile">
@@ -118,6 +118,9 @@
                         <dl class="layui-nav-child">
                             <dd data-name="list">
                                 <a lay-href="{{url('/admins/inventory/all')}}">产品库存</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/purchase_warehouse')}}">验收入库</a>
                             </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>

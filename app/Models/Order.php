@@ -25,13 +25,14 @@ class Order extends Model
         $page = $request->page ?: 1;
         $limit = $request->limit ?: 100;
 
-        $count = static::where('order_status',$status)
+        $count = static::where('order_used',0)
             ->keywords($keywords)
+            ->status($status)
             ->date($start_date, $end_date)
             ->count();
-        $orders = static::where('order_status',$status)
+        $orders = static::where('order_used',0)
             ->keywords($keywords)
-            //->status($status)
+            ->status($status)
             ->date($start_date, $end_date)
             //->select('orders.*')
             ->orderBy('id','asc')
