@@ -5,7 +5,7 @@ namespace App\Listeners;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use \Log;
+use Log;
 
 class QueryListener
 {
@@ -33,8 +33,8 @@ class QueryListener
                 // $fileName = storage_path('logs/sql/'.date('Y-m-d').'.log');
                 // Log::useFiles($fileName,'info');
                 $sql = str_replace("?", "'%s'", $event->sql);
-                //$log = vsprintf($sql, $event->bindings);
-                //Log::info($log);
+                $log = vsprintf($sql, $event->bindings);
+                Log::info($log);
             }
         }
     }

@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(70% - 3px);
+            height: calc(50% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(70% + 3px);
+            top: calc(50% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(70% - 3px);
+            top: calc(50% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -41,26 +41,32 @@
             padding: 9px 0
         }
     </style>
-@section('hidden_dom')
 
-<form class="layui-form" action="" id ="fm_import" style="display:none;">
-    <div class="layui-form-item">
-        <label class="layui-form-label">选择文件</label>
-        <div class="layui-input-block">
-            <button type="button" class="layui-btn" id="import">导入数据</button>
-        </div>
 
-        <label class="layui-form-label">
-            <a href="{{ asset('templates/入库模板.xlsx') }}">
-                <span style="color:red;">下载模板</span>
-            </a>
-        </label>
+<!--筛选开始-->
+<div class="layui-row" style="margin-top:10px;">
+        <form class="layui-form" action="">
 
-    </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">请输入</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline" style="width:265px;">
+                            <input class="layui-input" name="keywords" id="keywords" placeholder="产品名称/SKU编号"  autocomplete="off">
+                        </div>
+                    </div>
+                </div>
 
-</form>
-@endsection
+                    <div class="layui-inline">
+                        <a class="layui-btn" data-type="reload"  id='search'>查询</a>
+                        &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+            </div>
 
+        </form>
+</div>
+
+<!--表格面板-->
     <div style="width: 100%;height: calc(100% - 92px);">
         <div class="split-pane-warpper">
             <div class="pane pane-top" >
@@ -76,10 +82,38 @@
                         <div class="layui-col-md12">
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
-                                    <ul class="layui-tab-title">
-                                        <li class="layui-this">库存明细</li>
+                                    <form class="layui-form" action="">
+                                        <ul class="layui-tab-title">
+                                            <li class="layui-this"><b id="target_product_info"></b> 库存明细</li>
+                                            <li>
 
-                                    </ul>
+                                                <label>
+                                                    业务时间 :
+                                                </label>
+                                                <div class="layui-inline" style="width:150px;">
+                                                    <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                                                </div>-
+                                                <div class="layui-inline" style="width:150px;">
+                                                    <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                                                </div>
+                                            </li>
+                                            <li>
+                                                    <label>
+                                                        SKU编码 :
+                                                    </label>
+                                                    <div class="layui-inline" style="width:150px;">
+                                                        <input class="layui-input" name="goods_sku" id="goods_sku" placeholder="请输入sku">
+                                                    </div>
+                                            </li>
+                                            <li>
+                                                <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
+                                            </li>
+                                            <li>
+                                                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+                                            </li>
+
+                                        </ul>
+                                    </form>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
                                             <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
@@ -105,6 +139,7 @@
             var table = layui.table,
                 layer = layui.layer,
                 $=layui.jquery;
+                var laydate = layui.laydate;
                 var upload = layui.upload;
             var conMove = false;
             $('.pane-trigger-con').mousedown(function(event){
@@ -122,6 +157,67 @@
                     // console.log(event)
                     conMove = false
                 })
+            });
+
+             //点击搜索
+            $('#search').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+                console.log('11');
+                //执行重载
+
+            });
+
+            $('#sub_search').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+
+            });
+
+            var active = {
+                reload: function(){
+
+                    //执行重载
+                    table.reload('listReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            keywords: $("#keywords").val()
+                        }
+                    }, 'data');
+
+                    table.reload('testReload', {
+                       data:[]
+                    });
+                },
+
+                sub_reload: function(){
+
+                    //执行重载
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            start_date: $("#start_date").val(),
+                            end_date: $("#end_date").val(),
+                            goods_sku:$("#goods_sku").val(),
+                        }
+                    }, 'data');
+
+                }
+
+            };
+
+            laydate.render({
+                elem: '#start_date'
+                ,type: 'datetime'
+            });
+
+            laydate.render({
+                elem: '#end_date'
+                ,type: 'datetime'
             });
 
             //渲染实例
@@ -145,38 +241,11 @@
                 ,title: '库存数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 100
-                ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-400'
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type: 'checkbox', width:50}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-<<<<<<< HEAD
-                    ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
-                    ,{title: '商品名称', width:150,templet:function (res) {
-                            return res.product_goods.sku_name;
-                        }}
-                    ,{title: '仓库名', width:120,templet:function (res) {
-                            return res.warehouse.warehouse_name;
-                        }}
-                    ,{field: 'stock_num', title: '库存数量', width:90, style:'background-color: #eee; color: green;'}
-                    ,{field: 'stock_used_num', title: '库存占用', width:90}
-                    ,{field: 'stock_unused_num', title: '库存未占', width:90}
-                    ,{field: 'afloat_num', title: '在途数量', width:90, style:'background-color: #eee; color: blue;'}
-                    ,{field: 'order_num', title: '在途订单', width:90}
-                    ,{field: 'plan_num', title: '在途备货', width:90}
-                    ,{field: 'plan_used_num', title: '备货占用', width:90}
-                    ,{field: 'plan_unused_num', title: '备货未占', width:90, style:'background-color: #eee; color: red;'}
-                    ,{field: 'in_num', title: '入库数量', width:90}
-                    ,{field: 'out_num', title: '出库数量', width:90}
-                    ,{title: '属性名', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_names;
-                        }}
-                    ,{title: '属性值', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_value_names;
-                        }}
-                    ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
-=======
                     ,{title: '商品名称',width:220, templet:function (res) {
                             return res.sku.sku_name;
                     }}
@@ -194,130 +263,61 @@
                     ,{field: 'goods_text', title: '商品备注'}
 
 
->>>>>>> aec640dc4efbd88b7b6006a9b48349b40afd7944
                 ]]
-            });
-
-
-            create_show = function create_show(title,url,type,w,h) {
-                if(layui.device().android||layui.device().ios){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:['375px','667px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }else {
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:type,
-                        title:title,
-                        area:[w,h],
-                        fixed:false,
-                        maxmin:true,
-                        content:url
-                    });
-                }
-            };
-
-
-            var active = {
-                reload: function(){
-                    var searchReload = $('#searchReload');
-                    //执行重载
-                    table.reload('testReload', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                    }, 'data');
-                    //执行重载
-                    table.reload('listReload', {
-                        page: {
-                            curr: 1 //重新从第 1 页开始
-                        }
-                        ,where: {
-                            keywords: searchReload.val()
-                        }
-                    }, 'data');
-                }
-            };
-            $('.demoTable .layui-btn').on('click', function(){
-                var type = $(this).data('type');
-                active[type] ? active[type].call(this) : '';
-            });
-
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
             });
 
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(data_list)', function(obj){
                 var data = obj.data;
-                console.log(data);
-                table.render({
-                    elem: '#table_list'
-                    ,url: "{{ url('api/inventory_info')}}"//数据接口
-                    ,where: {
-                        warehouse_id:  data.warehouse_id,
-                        goods_sku: data.goods_sku
+
+                table.reload('testReload',{
+                    where: {
+                        goods_sku: data.goods_sku,
+                        start_date: $("#start_date").val(),
+                        end_date: $("#end_date").val(),
                     }
-                    ,page: true //开启分页
-                    ,parseData: function(res){ //res 即为原始返回的数据
-                        return {
-                            "code": res.code, //解析接口状态
-                            "msg": res.msg, //解析提示文本
-                            "count": res.count, //解析数据长度
-                            "data": res.data.data //解析数据列表
-                        };
-                    }
-                    ,count: 10000
-                    ,limit: 50
-                    ,limits: [50,100,300,500,1000,2000,5000,10000]
-                    ,cols: [[
-<<<<<<< HEAD
-                        {field:'id', title: 'ID', width:80, sort: true}
-                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
-                        ,{field:'goods_name', title: '商品名称', width:220}
-                        ,{field:'stock_num', title: '库存数量', width:120}
-                        ,{field:'in_num', title: '入库数量',width:120}
-                        ,{field:'out_num', title: '出库数量',  width:120}
-                        ,{field:'created_at', title: '创建时间', width:180}
-                        ,{field:'stock_code', title: '编码', width:135, fixed: 'right'}
-=======
-                        {field:'created_at', width:200, title: '创建时间', sort:true}
-                        ,{title: '产品名称', wifth:260,  templet: function(res){
-                            return res.sku.sku_name;
-                        }}
-                        ,{title: '属性值',  templet: function(res){
-                            return res.sku.sku_attr_value_names;
-                        }}
-                        ,{field:'goods_sku', title: 'SKU编码'}
-                        ,{field:'in_num', width:120, title: '入库数量'}
-                        ,{field:'out_num', width:120, title: '出库数量'}
-
-                        ,{field:'stock_type', title: '业务类型'}
-                        ,{field:'user_id', title: '操作人', templet: function(res){
-                            return res.admin.admin_name;
-                        }}
->>>>>>> aec640dc4efbd88b7b6006a9b48349b40afd7944
-                    ]]
-                    ,id: 'testReload'
-                });
-
-
-
+                })
+                // console.log(data);
+                // $("#target_product_info").text('[' + data.sku.sku_name + ']');
                 //标注选中样式
                 obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
+
+            table.render({
+                elem: '#table_list'
+                ,url: "{{ url('api/inventory_info')}}"//数据接口
+                ,where: {
+                    warehouse_id: {{ $warehouse_id }}
+                }
+                ,page: true //开启分页
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data.data //解析数据列表
+                    };
+                }
+                ,count: 10000
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,cols: [[
+                    {field:'created_at', width:200, title: '业务时间', sort:true}
+                    ,{field:'in_num', width:120, title: '入库数量'}
+                    ,{field:'out_num', width:120, title: '出库数量'}
+                    ,{field:'goods_sku', title: 'SKU编码'}
+                    ,{title: '产品名称', wifth:260,  templet: function(res){
+                        return res.sku.sku_name;
+                    }}
+                    ,{title: '属性值',  templet: function(res){
+                        return res.sku.sku_attr_value_names;
+                    }}
+                    ,{field:'stock_type', title: '业务类型'}
+                    ,{field:'user_id', title: '操作人', templet: function(res){
+                        return res.admin.admin_name;
+                    }}
+                ]]
+                ,id: 'testReload'
             });
 
             //监听单元格编辑
@@ -371,25 +371,6 @@
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
-                        $.ajax({
-                            url:"{{url('admins/supplier/')}}/"+data.id,
-                            type:'delete',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('删除成功！',{icon:1,time:2000},function () {
-                                        obj.del();
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('删除失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
 
 
                     });
@@ -405,25 +386,7 @@
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }else if(obj.event === 'check'){
-                        $.ajax({
-                            url:"{{url('admins/purchase_order/check/')}}/"+data.id,
-                            type:'post',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('审核成功！',{icon:1,time:2000},function () {
-                                        window.location = window.location;
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('审核失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
+
 
                 }
             });
@@ -443,11 +406,18 @@
                     //do somehing
                     console.log('click import store');
                     layer.open({
-                        title:'入库',
-                        type: 1,
-                        area:['600px','300px'],
-                        content: $("#fm_import")
-                    })
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'待入库列表',
+                        area: ['960px', '600px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{ route('inventory.yn_in_create') }}?warehouse_id={{ $yn_virtual_warehouse_id }}",
+                        end :function(){
+                            do_reload();
+
+                        }
+                    });
                 }else if(layEvent == 'batch_audit'){
                     //批量审核
                     if(checkStatus.data.length == 0){
@@ -486,6 +456,19 @@
 
                 }
             });
+
+            function do_reload(){
+            // var demoReload = $('#demoReload');
+                table.reload('listReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+
+                    }
+                }, 'data');
+        }
+
 
             // //执行实例
             var uploadInst = upload.render({

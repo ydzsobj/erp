@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Imports\InventoryImport;
 use App\Models\Inventory;
 use App\Models\InventoryInfo;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventoryController extends Controller
 {
@@ -13,26 +15,9 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
 
-        $keywords = $request->get('keywords');
-        $page = $request->page ? $request->page : 1;
-        $limit = $request->limit ? $request->limit :50;
-        //getSql();
-        if($keywords){
-            //$count = Product::where('id',$keywords)->orWhere('product_name','like',"%{$keywords}%")->count();
-            //$data = Product::where('id',$keywords)->orWhere('product_name','like',"%{$keywords}%")->offset(($page-1)*$limit)->limit($limit)->get();
-            $count = Inventory::where(function ($query) use ($keywords){
-                $query->where('id','like',"%{$keywords}%")
-                    ->orWhere('goods_sku','like',"%{$keywords}%");
-            })->count();
-            $data = Inventory::with('warehouse','product_goods')->where(function ($query) use ($keywords){
-                $query->where('id','like',"%{$keywords}%")
-                    ->orWhere('goods_sku','like',"%{$keywords}%");
-            })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
-
-        }else{
-            $count = Inventory::count();
-            $data = Inventory::with('warehouse','product_goods')->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get();
-        }
+        $obj = new Inventory();
+        $data = $obj->get_data($request);
+        $count = $data->total();
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
@@ -47,4 +32,17 @@ class InventoryController extends Controller
         })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
+
+    /**
+     * 库存详情
+     */
+    public function api_info(Request $request){
+
+        $info_obj = new InventoryInfo();
+
+        $data = $info_obj->get_data($request);
+
+        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data, 'count' => $data->total()]);
+    }
+
 }

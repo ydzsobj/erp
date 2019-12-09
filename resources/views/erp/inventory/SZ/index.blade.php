@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(70% - 3px);
+            height: calc(50% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(70% + 3px);
+            top: calc(50% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(70% - 3px);
+            top: calc(50% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -145,38 +145,11 @@
                 ,title: '库存数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 100
-                ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-400'
+                ,limit: 50
+                ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type: 'checkbox', width:50}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-<<<<<<< HEAD
-                    ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
-                    ,{title: '商品名称', width:150,templet:function (res) {
-                            return res.product_goods.sku_name;
-                        }}
-                    ,{title: '仓库名', width:120,templet:function (res) {
-                            return res.warehouse.warehouse_name;
-                        }}
-                    ,{field: 'stock_num', title: '库存数量', width:90, style:'background-color: #eee; color: green;'}
-                    ,{field: 'stock_used_num', title: '库存占用', width:90}
-                    ,{field: 'stock_unused_num', title: '库存未占', width:90}
-                    ,{field: 'afloat_num', title: '在途数量', width:90, style:'background-color: #eee; color: blue;'}
-                    ,{field: 'order_num', title: '在途订单', width:90}
-                    ,{field: 'plan_num', title: '在途备货', width:90}
-                    ,{field: 'plan_used_num', title: '备货占用', width:90}
-                    ,{field: 'plan_unused_num', title: '备货未占', width:90, style:'background-color: #eee; color: red;'}
-                    ,{field: 'in_num', title: '入库数量', width:90}
-                    ,{field: 'out_num', title: '出库数量', width:90}
-                    ,{title: '属性名', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_names;
-                        }}
-                    ,{title: '属性值', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_value_names;
-                        }}
-                    ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
-=======
                     ,{title: '商品名称',width:220, templet:function (res) {
                             return res.sku.sku_name;
                     }}
@@ -194,7 +167,6 @@
                     ,{field: 'goods_text', title: '商品备注'}
 
 
->>>>>>> aec640dc4efbd88b7b6006a9b48349b40afd7944
                 ]]
             });
 
@@ -284,16 +256,6 @@
                     ,limit: 50
                     ,limits: [50,100,300,500,1000,2000,5000,10000]
                     ,cols: [[
-<<<<<<< HEAD
-                        {field:'id', title: 'ID', width:80, sort: true}
-                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
-                        ,{field:'goods_name', title: '商品名称', width:220}
-                        ,{field:'stock_num', title: '库存数量', width:120}
-                        ,{field:'in_num', title: '入库数量',width:120}
-                        ,{field:'out_num', title: '出库数量',  width:120}
-                        ,{field:'created_at', title: '创建时间', width:180}
-                        ,{field:'stock_code', title: '编码', width:135, fixed: 'right'}
-=======
                         {field:'created_at', width:200, title: '创建时间', sort:true}
                         ,{title: '产品名称', wifth:260,  templet: function(res){
                             return res.sku.sku_name;
@@ -309,7 +271,6 @@
                         ,{field:'user_id', title: '操作人', templet: function(res){
                             return res.admin.admin_name;
                         }}
->>>>>>> aec640dc4efbd88b7b6006a9b48349b40afd7944
                     ]]
                     ,id: 'testReload'
                 });
