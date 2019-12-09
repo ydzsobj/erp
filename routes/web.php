@@ -107,14 +107,23 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     /******印尼虚拟仓库相关 by tian**/
     //导入入库
     Route::post('import_inventorys', 'InventoryController@import')->name('inventory.import');
+    //出库页面
+    Route::get('/yn_virtual_out_create', 'InventoryController@yn_virtual_out_create')->name('inventory.yn_virtual_out_create');
     //出库
     Route::post('/yn_virtual_out', 'InventoryController@yn_virtual_out')->name('inventory.yn_virtual_out');
+    //入库页面
+    Route::get('/yn_virtual_in_create', 'InventoryController@yn_virtual_in_create')->name('inventory.yn_virtual_in_create');
+    //入口
+    Route::get('/guide', 'InventoryController@guide')->name('inventory.guide');
+
     /***虚拟仓end */
 
-    /**印尼仓相关 */
+    /***********印尼仓相关 */
     //待入库列表
     Route::get('/yn_in_create',  'InventoryController@yn_in_create')->name('inventory.yn_in_create');
+    Route::get('/yn_out_create',  'InventoryController@yn_out_create')->name('inventory.yn_out_create');
     //入库
     Route::post('/yn_in',  'InventoryController@yn_in')->name('inventory.yn_in');
+    Route::post('/yn_out',  'InventoryController@yn_out')->name('inventory.yn_out');
 
 });

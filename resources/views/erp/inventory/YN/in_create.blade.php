@@ -18,8 +18,8 @@
                 elem: '#data_list'
                 ,url: "{{url('api/inventory_info')}}" //数据接口
                 ,where: {
-                    warehouse_id:  {{ $warehouse_id }},
-                    in_status: 0
+                    warehouse_id:  {{ $virtual_warehouse_id }},
+                    out_status: 1
                 }
                 ,id: 'listReload'
                 ,toolbar: '#toolbarDemo'
@@ -42,11 +42,11 @@
                         ,{title: '产品名称',  templet: function(res){
                             return res.sku.sku_name;
                         }}
-                        ,{title: '属性值', width:100, templet: function(res){
+                        ,{title: '属性值', templet: function(res){
                             return res.sku.sku_attr_value_names;
                         }}
-                        ,{field:'goods_sku', title: 'SKU编码', width:150}
-                        ,{field:'out_num', width:80, title: '待入库',style:'color:green'}
+                        ,{field:'goods_sku', title: 'SKU编码'}
+                        ,{field:'out_num', width:120, title: '待入库数量',style:'color:green'}
                         ,{field:'stock_type', title: '业务类型', width:100,}
                         ,{field:'created_at', width:170, title: '业务时间', sort:true}
                         ,{field:'user_id', title: '操作人',  width:100,templet: function(res){
@@ -176,8 +176,10 @@
                                     console.log(msg);
                                     layer.msg(msg.msg);
                                     if(msg.success){
-                                        var index = parent.layer.getFrameIndex(window.name);
-                                        parent.layer.close(index);
+
+                                        table.reload('listReload');
+                                        // var index = parent.layer.getFrameIndex(window.name);
+                                        // parent.layer.close(index);
                                         // parent.window.location = parent.window.location
                                     }
                             },
