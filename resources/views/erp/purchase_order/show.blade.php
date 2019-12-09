@@ -110,13 +110,9 @@
                     ,{field:'sku_name', title: '商品名称', width:180,templet:function(res){return res.goods_name;}}
                     ,{field:'goods_attr_name', title: '属性名', width:100}
                     ,{field:'goods_attr_value', title: '属性值', width:100}
-                    ,{field:'goods_num', title: '数量',width:80}
-                    ,{field:'goods_price', title: '单价',width:80}
-                    ,{field:'goods_money', title: '总价',  width:80}
-                    ,{field:'tax_rate', title: '税率', width:80}
-                    ,{field:'tax', title: '税费', width:80}
-                    ,{field:'price_tax', title: '单税率', width:80}
-                    ,{field:'money_tax', title: '总金额', width:80}
+                    ,{field:'plan_num', title: '备货数量', width: 100}
+                    ,{field:'order_num', title: '订单数量', width: 100}
+                    ,{field:'goods_money', title: '金额', width: 100}
                     ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
                 ]]
             });

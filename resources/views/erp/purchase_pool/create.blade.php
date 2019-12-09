@@ -109,8 +109,8 @@
                     {field: 'goods_name', title: '商品名称', width: 180},
                     {field: 'goods_attr_name', title: '属性名', width: 100},
                     {field: 'goods_attr_value', title: '属性值', width: 100},
-                    {field: 'stock_num', title: '备货数量', edit:'text', width: 100},
-                    {field: 'order_num', title: '订单数量A', edit:'text', width: 100},
+                    {field: 'plan_num', title: '备货数量', edit:'text', width: 100},
+                    {field: 'order_num', title: '订单数量', edit:'text', width: 100},
                     {field: 'goods_money', title: '金额', edit:'text', width: 100},
                     // {field: 'tax_rate', title: '税率', edit:'text', width: 80},
                     // {field: 'tax', title: '税费', width: 100},
@@ -119,10 +119,6 @@
                 ]],
             });
 
-            //表初始化
-            var tableIns = function () {
-                table.init('stock_num', 0);
-            };
 
             //监听提交
             form.on('submit(form)', function(data){
@@ -130,7 +126,7 @@
                 data.field.table = table.cache;
                 for(var i=0, row; i < table.cache.dataTable.length; i++){
                     row = table.cache.dataTable[i];
-                    if(row.goods_num==0 || row.goods_num==''){
+                    if(row.order_num==0 || row.order_num==''){
                         layer.msg("检查每一行，请完善数据！", { icon: 5 }); //提示
                         return false;
                     }

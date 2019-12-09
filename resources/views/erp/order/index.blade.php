@@ -1,63 +1,17 @@
 @extends('erp.father.father')
 @section('content')
-    <div class="layui-row" style="margin-top:10px;">
-        <form class="layui-form" action="">
-
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">请输入</label>
-                    <div class="layui-input-block">
-                        <div class="layui-inline" style="width:300px;">
-                            <input class="layui-input" name="keywords" id="searchReload" placeholder="订单编号/运单编号/收货人姓名电话详细地址"  autocomplete="off">
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">状态</label>
-                    <div class="layui-input-inline">
-                        <select name="order_status" id="order_status">
-                            <option value="0">未导入</option>
-                            <option value="1">已导入</option>
-                            <option value="2">已确定</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <label class="layui-form-label">导入时间</label>
-                    <div class="layui-input-block">
-                        <div class="layui-inline">
-                            <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
-                        </div>-
-                        <div class="layui-inline">
-                            <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="layui-row demoTable">
-                <a class="layui-btn" data-type="reload" style="margin-left:600px;" id='search'>搜索</a>
-                &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-
-        </form>
-    </div>
 
     <div class="layui-fluid">
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container demoTable">
-                <button class="layui-btn" data-type="getCheckData">批量生成汇总单</button>
-{{--                <button class="layui-btn layui-btn-warm" onclick="show('查看采购汇总单','{{url("admins/order/order_pool")}}',2,'100%','100%');">查看采购汇总单</button>--}}
-                <button class="layui-btn layuiadmin-btn-tags layui-btn-normal" onclick="show('导入订单','{{url("admins/order/create")}}',2,'500px','500px');">导入订单</button>
+                <button class="layui-btn" data-type="getCheckData">批量生成采购汇总单</button>
             </div>
         </script>
         <table id="list" lay-filter="list"></table>
     </div>
-    <script type="text/html" id="status">
-        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">未导入</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">已导入</div>  @{{# }else{  }} <div style="color: #008000">已确定</div> @{{# }  }}
+    <script type="text/html" id="order_used">
+        @{{# if(d.order_used == 0){ }} <div style="color: #ff0000">未占用</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #008000">已占用</div>  @{{# }else{  }} <div style="color: #0000FF">部分占用</div> @{{# }  }}
     </script>
-
 @endsection
 @section('js')
     <script>
@@ -80,18 +34,17 @@
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,page: true //开启分页
-                ,height: 'full-200'
+                ,height: 'full-50'
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
-                    ,{field: 'order_sn', title: '订单编码', width: 180, fixed: 'left'}
-                    ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
+                    ,{field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
+                    ,{field: 'order_used', title: '订单占用', width: 100, fixed: 'left',templet:'#order_used'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}
                     ,{field: 'order_phone', title: '电话', width:120}
                     ,{field: 'order_code', title: '邮编', width:80}
                     ,{field: 'order_province', title: '省', width:120}
                     ,{field: 'order_city', title: '市', width:120}
-                    ,{field: 'order_county', title: '县', width:120}
                     ,{field: 'order_area', title: '区', width:120}
                     ,{field: 'order_address', title: '详细地址', width:220}
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}

@@ -7,6 +7,7 @@ use App\Http\Controllers\CommonController;
 use App\Http\Requests\OrderRequest;
 use App\Imports\OrderImport;
 use App\Imports\OrdersImport;
+use App\Models\OrderLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportOrderRequest;
@@ -112,6 +113,53 @@ class OrderController extends CommonController
         //
     }
 
+    //订单列表查询
+    public function list()
+    {
+        return view('erp.order.list');
+    }
+
+    //订单导入
+    public function import()
+    {
+        return view('erp.order.import');
+    }
+
+    /**
+     * @批量匹配库存
+     */
+    public function match(Request $request){
+        $ids = $request->get('ids');
+        $ids=explode(',',$ids);
+
+        //匹配处理
+        //$order = Order::whereIn('id',$ids)->get();
+
+        $data = [
+            'checked_at' => Carbon::now(),
+            'order_status' => 1,
+            'checked_id' => Auth::user()->id
+        ];
+
+        foreach ($ids as $key=>$value){
+            if(empty($value)) continue;
+
+            $this->doOrder($value);
+            $orderLogArr[] = [
+                'order_id' => intval($value),
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 1,
+                'order_text' => '订单已处理',
+                'created_at' => date('Y-m-d H:i:s', time()),
+            ];
+        }
+        //dd($ids);
+        OrderLog::insert($orderLogArr);    //订单日志记录
+
+        $res = Order::whereIn('id', $ids)->update($data);
+        return $res ? '0':'1';
+    }
+
     /**
      * @批量生成汇总单
      */
@@ -120,18 +168,34 @@ class OrderController extends CommonController
         $ids=explode(',',$ids);
         $data = [
             'checked_at' => Carbon::now(),
-            'order_status' => 1,
+            'order_status' => 2,
             'checked_id' => Auth::user()->id
         ];
+
+        foreach ($ids as $key=>$value){
+            if(empty($value)) continue;
+            $orderLogArr[$key] = [
+                'order_id' => intval($value),
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 2,
+                'order_text' => '订单已生成汇总单',
+                'created_at' => date('Y-m-d H:i:s', time()),
+            ];
+        }
+
+        OrderLog::insert($orderLogArr);    //订单日志记录
+
         $res = Order::whereIn('id', $ids)->update($data);
         return $res ? '0':'1';
     }
 
+    /*
     public function import(ImportOrderRequest $request){
         $file_path = $request->post('path');
         $country_id = $request->post('country_id');
         Excel::import(new OrdersImport($country_id), str_replace('storage','',$file_path), 'public');
     }
+    */
 
     /*
      * 查看采购汇总单

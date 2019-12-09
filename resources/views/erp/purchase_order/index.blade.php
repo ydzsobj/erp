@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(50% - 3px);
+            height: calc(70% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(50% + 3px);
+            top: calc(70% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(50% - 3px);
+            top: calc(70% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -132,13 +132,14 @@
     </div>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">提交审核</button>
             <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加采购单','{{url("admins/purchase_order/create")}}',2,'100%','100%');">添加采购单</button>
         </div>
     </script>
 
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>  @{{# }else{  }} <div style="color: #000">已入库</div> @{{# }  }}
+        @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>
+        @{{# }else if(d.purchase_order_status == 2){  }} <div style="color: #0000FF">已出货</div> @{{# }else if(d.purchase_order_status == 3){  }} <div style="color: #fcd000">入库单</div>
+        @{{# }else{  }} <div style="color: #000">已完成</div>@{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -181,32 +182,32 @@
                 ,title: '采购数据表'
                 ,page: true //开启分页
                 ,count: 10000
-                ,limit: 50
-                ,limits: [50,100,300,500,1000,2000,5000,10000]
+                ,limit: 100
+                ,limits: [100,300,500,1000,2000,5000,10000]
+                ,height: 'full-400'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'purchase_order_status', title: '状态', width:70,templet:"#purchase_order_status"}
                     ,{field: 'purchase_order_code', title: '采购单号', width:130}
-                    ,{field: 'deliver_at', title: '交付日期', width:120}
-                    ,{field: 'supplier_address', title: '供货地点', width:100}
-                    ,{field: 'supplier_contacts', title: '联系人', width:80}
-                    ,{field: 'supplier_phone', title: '手机', width:130}
-                    ,{field: 'supplier_fax', title: '传真', width:120}
-                    ,{field: 'purchase_num', title: '数量', width:60}
-                    ,{field: 'supplier_money', title: '金额', width:80}
-                    ,{field: 'supplier_tax', title: '税金', width:80}
-                    ,{field: 'money_tax', title: '总计', width:100}
-                    ,{field: 'created_at', title: '创建时间', width: 120}
-                    ,{field: 'checked_at', title: '审核时间', width: 120}
-                    ,{field: 'purchase_text', title: '备注', width: 100}
+                    ,{field: 'expect_out_at', title: '预计出货时间', width:160}
+                    ,{field: 'out_at', title: '实际出货日期', width:160}
+                    ,{field: 'expect_deliver_at', title: '预计到货日期', width:160}
+                    ,{field: 'deliver_at', title: '实际到货日期', width:160}
+                    ,{field: 'created_at', title: '创建时间', width: 160}
+                    ,{field: 'checked_at', title: '审核时间', width: 160}
+                    ,{field: 'purchase_text', title: '备注', width: 160}
                     ,{field: 'button', title: '操作', width: 180, fixed: 'right',
                         templet: function(row){
                             var status = '';
                             if(row.purchase_order_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
                             }else if(row.purchase_order_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">生成入库单</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>';
+                            }
+                            else if(row.purchase_order_status == 2){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
+
                             }
                         return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                             '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
@@ -290,13 +291,10 @@
                         ,{field:'goods_name', title: '商品名称', width:180}
                         ,{field:'goods_attr_name', title: '属性名', width:100}
                         ,{field:'goods_attr_value', title: '属性值', width:100}
-                        ,{field:'goods_num', title: '数量',width:80}
-                        ,{field:'goods_price', title: '单价',width:80}
-                        ,{field:'goods_money', title: '总价',  width:80}
-                        ,{field:'tax_rate', title: '税率', width:80}
-                        ,{field:'tax', title: '税费', width:80}
-                        ,{field:'price_tax', title: '单税率', width:80}
-                        ,{field:'money_tax', title: '总金额', width:80}
+                        ,{field:'goods_num', title: '商品总数',width:120}
+                        ,{field:'order_num', title: '订单数量',width:120}
+                        ,{field:'plan_num', title: '备货数量',width:120}
+                        ,{field:'goods_money', title: '总价',  width:120}
                         ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
                     ]]
                     ,id: 'testReload'
@@ -311,7 +309,7 @@
             table.on('tool(list)', function(obj){
                 var data = obj.data;
 
-                if(obj.event === 'detail'){
+                if(obj.event === 'add'){
                     layer.open({
                         skin:'layui-layer-nobg',
                         type:2,
@@ -379,7 +377,30 @@
                             }
                         });
 
+                }else if(obj.event === 'time'){
+                    $.ajax({
+                        url:"{{url('admins/purchase_order/time/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('操作成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('操作失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
                 }
+
+
             });
 
 

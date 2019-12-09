@@ -8,8 +8,10 @@ use App\Models\Admin;
 use App\Models\InventoryInfo;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderInfo;
+use App\Models\PurchaseOrderTrace;
 use App\Models\Supplier;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -158,6 +160,24 @@ class PurchaseOrderController extends CommonController
     public function check(Request $request, $id){
         $result = PurchaseOrder::find($id);
         $result->purchase_order_status = 1;
+        $result->checked_id = Auth::guard('admin')->user()->id;
+        $result->checked_at = date('Y-m-d H:i:s', time());
+
+        $this->purchaseOrderLog($id,'采购订单已审核！');
+
+        return $result->save()?'0':'1';
+    }
+
+    /*
+     * 出货时间
+     */
+    public function time(Request $request, $id){
+        $result = PurchaseOrder::find($id);
+        $result->purchase_order_status = 2;
+        $result->out_at = date('Y-m-d H:i:s', time());
+
+        $this->purchaseOrderLog($id,'供应商已出货！');
+
         return $result->save()?'0':'1';
     }
 

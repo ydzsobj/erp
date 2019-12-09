@@ -19,7 +19,7 @@ class PurchasePoolController extends Controller
 
         $order = Order::with(['order_info'=>function($query){
             $query->where('goods_status','0');
-        }])->where('order_status',1)->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get()->toArray();
+        }])->where('order_status',2)->orderByDesc('id')->offset(($page-1)*$limit)->limit($limit)->get()->toArray();
         $data = [];
         foreach ($order as $key=>$value){
             foreach ($value['order_info'] as $k=>$v){
@@ -37,7 +37,9 @@ class PurchasePoolController extends Controller
                     $data[$v['goods_sku']]['goods_attr_name'] = $sku['sku_attr_names'];
                     $data[$v['goods_sku']]['goods_attr_value'] = $sku['sku_attr_value_names'];
                     $data[$v['goods_sku']]['goods_price'] = $sku['sku_price'];
+                    $data[$v['goods_sku']]['inventory'] = Inventory::with('warehouse')->where('goods_sku',$v['goods_sku'])->get();
                 }
+
             }
         }
 

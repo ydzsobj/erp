@@ -4,8 +4,10 @@ namespace App\Imports;
 
 use App\Models\Order;
 use App\Models\OrderInfo;
+use App\Models\OrderLog;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -73,6 +75,7 @@ class OrderImport implements ToCollection
                 'order_type' => '普通订单',  //订单类型
                 'coustomer_text' => trim($row[22]),  //客服备注
                 'order_from' => trim($row[11]),  //订单来源
+                'created_at' => date('Y-m-d H:i:s', time()),
             ];
 
 
@@ -81,6 +84,13 @@ class OrderImport implements ToCollection
                 $lastId = DB::table('order')->insertGetId($excel_order);
                 $sum++;
             }
+            $orderLogArr[$key] = [
+                'order_id' => $lastId,
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 0,
+                'order_text' => '订单待处理',
+                'created_at' => date('Y-m-d H:i:s', time()),
+            ];
 
             $skuArr = [
                 'goods_sku' => $goods_sku,
@@ -110,6 +120,8 @@ class OrderImport implements ToCollection
 
 
         }
+
+        OrderLog::insert($orderLogArr);    //订单导入日志
 
         $message = '共' . $sum . '个订单; 订单号已存在：' . $exist . '个;   成功导入:' . $success . '个商品;失败：' . $fail . '个商品';
         session()->flash('excel', $message);

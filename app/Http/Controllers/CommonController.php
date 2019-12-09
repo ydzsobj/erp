@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
+use App\Models\Inventory;
+use App\Models\Order;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
 use App\Models\WarehousePick;
 use Illuminate\Http\Request;
@@ -36,6 +39,100 @@ class CommonController extends Controller
         $reader = $reader->getSheet(0);
 
         return $reader->toArray();
+    }
+
+    /*
+     * 订单碰库存
+     */
+    public function doOrder($orderId){
+        $order = Order::with('order_info')->where('id',$orderId)->first();
+        $warehouse_ids = $this->checkCurrency($order->order_currency);
+
+        foreach($order->order_info as $key=>$value){
+            $match = $this->matchInventory($warehouse_ids,$value['goods_sku'],$value['goods_num']);
+            if($match['code']=='1'){
+                //这里不涉及一单多品
+                $value->where('id',$value['id'])->update(['goods_used'=>1,'goods_lock'=>1]);
+                $order->where('id',$orderId)->update(['order_lock'=>1,'order_used'=>1,'warehouse_id'=>$match['warehouse_id']]);
+            }
+        }
+
+
+    }
+
+    //库存占用
+    public function stock_used($warehouse_id,$goods_sku,$used_num){
+        dd('aa');
+    }
+
+    /*
+     * 库存碰订单
+     */
+
+
+    /*
+     * 处理库存数量
+     */
+    public function matchInventory($warehouse_ids,$goods_sku,$goods_num){
+        $inventory = Inventory::where(function ($query) use($warehouse_ids,$goods_sku){
+            $query->whereIn('warehouse_id',$warehouse_ids)->where('goods_sku',$goods_sku);
+        })->get();
+
+        foreach($inventory as $key=>$value){
+            if($value['stock_unused_num']>=$goods_num){
+                //$this->stock_used($value['warehouse_id'],$goods_sku,$goods_num);
+                $value->stock_used_num += $goods_num;
+                $value->stock_unused_num -= $goods_num;
+                $result = $value->save();
+                if($result){
+                    return [
+                        'code'=>'1',   //库存占用 库存锁定
+                        'warehouse_id'=>$value['warehouse_id'],
+                    ];
+                }
+
+            }elseif($value['warehouse_id']==1 && $value['plan_unused_num']>=$goods_num){
+                return [
+                    'code'=>'1',   //备货占用
+                    'warehouse_id'=>$value['warehouse_id'],
+                    'used_num'=>$goods_num
+                ];
+            }
+
+
+        }
+
+
+
+        //dd($inventory);
+    }
+
+    /*
+     *检查国家标识
+     */
+    public function checkCurrency($order_currency){
+        switch ($order_currency){
+            case 'IDR' :    //印尼
+                return [2,1];
+                break;
+            case 'PHP' :    //菲律宾
+                return [3,1];
+                break;
+            default :
+                return [1];
+                break;
+        }
+    }
+
+    /*
+     * 采购订单轨迹记录
+     */
+    public function purchaseOrderLog($id,$msg){
+        PurchaseOrderTrace::create([
+            'purchase_order_id'=>$id,
+            'purchase_order_log'=>$msg,
+            'created_at' => date('Y-m-d H:i:s', time())
+        ]);
     }
 
     /*

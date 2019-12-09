@@ -1,16 +1,58 @@
 @extends('erp.father.father')
 @section('content')
-    <div class="layui-fluid">
-        <script type="text/html" id="toolbar">
-            <div class="layui-btn-container demoTable">
-                <button class="layui-btn layuiadmin-btn-tags layui-btn-normal" onclick="show('批量导入订单','{{url("admins/order/create")}}',2,'500px','500px');">批量导入订单</button>
-                <button class="layui-btn" data-type="getCheckData">上传匹配库存</button>
+    <div class="layui-row" style="margin-top:5px;">
+        <form class="layui-form" action="">
+
+            <div class="layui-inline">
+                <label class="layui-form-label">请输入</label>
+                <div class="layui-input-block">
+                    <div class="layui-inline" style="width:300px;">
+                        <input class="layui-input" name="keywords" id="searchReload" placeholder="订单编号/运单编号/收货人姓名电话详细地址"  autocomplete="off">
+                    </div>
+                </div>
             </div>
-        </script>
+            <div class="layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="order_status" id="order_status">
+                        <option value="0">未导入</option>
+                        <option value="1">已导入</option>
+                        <option value="2">已确定</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">导入时间</label>
+                <div class="layui-input-block">
+                    <div class="layui-inline">
+                        <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                    </div>-
+                    <div class="layui-inline">
+                        <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-row demoTable" style="margin-top:10px;">
+                <a class="layui-btn" data-type="reload" style="margin-left:600px;" id='search'>搜索</a>
+                &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="layui-fluid">
         <table id="list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="status">
-        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">待处理</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">未导入</div>  @{{# }else{  }} <div style="color: #008000">已确定</div> @{{# }  }}
+        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">未导入</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">已导入</div>  @{{# }else{  }} <div style="color: #008000">已确定</div> @{{# }  }}
+    </script>
+    <script type="text/html" id="order_lock">
+        @{{# if(d.order_lock == 0){ }} <div style="color: #ff0000">未锁定</div> @{{# }else if(d.order_lock == 1){  }} <div style="color: #008000">已锁定</div>  @{{# }else{  }} <div>未知</div> @{{# }  }}
+    </script>
+    <script type="text/html" id="order_used">
+        @{{# if(d.order_used == 0){ }} <div style="color: #ff0000">未占用</div> @{{# }else if(d.order_used == 1){  }} <div style="color: #008000">已占用</div>  @{{# }else{  }} <div>未知</div> @{{# }  }}
     </script>
 
 @endsection
@@ -26,19 +68,16 @@
             //渲染实例
             table.render({
                 elem: '#list'
-                ,url: "{{url('api/order/import')}}" //数据接口
+                ,url: "{{url('api/order/list')}}" //数据接口
                 ,id: 'listReload'
-                ,toolbar: '#toolbar'
-                ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '产品数据表'
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,page: true //开启分页
-                ,height: 'full-50'
+                ,height: 'full-150'
                 ,cols: [[ //表头
-                    {type:'checkbox', fixed: 'left'}
-                    ,{field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
+                    {field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
                     ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}
@@ -50,6 +89,8 @@
                     ,{field: 'order_address', title: '详细地址', width:220}
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
                     ,{field: 'created_at', title: '导入时间', width: 160, sort: true}
+                    ,{title: '锁定', width: 80, fixed: 'right',templet:'#order_lock'}
+                    ,{title: '占用', width: 80, fixed: 'right',templet:'#order_used'}
                 ]]
             });
 
@@ -108,20 +149,20 @@
                     for(var i=0;i<checkStatus.data.length;i++){
                         codeId += checkStatus.data[i].id+",";
                     }
-                    parent.layer.msg('上传匹配库存中...', {icon: 16,shade: 0.3,time:5000});
+                    parent.layer.msg('生成中...', {icon: 16,shade: 0.3,time:5000});
 
                     $.ajax({
                         type:"POST",
-                        url: "{{url('admins/order/match')}}",
+                        url: "{{url('admins/order/create_order_pool')}}",
                         data:{"ids":codeId,"_token":"{{csrf_token()}}"},
                         success:function (data) {
                             layer.closeAll('loading');
                             if(data==0){
-                                parent.layer.msg('上传成功！', {icon: 1,time:2000,shade:0.2},function () {
+                                parent.layer.msg('生成成功！', {icon: 1,time:2000,shade:0.2},function () {
                                     location.reload(true);
                                 });
                             }else{
-                                parent.layer.msg('上传失败！', {icon: 2,time:3000,shade:0.2});
+                                parent.layer.msg('生成失败！', {icon: 2,time:3000,shade:0.2});
                             }
                         },
                         end: function () {

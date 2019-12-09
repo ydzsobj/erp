@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Inventory;
 use App\Models\OrderInfo;
 use App\Models\PurchaseOrderInfo;
+use App\Models\PurchaseOrderTrace;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +46,7 @@ class PurchasePoolController extends CommonController
      */
     public function store(Request $request)
     {
-        dd($request);
+        //dd($request);
         //存储表单信息
         $purchase_order_code = $this->createPurchaseOrderCode('C');
         $arr = [
@@ -68,17 +69,17 @@ class PurchasePoolController extends CommonController
 
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
-                $stock_num = intval($value['stock_num']);
-                $order_num = intval($value['order_num']);
+                $plan_num = $value['plan_num']??0;
+                $order_num = $value['order_num']??0;
                 $infoArr[$key]['purchase_order_id'] = $lastId;
                 $infoArr[$key]['goods_id'] = $value['id'];
                 $infoArr[$key]['goods_sku'] = $value['goods_sku'];
                 $infoArr[$key]['goods_name'] = $value['goods_name'];
                 $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
-                $infoArr[$key]['stock_num'] = $stock_num;
+                $infoArr[$key]['plan_num'] = $plan_num;
                 $infoArr[$key]['order_num'] = $order_num;
-                $infoArr[$key]['goods_num'] = $stock_num+$order_num;
+                $infoArr[$key]['goods_num'] = $plan_num+$order_num;
                 $infoArr[$key]['goods_money'] = $value['goods_money']??0;
 
 
@@ -97,7 +98,7 @@ class PurchasePoolController extends CommonController
             }
         }
 
-
+        $this->purchaseOrderLog($lastId,'采购订单创建成功！');
 
         $result = PurchaseOrderInfo::insert($infoArr);
 

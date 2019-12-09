@@ -15,7 +15,11 @@ class PurchaseWarehouse extends Model
 
     //仓库
     public function warehouse(){
-        return $this->hasOne('App\Models\Warehouse','id','warehouse_id');
+        return $this->hasOne(Warehouse::class,'id','warehouse_id');
+    }
+
+    public function purchase_order_warehouse(){
+        return $this->hasOne(PurchaseOrderWarehouse::class,'purchase_warehouse_id','id');
     }
 
 }
