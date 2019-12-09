@@ -131,10 +131,10 @@
                         <a lay-href="{{url('/admins/inventory?warehouse_id=2')}}">深圳虚拟仓</a>
                     </dd> --}}
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory?warehouse_id=3')}}">印尼仓</a>
+                        <a lay-href="{{url('/admins/guide?warehouse_id=3')}}">印尼仓</a>
                     </dd>
                     <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory?warehouse_id=4')}}">印尼虚拟仓</a>
+                        <a lay-href="{{url('/admins/guide?warehouse_id=4')}}">印尼虚拟仓</a>
                     </dd>
                     {{-- <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory')}}">菲律宾仓</a>

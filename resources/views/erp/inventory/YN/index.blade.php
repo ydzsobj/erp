@@ -228,7 +228,7 @@
                     warehouse_id:  {{ $warehouse_id }}
                 }
                 ,id: 'listReload'
-                ,toolbar: '#toolbarDemo'
+                // ,toolbar: '#toolbarDemo'
                 ,parseData: function(res){ //res 即为原始返回的数据
                         return {
                             "code": res.code, //解析接口状态
@@ -302,18 +302,19 @@
                 ,limit: 50
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[
-                    {field:'created_at', width:200, title: '业务时间', sort:true}
-                    ,{field:'in_num', width:120, title: '入库数量'}
-                    ,{field:'out_num', width:120, title: '出库数量'}
-                    ,{field:'goods_sku', title: 'SKU编码'}
-                    ,{title: '产品名称', wifth:260,  templet: function(res){
+                    {field:'created_at', width:170, title: '业务时间', sort:true}
+                    ,{field:'in_num', width:90, title: '入库数量'}
+                    ,{field:'out_num', width:90, title: '出库数量'}
+                    ,{field:'goods_sku', title: 'SKU编码',width:150}
+                    ,{title: '产品名称', wifth:220,  templet: function(res){
                         return res.sku.sku_name;
                     }}
                     ,{title: '属性值',  templet: function(res){
                         return res.sku.sku_attr_value_names;
                     }}
-                    ,{field:'stock_type', title: '业务类型'}
-                    ,{field:'user_id', title: '操作人', templet: function(res){
+                    ,{field:'stock_type', width:90, title: '业务类型'}
+                    ,{field:'order_sn', title: '业务单号'}
+                    ,{field:'user_id', title: '操作人', width:100, templet: function(res){
                         return res.admin.admin_name;
                     }}
                 ]]
@@ -537,9 +538,9 @@
     </script>
 @endsection
 
-<script type="text/html" id="toolbarDemo">
+{{-- <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
       <button class="layui-btn layui-btn-sm" lay-event="import_order" >入库</button>
       <button class="layui-btn layui-btn-sm" lay-event="" >出库</button>
     </div>
-  </script>
+  </script> --}}

@@ -186,7 +186,7 @@
                     warehouse_id:  {{ $warehouse_id }}
                 }
                 ,id: 'listReload'
-                ,toolbar: '#toolbarDemo'
+                // ,toolbar: '#toolbarDemo'
                 ,parseData: function(res){ //res 即为原始返回的数据
                         return {
                             "code": res.code, //解析接口状态
@@ -544,9 +544,9 @@
     </script>
 @endsection
 
-<script type="text/html" id="toolbarDemo">
+{{-- <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
       <button class="layui-btn layui-btn-sm" lay-event="import_order" >入库</button>
       <button class="layui-btn layui-btn-sm" lay-event="batch_out" >出库</button>
     </div>
-  </script>
+  </script> --}}
