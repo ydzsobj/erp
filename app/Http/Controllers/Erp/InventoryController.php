@@ -30,7 +30,7 @@ class InventoryController extends Controller
                 //深圳仓首页列表
                 return view('erp.inventory.SZ.index', compact('warehouse_id'));
             break;
-            case Inventory::YN_WAREHOUSE_IDgit:
+            case Inventory::YN_WAREHOUSE_ID:
                 //印尼仓首页列表
                 return view('erp.inventory.YN.index', compact('warehouse_id'));
             break;
