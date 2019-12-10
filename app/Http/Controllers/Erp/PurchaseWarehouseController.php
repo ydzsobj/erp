@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseWarehouseRequest;
 use App\Models\Inventory;
 use App\Models\InventoryInfo;
+use App\Models\OrderInfo;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderWarehouse;
 use App\Models\PurchaseWarehouse;
@@ -221,13 +222,42 @@ class PurchaseWarehouseController extends CommonController
 
             $inventory->afloat_num = $inventory->afloat_num - $value['goods_num'];
             $inventory->stock_num = $inventory->stock_num + $value['goods_num'];
-            $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'] + $value['plan_used_num'];
-            $inventory->stock_unused_num = $inventory->stock_unused_num + $value['plan_unused_num'];
+            $inventory->in_num = $inventory->in_num + $value['goods_num'];
             $inventory->plan_num = $inventory->plan_num - $value['plan_num'];
             $inventory->order_num = $inventory->order_num - $value['order_num'];
-            $inventory->plan_unused_num = $inventory->plan_unused_num - $value['plan_unused_num'];
-            $inventory->plan_used_num = $inventory->plan_used_num - $value['plan_used_num'];
-            $inventory->in_num = $inventory->in_num + $value['goods_num'];
+
+
+            if($inventory->plan_used_num>=$value['plan_num']){
+                $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'] + $value['plan_num'];
+                $inventory->plan_used_num = $inventory->plan_used_num - $value['plan_num'];
+            }else{
+                if($inventory->plan_unused_num>=$value['plan_num']){
+                    $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'];
+                    $inventory->stock_unused_num = $inventory->stock_unused_num + $value['plan_num'];
+                    $inventory->plan_unused_num = $inventory->plan_unused_num - $value['plan_num'];
+                }else{
+                    $balance = $value['plan_num'] - $inventory->plan_used_num;
+                    $inventory->stock_used_num = $inventory->stock_used_num + $value['order_num'] + $inventory->plan_used_num;
+                    $inventory->stock_unused_num = $inventory->stock_unused_num + $balance;
+                    $inventory->plan_used_num = $inventory->plan_used_num - $inventory->plan_used_num;
+                    $inventory->plan_unused_num = $inventory->plan_unused_num - $balance;
+                }
+            }
+
+
+            $this->doInventory($value['goods_sku'],$warehouse['warehouse_id']);
+
+
+
+
+
+
+
+            $inventory->save();
+
+            //库存匹配订单
+
+
 //            $inventory->afloat_price = $value['goods_price'];
 //            $inventory->afloat_money = $inventory->afloat_money - $value['goods_money'];
 //            $inventory->stock_price = $value['goods_price'];
@@ -235,7 +265,7 @@ class PurchaseWarehouseController extends CommonController
 //            $inventory->in_price = $value['goods_price'];
 //            $inventory->in_money = $inventory->in_money + $value['goods_money'];
 
-            $inventory->save();
+
 
         }
         $warehouse->purchase_warehouse_status = 2;
