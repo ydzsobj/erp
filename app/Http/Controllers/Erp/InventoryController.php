@@ -175,9 +175,9 @@ class InventoryController extends Controller
             DB::transaction(function () use ($item, $admin) {
 
                 //修改出库状态
-                $inventory_info = InventoryInfo::find($item['id']);
-                $inventory_info->out_status = 1;
-                $inventory_info->save();
+                // $inventory_info = InventoryInfo::find($item['id']);
+                // $inventory_info->out_status = 1;
+                // $inventory_info->save();
 
                 //修改真实仓库存
                 $inventory = Inventory::by_goods_sku($item['warehouse_id'], $item['goods_sku']);
@@ -292,6 +292,14 @@ class InventoryController extends Controller
         return view('erp.inventory.YN.out_create', compact('warehouse_id'));
     }
 
+    //问题件
+    public function problems_create(Request $request){
+
+        $warehouse_id = $request->get('warehouse_id');
+
+        return view('erp.inventory.YN_VIRTUAL.problems_create', compact('warehouse_id'));
+    }
+
     //印尼仓入库
     public function yn_in(Request $request){
 
@@ -360,10 +368,47 @@ class InventoryController extends Controller
         $result = $inventory->save();
 
         $msg = $result ? '保存成功':'保存失败';
-
         $success = $result ? true : false;
-
         return response()->json(['success' => $success, 'msg' => $msg]);
+
+    }
+
+    //标记问题件
+    public function update_status(Request $request, $id){
+
+        $success = true;
+        $msg = 'ok';
+        $action = $request->post('action');
+
+        DB::transaction(function () use ($request, $id, $action) {
+
+            switch($action){
+                case 'set_problem':
+                    $status = 3;
+                    break;
+                case 'remove_problem':
+                    $status = 4;
+                    break;
+                default:
+                    return false;
+            }
+
+            if($status){
+                $inventory_info = InventoryInfo::find($id);
+                $inventory_info->out_status = $status;//问题件
+                $result = $inventory_info->save();
+            }
+
+            if($status == 3){
+                 //减去库存
+                $inventory = Inventory::by_goods_sku($request->post('warehouse_id'), $inventory_info->goods_sku);
+                $inventory->stock_num -= $inventory_info->in_num;
+                $inventory->save();
+            }
+
+        });
+
+        return returned($success, $msg);
 
     }
 

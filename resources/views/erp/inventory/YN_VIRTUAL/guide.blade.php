@@ -5,6 +5,7 @@
     <button type="button" class="layui-btn" id="in_store">入库</button>
     <button type="button" class="layui-btn" id="store">库存</button>
     <button type="button" class="layui-btn" id="out_store">出库</button>
+    <button type="button" class="layui-btn" id="problems">问题件</button>
 
 </div>
 
@@ -57,6 +58,18 @@
                         fixed:false,
                         maxmin:true,
                         content:"{{ route('inventory.yn_virtual_out_create') }}?warehouse_id={{ $warehouse_id }}",
+                    });
+                })
+
+                $("#problems").click(function(){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'问题件',
+                        area: ['90%', '90%'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{ route('inventory.problems_create') }}?warehouse_id={{ $warehouse_id }}",
                     });
                 })
 

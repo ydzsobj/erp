@@ -333,7 +333,7 @@
                     data:{_token:"{{ csrf_token() }}", update_field: obj.field, update_field_value: obj.value},
                     success:function(msg){
                         if(msg.success){
-                            layer.msg('设置成功！',{icon:1,time:2000},function () {
+                            layer.msg('设置成功！',{icon:1,time:2000},function (index) {
                                 layer.close(index);
                             });
                         }else{

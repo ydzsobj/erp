@@ -351,6 +351,15 @@
                     ,{field:'user_id', title: '操作人', templet: function(res){
                         return res.admin.admin_name;
                     }}
+                    ,{field:'out_status', title: '状态', templet: function(row){
+                        var status = '';
+
+                        if(row.out_status == 3){
+                            status = '<span style="color:red;">问题件</span>';
+                        }
+
+                        return status;
+                    }}
                 ]]
                 ,id: 'testReload'
             });
@@ -367,7 +376,7 @@
                     data:{_token:"{{ csrf_token() }}", update_field: obj.field, update_field_value: obj.value},
                     success:function(msg){
                         if(msg.success){
-                            layer.msg('设置成功！',{icon:1,time:2000},function () {
+                            layer.msg('设置成功！',{icon:1,time:2000},function (index) {
                                 layer.close(index);
                             });
                         }else{

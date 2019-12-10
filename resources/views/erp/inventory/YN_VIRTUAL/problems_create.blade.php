@@ -70,10 +70,10 @@
                 ,url: "{{url('api/inventory_info')}}" //数据接口
                 ,where: {
                     warehouse_id:  {{ $warehouse_id }},
-                    out_status: 0
+                    out_status: 3
                 }
                 ,id: 'listReload'
-                ,toolbar: '#toolbarDemo'
+                // ,toolbar: '#toolbarDemo'
                 ,parseData: function(res){ //res 即为原始返回的数据
                         return {
                             "code": res.code, //解析接口状态
@@ -98,7 +98,7 @@
                             return res.sku.sku_attr_value_names;
                         }}
                         ,{field:'goods_sku', title: 'SKU编码', width:150}
-                        ,{field:'in_num', width:80, title: '待出库',style:'color:green'}
+                        ,{field:'in_num', width:80, title: '数量',style:'color:green'}
                         ,{field:'stock_type', title: '业务类型', width:100,}
 
                         ,{field:'user_id', title: '操作人',  width:100,templet: function(res){
@@ -106,7 +106,7 @@
                         }}
                         ,{title:'操作', width:120, templet:function(){
 
-                            html_str = '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="set_status">标记问题件</a>';
+                            html_str = '<a class="layui-btn layui-btn-xs" lay-event="set_status">处理</a>';
                             return html_str;
                         }}
 
@@ -120,7 +120,7 @@
 
                 if(obj.event === 'set_status'){
                     //设置
-                    layer.confirm('确定要标记为问题件吗？', function(index){
+                    layer.confirm('确定要标记为已处理吗？', function(index){
                         $.ajax({
                             type:'POST',
                             url: "/admins/inventory/" + data.id +"/update_status",
@@ -128,7 +128,7 @@
                                 _token: "{{ csrf_token() }}" ,
                                 _method: 'put',
                                 warehouse_id : {{ $warehouse_id }},
-                                action: 'set_problem'
+                                action: 'remove_problem'
                             },
                             dataType:"json",
                             success:function(msg){
@@ -222,8 +222,8 @@
     </script>
 @endsection
 
-<script type="text/html" id="toolbarDemo">
+{{-- <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-      <button class="layui-btn layui-btn-sm" lay-event="batch_out_store" >确定出库</button>
+      <button class="layui-btn layui-btn-sm" lay-event="batch_out_store" >处理</button>
     </div>
-  </script>
+  </script> --}}

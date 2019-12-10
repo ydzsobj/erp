@@ -74,6 +74,8 @@ class InventoryInfo extends Model
                     $query->where('inventory_info.out_status', $out_status)->where('inventory_info.in_num','>',0);
                 }else if($out_status == 1){
                     $query->where('inventory_info.out_status', $out_status)->where('inventory_info.out_num','>',0);
+                }else{
+                    $query->where('inventory_info.out_status', $out_status);
                 }
 
             })
