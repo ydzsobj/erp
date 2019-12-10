@@ -9,6 +9,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
 use App\Models\WarehousePick;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -53,10 +54,14 @@ class CommonController extends Controller
             if($match['code']=='1'){
                 //这里不涉及一单多品
                 $value->where('id',$value['id'])->update(['goods_used'=>1,'goods_lock'=>1]);
-                $order->where('id',$orderId)->update(['order_lock'=>1,'order_used'=>1,'warehouse_id'=>$match['warehouse_id']]);
+                $order->where('id',$orderId)->update(['order_lock'=>1,'order_used'=>1,'order_status'=>4,'warehouse_id'=>$match['warehouse_id']]);
+                return ['order_status'=>4,'order_text'=>'订单已锁库'];
             }elseif($match['code']=='2'){
                 $value->where('id',$value['id'])->update(['goods_used'=>1]);
-                $order->where('id',$orderId)->update(['order_used'=>1]);
+                $order->where('id',$orderId)->update(['order_used'=>1,'order_status'=>3]);
+                return ['order_status'=>3,'order_text'=>'订单未锁库，占用等待中'];
+            }else{
+                return ['order_status'=>1,'order_text'=>'订单已处理'];
             }
         }
 
@@ -130,6 +135,7 @@ class CommonController extends Controller
                 break;
         }
     }
+
 
     /*
      * 采购订单轨迹记录
