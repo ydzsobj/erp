@@ -175,9 +175,9 @@ class InventoryController extends Controller
             DB::transaction(function () use ($item, $admin) {
 
                 //修改出库状态
-                // $inventory_info = InventoryInfo::find($item['id']);
-                // $inventory_info->out_status = 1;
-                // $inventory_info->save();
+                $inventory_info = InventoryInfo::find($item['id']);
+                $inventory_info->out_status = 1;
+                $inventory_info->save();
 
                 //修改真实仓库存
                 $inventory = Inventory::by_goods_sku($item['warehouse_id'], $item['goods_sku']);
