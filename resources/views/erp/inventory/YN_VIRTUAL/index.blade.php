@@ -230,8 +230,8 @@
                     // ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
-                    ,{field: 'goods_position', title: '库位'}
-                    ,{field: 'goods_text', title: '商品备注'}
+                    ,{field: 'goods_position', title: '库位',edit: true}
+                    ,{field: 'goods_text', title: '商品备注', edit: true}
 
 
                 ]]
@@ -361,7 +361,28 @@
                     ,data = obj.data //得到所在行所有键值
                     ,field = obj.field; //得到字段
                 console.log(obj);
-
+                $.ajax({
+                    type:'post',
+                    url:"/admins/inventory/" + obj.data.id + '/update_fields',
+                    data:{_token:"{{ csrf_token() }}", update_field: obj.field, update_field_value: obj.value},
+                    success:function(msg){
+                        if(msg.success){
+                            layer.msg('设置成功！',{icon:1,time:2000},function () {
+                                layer.close(index);
+                            });
+                        }else{
+                            layer.msg('设置失败！',{icon:2,time:2000});
+                        }
+                    },
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
+                    }
+                });
             });
 
             //监听工具条

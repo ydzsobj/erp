@@ -125,6 +125,11 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('/yn_out_create',  'InventoryController@yn_out_create')->name('inventory.yn_out_create');
     //入库
     Route::post('/yn_in',  'InventoryController@yn_in')->name('inventory.yn_in');
+    //出库
     Route::post('/yn_out',  'InventoryController@yn_out')->name('inventory.yn_out');
+
+    //更新仓位
+    Route::post('/inventory/{id}/update_fields', 'InventoryController@update_fields')->name('inventory.update_fields');
+
 
 });

@@ -345,4 +345,26 @@ class InventoryController extends Controller
         return response()->json(['success' => true, 'msg' => 'ok']);
     }
 
+     /*
+     *设置仓位库位
+     */
+    public function update_fields(Request $request, $id){
+
+        $field = $request->post('update_field');
+        $value = $request->post('update_field_value');
+
+        //更新操作
+        $inventory = Inventory::find($id);
+        $inventory->{$field} = $value;
+
+        $result = $inventory->save();
+
+        $msg = $result ? '保存成功':'保存失败';
+
+        $success = $result ? true : false;
+
+        return response()->json(['success' => $success, 'msg' => $msg]);
+
+    }
+
 }
