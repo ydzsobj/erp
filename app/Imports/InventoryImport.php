@@ -49,8 +49,8 @@ class InventoryImport implements ToCollection
                 $existed_data->stock_num += intval($row[2]);
                 $existed_data->in_num += intval($row[2]);
                 // $existed_data->afloat_num += ($row[3]);
-                $existed_data->goods_position = ($row[3]);
-                $existed_data->goods_text = ($row[4]);
+                // $existed_data->goods_position = ($row[3]);
+                // $existed_data->goods_text = ($row[4]);
                 $mod = $existed_data->save();
 
             }else{
@@ -61,8 +61,8 @@ class InventoryImport implements ToCollection
                     'stock_num' => intval($row[2]),
                     'in_num' => intval($row[2]),
                     // 'afloat_num' => intval($row[3]),
-                    'goods_position' => $row[3],
-                    'goods_text' => $row[4]
+                    // 'goods_position' => $row[3],
+                    // 'goods_text' => $row[4]
                 ]);
             }
 
@@ -75,7 +75,8 @@ class InventoryImport implements ToCollection
                     // 'stock_num' => intval($row[2]),
                     'in_num' => intval($row[2]),
                     'stock_type' => '库存导入',
-                    'user_id' => $admin->id
+                    'user_id' => $admin->id,
+                    'order_sn' => $row[3],
                 ]);
             }else{
                 $failed++;

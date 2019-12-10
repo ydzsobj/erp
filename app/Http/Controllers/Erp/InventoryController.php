@@ -167,12 +167,21 @@ class InventoryController extends Controller
 
         $out_data = $request->post('out_data');
 
+        $error_msg = '';
+
         foreach($out_data as $item){
 
             if($item['in_num'] < 1){
                 continue;
             }
-            DB::transaction(function () use ($item, $admin) {
+
+            $inventory = Inventory::by_goods_sku($item['warehouse_id'], $item['goods_sku']);
+            $inventory->stock_num -= $item['in_num'];
+            if($inventory->stock_num < 0){
+                $error_msg .= $item['sku_name']. '库存不足';
+                continue;
+            }
+            DB::transaction(function () use ($item, $inventory, $admin) {
 
                 //修改出库状态
                 $inventory_info = InventoryInfo::find($item['id']);
@@ -180,9 +189,7 @@ class InventoryController extends Controller
                 $inventory_info->save();
 
                 //修改真实仓库存
-                $inventory = Inventory::by_goods_sku($item['warehouse_id'], $item['goods_sku']);
                 $inventory->out_num += $item['in_num'];
-                $inventory->stock_num -= $item['in_num'];
                 $inventory->save();
 
                 InventoryInfo::create([
@@ -197,7 +204,9 @@ class InventoryController extends Controller
             }, 3);
         }
 
-        return response()->json(['success' => true, 'msg' => 'ok']);
+        $msg  = $error_msg ?: 'ok';
+
+        return response()->json(['success' => true, 'msg' => $msg]);
     }
 
     //印尼仓出库
