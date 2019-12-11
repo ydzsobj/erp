@@ -30,7 +30,7 @@ class InventoryController extends Controller
                 //深圳仓首页列表
                 return view('erp.inventory.SZ.index', compact('warehouse_id'));
             break;
-            case Inventory::YN_WAREHOUSE_IDgit:
+            case Inventory::YN_WAREHOUSE_ID:
                 //印尼仓首页列表
                 return view('erp.inventory.YN.index', compact('warehouse_id'));
             break;
@@ -167,12 +167,21 @@ class InventoryController extends Controller
 
         $out_data = $request->post('out_data');
 
+        $error_msg = '';
+
         foreach($out_data as $item){
 
             if($item['in_num'] < 1){
                 continue;
             }
-            DB::transaction(function () use ($item, $admin) {
+
+            $inventory = Inventory::by_goods_sku($item['warehouse_id'], $item['goods_sku']);
+            $inventory->stock_num -= $item['in_num'];
+            if($inventory->stock_num < 0){
+                $error_msg .= $item['sku_name']. '库存不足';
+                continue;
+            }
+            DB::transaction(function () use ($item, $inventory, $admin) {
 
                 //修改出库状态
                 $inventory_info = InventoryInfo::find($item['id']);
@@ -180,9 +189,7 @@ class InventoryController extends Controller
                 $inventory_info->save();
 
                 //修改真实仓库存
-                $inventory = Inventory::by_goods_sku($item['warehouse_id'], $item['goods_sku']);
                 $inventory->out_num += $item['in_num'];
-                $inventory->stock_num -= $item['in_num'];
                 $inventory->save();
 
                 InventoryInfo::create([
@@ -197,7 +204,9 @@ class InventoryController extends Controller
             }, 3);
         }
 
-        return response()->json(['success' => true, 'msg' => 'ok']);
+        $msg  = $error_msg ?: 'ok';
+
+        return response()->json(['success' => true, 'msg' => $msg]);
     }
 
     //印尼仓出库
@@ -292,6 +301,14 @@ class InventoryController extends Controller
         return view('erp.inventory.YN.out_create', compact('warehouse_id'));
     }
 
+    //问题件
+    public function problems_create(Request $request){
+
+        $warehouse_id = $request->get('warehouse_id');
+
+        return view('erp.inventory.YN_VIRTUAL.problems_create', compact('warehouse_id'));
+    }
+
     //印尼仓入库
     public function yn_in(Request $request){
 
@@ -308,11 +325,13 @@ class InventoryController extends Controller
             }
             DB::transaction(function () use ($item, $admin) {
 
-                $inventory_info = InventoryInfo::find($item['id']);
-                $inventory_info->out_status = 2;//入库状态 已入真实库
-                $inventory_info->save();
+                InventoryInfo::whereIn('id', $item['waiting_ids'])->update(['out_status' => 2]);
 
-                $existed_data = Inventory::by_goods_sku(Warehouse::YN_WAREHOUSE_ID, $item['goods_sku']);
+                // $inventory_info = InventoryInfo::find($item['id']);
+                // $inventory_info->out_status = 2;//入库状态 已入真实库
+                // $inventory_info->save();
+
+                $existed_data = Inventory::by_goods_sku(Warehouse::YN_WAREHOUSE_ID, $item['sku_code']);
 
                 if($existed_data){
                     //sku已存在，追加库存信息 //虚拟仓出的 = 真实仓待入库的
@@ -323,7 +342,7 @@ class InventoryController extends Controller
                 }else{
                     //sku新入库 添加数据
                     $mod = Inventory::create([
-                        'goods_sku' => $item['goods_sku'],
+                        'goods_sku' => $item['sku_code'],
                         'warehouse_id' => Warehouse::YN_WAREHOUSE_ID,
                         'stock_num' => intval($item['out_num']),
                         'in_num' => intval($item['out_num'])
@@ -332,7 +351,7 @@ class InventoryController extends Controller
 
                 //添加详情
                 InventoryInfo::create([
-                    'goods_sku' => $item['goods_sku'],
+                    'goods_sku' => $item['sku_code'],
                     'warehouse_id' => Warehouse::YN_WAREHOUSE_ID,
                     'in_num' => intval($item['out_num']),
                     'stock_type' => '确认入库',
@@ -343,6 +362,65 @@ class InventoryController extends Controller
         }
 
         return response()->json(['success' => true, 'msg' => 'ok']);
+    }
+
+     /*
+     *设置仓位库位
+     */
+    public function update_fields(Request $request, $id){
+
+        $field = $request->post('update_field');
+        $value = $request->post('update_field_value');
+
+        //更新操作
+        $inventory = Inventory::find($id);
+        $inventory->{$field} = $value;
+
+        $result = $inventory->save();
+
+        $msg = $result ? '保存成功':'保存失败';
+        $success = $result ? true : false;
+        return response()->json(['success' => $success, 'msg' => $msg]);
+
+    }
+
+    //标记问题件
+    public function update_status(Request $request, $id){
+
+        $success = true;
+        $msg = 'ok';
+        $action = $request->post('action');
+
+        DB::transaction(function () use ($request, $id, $action) {
+
+            switch($action){
+                case 'set_problem':
+                    $status = 3;
+                    break;
+                case 'remove_problem':
+                    $status = 4;
+                    break;
+                default:
+                    return false;
+            }
+
+            if($status){
+                $inventory_info = InventoryInfo::find($id);
+                $inventory_info->out_status = $status;//问题件
+                $result = $inventory_info->save();
+            }
+
+            if($status == 3){
+                 //减去库存
+                $inventory = Inventory::by_goods_sku($request->post('warehouse_id'), $inventory_info->goods_sku);
+                $inventory->stock_num -= $inventory_info->in_num;
+                $inventory->save();
+            }
+
+        });
+
+        return returned($success, $msg);
+
     }
 
 }

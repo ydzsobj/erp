@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\InventoryImportLog;
 use App\Models\Inventory;
 use App\Models\InventoryInfo;
 use App\Models\Order;
@@ -30,6 +31,13 @@ class InventoryImport implements ToCollection
         //admin
         $admin = Auth::user();
 
+        //增加导入日志
+        $log_mod = InventoryImportLog::create([
+            'import_nums' => count($rows) - 1,
+            'admin_id' => $admin->id,
+            'warehouse_id' => $this->warehouse_id
+        ]);
+
         foreach ($rows as $key=>$row){
             if($key == 0){
                 continue;
@@ -49,8 +57,8 @@ class InventoryImport implements ToCollection
                 $existed_data->stock_num += intval($row[2]);
                 $existed_data->in_num += intval($row[2]);
                 // $existed_data->afloat_num += ($row[3]);
-                $existed_data->goods_position = ($row[3]);
-                $existed_data->goods_text = ($row[4]);
+                // $existed_data->goods_position = ($row[3]);
+                // $existed_data->goods_text = ($row[4]);
                 $mod = $existed_data->save();
 
             }else{
@@ -61,8 +69,8 @@ class InventoryImport implements ToCollection
                     'stock_num' => intval($row[2]),
                     'in_num' => intval($row[2]),
                     // 'afloat_num' => intval($row[3]),
-                    'goods_position' => $row[3],
-                    'goods_text' => $row[4]
+                    // 'goods_position' => $row[3],
+                    // 'goods_text' => $row[4]
                 ]);
             }
 
@@ -75,7 +83,10 @@ class InventoryImport implements ToCollection
                     // 'stock_num' => intval($row[2]),
                     'in_num' => intval($row[2]),
                     'stock_type' => '库存导入',
-                    'user_id' => $admin->id
+                    'user_id' => $admin->id,
+                    'import_order_sn' => $row[3],
+                    'targetable_type' => InventoryImportLog::TABLE,
+                    'targetable_id' => $log_mod->id
                 ]);
             }else{
                 $failed++;

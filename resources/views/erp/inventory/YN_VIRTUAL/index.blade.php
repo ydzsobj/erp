@@ -230,8 +230,9 @@
                     // ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
-                    ,{field: 'goods_position', title: '库位'}
-                    ,{field: 'goods_text', title: '商品备注'}
+                    ,{field: 'goods_position', title: '库位',edit: true}
+                    ,{field: 'goods_text', title: '商品备注', edit: true}
+
 
 
                 ]]
@@ -337,9 +338,9 @@
                 ,limit: 50
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[
-                    {field:'created_at', width:200, title: '业务时间', sort:true}
-                    ,{field:'in_num', width:120, title: '入库数量'}
-                    ,{field:'out_num', width:120, title: '出库数量'}
+                    {field:'created_at', width:170, title: '业务时间', sort:true}
+                    ,{field:'in_num', width:90, title: '入库数量'}
+                    ,{field:'out_num', width:90, title: '出库数量'}
                     ,{field:'goods_sku', title: 'SKU编码'}
                     ,{title: '产品名称', wifth:260,  templet: function(res){
                         return res.sku.sku_name;
@@ -351,6 +352,16 @@
                     ,{field:'user_id', title: '操作人', templet: function(res){
                         return res.admin.admin_name;
                     }}
+                    ,{field:'import_order_sn', width:150, title: '订单号'}
+                    ,{field: 'out_status', title: '状态标记', width:90, templet:function(row){
+                        if(row.out_status == 3){
+                            return "<span style='color:red'>问题件</span>";
+                        }else if(row.out_status == 4){
+                            return "<span style='color:green'>问题件已处理</span>";
+                        }else{
+                            return '';
+                        }
+                    }}
                 ]]
                 ,id: 'testReload'
             });
@@ -361,7 +372,28 @@
                     ,data = obj.data //得到所在行所有键值
                     ,field = obj.field; //得到字段
                 console.log(obj);
-
+                $.ajax({
+                    type:'post',
+                    url:"/admins/inventory/" + obj.data.id + '/update_fields',
+                    data:{_token:"{{ csrf_token() }}", update_field: obj.field, update_field_value: obj.value},
+                    success:function(msg){
+                        if(msg.success){
+                            layer.msg('设置成功！',{icon:1,time:2000},function (index) {
+                                layer.close(index);
+                            });
+                        }else{
+                            layer.msg('设置失败！',{icon:2,time:2000});
+                        }
+                    },
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
+                    }
+                });
             });
 
             //监听工具条

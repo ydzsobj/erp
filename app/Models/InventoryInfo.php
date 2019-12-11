@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 class InventoryInfo extends Model
@@ -27,7 +29,8 @@ class InventoryInfo extends Model
         'stock_type',
         'out_status',
         'targetable_type',
-        'targetable_id'
+        'targetable_id',
+        'import_order_sn'
     ];
 
     public function admin(){
@@ -46,6 +49,8 @@ class InventoryInfo extends Model
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         $keywords = $request->get('keywords');
+        $targetable_type = $request->get('targetable_type');
+        $targetable_id = $request->get('targetable_id');
 
         return self::with(['admin','sku'])
 
@@ -74,11 +79,19 @@ class InventoryInfo extends Model
                     $query->where('inventory_info.out_status', $out_status)->where('inventory_info.in_num','>',0);
                 }else if($out_status == 1){
                     $query->where('inventory_info.out_status', $out_status)->where('inventory_info.out_num','>',0);
+                }else{
+                    $query->where('inventory_info.out_status', $out_status);
                 }
 
             })
             ->when($start_date && $end_date, function($query) use($start_date, $end_date){
                 $query->whereBetween('inventory_info.created_at', [$start_date, $end_date]);
+            })
+            ->when($targetable_id && $targetable_type, function($query) use ($targetable_type, $targetable_id){
+                $query->where([
+                    'targetable_type' => $targetable_type,
+                    'targetable_id' => $targetable_id
+                ]);
             })
             ->select(
                 'inventory_info.*',
@@ -87,5 +100,46 @@ class InventoryInfo extends Model
             ->orderBy('inventory_info.id','desc')
             ->paginate($this->page_size);
 
+    }
+
+    //汇总待入库的数据
+    public function waiting_in(){
+
+        $summary = InventoryInfo::where('warehouse_id',Warehouse::YN_VIRTUAL_WAREHOUSE_ID)
+                ->where(['out_status' => 1])
+                ->where('inventory_info.out_num','>',0)
+                ->select(DB::raw('SUM(out_num) as total_out_nums'),'goods_sku')
+                ->groupBy('goods_sku')
+                ->get();
+
+        $goods_sku_list = $summary->pluck('goods_sku');
+
+        $skus = ProductGoods::whereIn('sku_code', $goods_sku_list->all())
+            ->select(
+                'product_goods.*'
+            )
+            ->paginate($this->page_size);
+
+        $summary_data = $summary->keyBy('goods_sku');
+
+        $skus->map(function($item) use ($summary_data){
+
+            $target = Arr::get($summary_data, $item->sku_code);
+            $item['out_num'] = $target->total_out_nums;
+            $item['waiting_ids'] = $this->waiting_ids($item->sku_code);
+            return $item;
+        });
+
+        return $skus;
+
+    }
+
+    public function waiting_ids($sku_code){
+
+        return InventoryInfo::where('warehouse_id',Warehouse::YN_VIRTUAL_WAREHOUSE_ID)
+                ->where(['out_status' => 1])
+                ->where('inventory_info.out_num','>',0)
+                ->where('goods_sku', $sku_code)
+                ->pluck('id');
     }
 }

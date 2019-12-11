@@ -116,6 +116,10 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('/yn_virtual_in_create', 'InventoryController@yn_virtual_in_create')->name('inventory.yn_virtual_in_create');
     //入口
     Route::get('/guide', 'InventoryController@guide')->name('inventory.guide');
+    //标记问题件
+    Route::put('/inventory/{id}/update_status', 'InventoryController@update_status')->name('inventory.update_status');
+    //问题件列表
+    Route::get('/inventory_problems_create', 'InventoryController@problems_create')->name('inventory.problems_create');
 
     /***虚拟仓end */
 
@@ -125,6 +129,11 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('/yn_out_create',  'InventoryController@yn_out_create')->name('inventory.yn_out_create');
     //入库
     Route::post('/yn_in',  'InventoryController@yn_in')->name('inventory.yn_in');
+    //出库
     Route::post('/yn_out',  'InventoryController@yn_out')->name('inventory.yn_out');
+
+    //更新仓位
+    Route::post('/inventory/{id}/update_fields', 'InventoryController@update_fields')->name('inventory.update_fields');
+
 
 });

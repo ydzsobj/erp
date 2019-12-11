@@ -259,8 +259,8 @@
                     ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
-                    ,{field: 'goods_position', title: '库位'}
-                    ,{field: 'goods_text', title: '商品备注'}
+                    ,{field: 'goods_position', title: '库位', 'edit': true}
+                    ,{field: 'goods_text', title: '商品备注', 'edit': true}
 
 
                 ]]
@@ -329,12 +329,11 @@
                 console.log(obj);
                 $.ajax({
                     type:'post',
-                    url:"/admins/inventory/" + obj.data.id + '/goods_position',
-                    data:{_token:"{{ csrf_token() }}", goods_position: obj.value},
+                    url:"/admins/inventory/" + obj.data.id + '/update_fields',
+                    data:{_token:"{{ csrf_token() }}", update_field: obj.field, update_field_value: obj.value},
                     success:function(msg){
-                        if(msg=='0'){
-                            layer.msg('设置成功！',{icon:1,time:2000},function () {
-                                window.location = window.location;
+                        if(msg.success){
+                            layer.msg('设置成功！',{icon:1,time:2000},function (index) {
                                 layer.close(index);
                             });
                         }else{
