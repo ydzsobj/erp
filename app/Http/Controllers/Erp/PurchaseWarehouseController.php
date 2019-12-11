@@ -191,6 +191,7 @@ class PurchaseWarehouseController extends CommonController
         $result->checked_id = Auth::guard('admin')->user()->id;
         $result->checked_at = Carbon::now();
 
+        PurchaseOrder::where('id',$result['purchase_order_warehouse']->purchase_order_id)->update(['deliver_at'=>Carbon::now()]);
         $this->purchaseOrderLog($result->purchase_order_warehouse->purchase_order_id,'采购订单已到货！');
 
         return $result->save()?'0':'1';
@@ -245,7 +246,7 @@ class PurchaseWarehouseController extends CommonController
             }
 
 
-            $this->doInventory($value['goods_sku'],$warehouse['warehouse_id']);
+            //$this->doInventory($value['goods_sku'],$warehouse['warehouse_id']);
 
 
 

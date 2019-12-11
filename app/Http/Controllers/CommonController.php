@@ -75,13 +75,15 @@ class CommonController extends Controller
      * 库存碰订单
      */
     public function doInventory($goods_sku,$warehouse_id){
-        $order_info = OrderInfo::with(['order'=>function($query){
+        $order_info = OrderInfo::with(['order'=>function($query) use ($warehouse_id){
             $query->whereBetween('order_status', [2,3]);
         }])->where(function ($query) use ($goods_sku,$warehouse_id){
             $query->where('goods_sku','=',$goods_sku);
                 //->where('warehouse_id','=',$warehouse_id);
-        })->get();
-
+        })->orderBy('id','asc')->get();
+        foreach ($order_info as $key=>$value){
+            dd($value['order']);
+        }
         dump($order_info);
     }
 
