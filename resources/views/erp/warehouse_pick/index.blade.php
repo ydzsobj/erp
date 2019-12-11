@@ -127,7 +127,7 @@
     </script>
 
     <script type="text/html" id="status">
-        @{{# if(d.pick_status == 0){ }} <div style="color: #ff0000">未完成</div>  @{{# }else{  }} <div style="color: #008000">已完成</div> @{{# }  }}
+        @{{# if(d.pick_status == 0){ }} <div style="color: #ff0000">未出库</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -191,7 +191,7 @@
                         templet: function(row){
                             var status = '';
                             if(row.pick_status == 0){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">出库</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="out">出库</a>';
                             }
                             return status;
                         }
@@ -342,48 +342,30 @@
                         content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-                }else if(obj.event === 'check'){
-                        $.ajax({
-                            url:"{{url('admins/purchase_order/check/')}}/"+data.id,
-                            type:'post',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('审核成功！',{icon:1,time:2000},function () {
-                                        window.location = window.location;
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('审核失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
-
-                }else if(obj.event === 'export'){
-                    /*$.ajax({
-                        url:"{{url('admins/warehouse_pick/export/')}}/"+data.id,
-                        type:'get',
+                }else if(obj.event === 'out'){
+                    $.ajax({
+                        url:"{{url('admins/warehouse_pick/out/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
                         datatype:'json',
                         success:function (msg) {
                             if(msg=='0'){
-                                layer.msg('导出成功！',{icon:1,time:2000},function () {
+                                layer.msg('审核成功！',{icon:1,time:2000},function () {
                                     window.location = window.location;
                                     layer.close(index);
                                 });
                             }else{
-                                layer.msg('导出失败！',{icon:2,time:2000});
+                                layer.msg('审核失败！',{icon:2,time:2000});
                             }
                         },
                         error: function(XmlHttpRequest, textStatus, errorThrown){
                             layer.msg('error!',{icon:2,time:2000});
                         }
-                    });*/
+                    });
 
                 }
+
+
             });
 
 

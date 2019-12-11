@@ -121,9 +121,8 @@
         </div>
     </div>
     <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="getCheckData">提交审核</button>
-            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加采购单','{{url("admins/purchase_order/create")}}',2,'100%','100%');">添加采购单</button>
+        <div class="layui-btn-container demoTable">
+            <button class="layui-btn" data-type="getCheckData">批量生成拣货单</button>
         </div>
     </script>
 
@@ -175,7 +174,7 @@
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,page: true //开启分页
-                ,height: 'full-200'
+                ,height: 'full-350'
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
                     ,{field: 'order_sn', title: '订单号', width: 150, fixed: 'left'}
@@ -238,22 +237,47 @@
                         }
                     }, 'data');
                 },
+                //批量审核
+                getCheckData:function(){
+                    var checkStatus = table.checkStatus('listReload');
+                    if(checkStatus.data.length==0){
+                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                        return ;
+                    }
+                    var codeId= "";
+                    for(var i=0;i<checkStatus.data.length;i++){
+                        if(checkStatus.data[i].order_lock<1){
+                            parent.layer.msg('有订单未锁库，请核查订单状态！', {icon: 2});
+                            return ;
+                        }
+                        codeId += checkStatus.data[i].id+",";
+                    }
+                    parent.layer.msg('生成中...', {icon: 16,shade: 0.3,time:3000});
+                    json = JSON.stringify(checkStatus);
+                    layui.use('layer', function () {
+                        layer.open({
+                            skin:'layui-layer-nobg',
+                            type:2,
+                            title:'编辑信息',
+                            area:['100%','100%'],
+                            fixed:false,
+                            maxmin:true,
+                            content:"{{url('admins/warehouse_pick/create')}}",
+                            success:function (layero,index) {
+                                var iframe = window['layui-layer-iframe' + index];
+                            }
+                        });
+                    });
+
+                }
+
             };
             $('.demoTable .layui-btn').on('click', function(){
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
             });
 
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
-            });
+
 
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(list)', function(obj){

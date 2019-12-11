@@ -7,8 +7,10 @@ use App\Exports\UsersExport;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderLog;
 use App\Models\Warehouse;
 use App\Models\WarehousePick;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Excel;
@@ -54,10 +56,17 @@ class WarehousePickController extends CommonController
         if(isset($request->table)) {
             foreach ($request->table['dataTable'] as $key => $value) {
                 $pick_ids[] = $value['id'];
-                Order::where('id',$value['id'])->update(['ex_status'=>1]);
+                Order::where('id',$value['id'])->update(['order_status'=>5,'ex_status'=>1]);
+                $orderLogArr[] = [
+                    'order_id' => $value['id'],
+                    'user_id' =>  Auth::guard('admin')->user()->id,
+                    'order_status' => 5,
+                    'order_text' => '订单拣货中',
+                    'created_at' => Carbon::now(),
+                ];
+                OrderLog::insert($orderLogArr);    //订单日志记录
             }
         }
-
         $arr = [
             'pick_code' => $pick_code,
             'pick_ids' => implode(',',$pick_ids),
@@ -67,8 +76,8 @@ class WarehousePickController extends CommonController
             'user_id' => Auth::guard('admin')->user()->id,
             'pick_text' => $request->pick_text,
             'picked_at' => $request->picked_at,
-            'picked_status' => 0,
-            'created_at' => date('Y-m-d H:i:s', time()),
+            'pick_status' => 0,
+            'created_at' => Carbon::now(),
         ];
 
         $result = WarehousePick::insert($arr);
@@ -132,5 +141,19 @@ class WarehousePickController extends CommonController
         return Excel::download(new OrderExport($order), $id.'_拣货单导出'.date('y-m-d H_i_s').'.xlsx');
 
     }
+
+
+    /*
+     * 出库
+     */
+    public function out(Request $request, $id){
+
+
+
+
+    }
+
+
+
 
 }

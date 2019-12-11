@@ -91,6 +91,9 @@
                     ,{field: 'created_at', title: '导入时间', width: 160, sort: true}
                     ,{title: '锁定', width: 80, fixed: 'right',templet:'#order_lock'}
                     ,{title: '占用', width: 80, fixed: 'right',templet:'#order_used'}
+                    ,{title: '仓库', width: 80, fixed: 'right',templet:function(res){
+                            if(res.warehouse){ return res.warehouse.warehouse_name }else{ return ''; }
+                        }}
                 ]]
             });
 

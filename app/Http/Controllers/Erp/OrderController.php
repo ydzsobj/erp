@@ -137,7 +137,6 @@ class OrderController extends CommonController
 
         $data = [
             'checked_at' => Carbon::now(),
-            'order_status' => 1,
             'checked_id' => Auth::user()->id
         ];
 
