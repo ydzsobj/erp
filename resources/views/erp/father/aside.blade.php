@@ -164,9 +164,9 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory')}}">菲律宾虚拟仓</a>
                     </dd> --}}
-                    <dd data-name="console">
+                    {{--  <dd data-name="console">
                         <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
-                    </dd>
+                    </dd>  --}}
 
                 </dl>
             </li>
