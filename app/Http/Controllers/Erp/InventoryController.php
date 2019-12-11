@@ -25,6 +25,8 @@ class InventoryController extends Controller
     {
         $warehouse_id = $request->get('warehouse_id');
 
+        $status_list = config('inventory_info.status_list');
+
         switch($warehouse_id){
             case Inventory::SZ_WAREHOUSE_ID:
                 //深圳仓首页列表
@@ -36,7 +38,7 @@ class InventoryController extends Controller
             break;
             case Inventory::YN_VIRTUAL_WAREHOUSE_ID:
                 //印尼虚拟仓首页列表
-                return view('erp.inventory.YN_VIRTUAL.index', compact('warehouse_id'));
+                return view('erp.inventory.YN_VIRTUAL.index', compact('warehouse_id','status_list'));
             break;
             default:
                 return false;

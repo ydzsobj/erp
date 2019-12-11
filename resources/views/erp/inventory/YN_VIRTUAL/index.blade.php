@@ -25,7 +25,7 @@
             /* background-color:pink; */
             bottom: 0;
             top: calc(50% + 3px);
-            overflow: auto
+            /* overflow: auto */
         }
         .pane-trigger-con{
             width: 100%;
@@ -120,6 +120,18 @@
                                                         <div class="layui-inline" style="width:150px;">
                                                             <input class="layui-input" name="goods_sku" id="goods_sku" placeholder="请输入sku">
                                                         </div>
+                                                </li>
+                                                <li>
+                                                    状态：
+                                                    <div class="layui-inline" style="width:110px;">
+                                                            <select name="out_status" id="select_status" >
+                                                                <option></option>
+                                                                    @foreach ($status_list as $key=>$status)
+                                                                        <option value={{ $key }}>{{ $status }}</option>
+                                                                    @endforeach
+                                                            </select>
+                                                    </div>
+
                                                 </li>
                                                 <li>
                                                     <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
@@ -286,6 +298,7 @@
                             start_date: $("#start_date").val(),
                             end_date: $("#end_date").val(),
                             goods_sku:$("#goods_sku").val(),
+                            out_status: $("#select_status").val(),
                         }
                     }, 'data');
 
@@ -313,6 +326,7 @@
                         goods_sku: data.goods_sku,
                         start_date: $("#start_date").val(),
                         end_date: $("#end_date").val(),
+                        out_status: $("#select_status").val(),
                     }
                 })
                 //标注选中样式
@@ -352,10 +366,16 @@
                     ,{field:'user_id', title: '操作人', templet: function(res){
                         return res.admin.admin_name;
                     }}
-                    ,{field:'import_order_sn', width:150, title: '订单号'}
-                    ,{field: 'out_status', title: '状态标记', width:90, templet:function(row){
-                        if(row.out_status == 3){
-                            return "<span style='color:red'>问题件</span>";
+                    // ,{field:'import_order_sn', width:150, title: '订单号'}
+                    ,{field: 'out_status', title: '状态', width:90, templet:function(row){
+                        if(row.out_status == 0 || (row.out_status == 1 && row.in_num >0)){
+                            return "<span style='color:orange'>已入库</span>";
+                        }else if(row.out_status == 2){
+                            return "<span style='color:green'>已入真实仓</span>";
+                        }else if(row.out_status == 1 && row.out_num >0){
+                            return "<span style='color:blue'>已出库</span>";
+                        }else if(row.out_status == 3){
+                            return "<span style='color:red'>问题件未处理</span>";
                         }else if(row.out_status == 4){
                             return "<span style='color:green'>问题件已处理</span>";
                         }else{

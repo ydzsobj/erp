@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\AdminLog;
 use App\Models\Inventory;
 use App\Models\Order;
+use App\Models\OrderInfo;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
 use App\Models\WarehousePick;
 use Carbon\Carbon;
+use function foo\func;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -53,12 +55,12 @@ class CommonController extends Controller
             $match = $this->matchInventory($warehouse_ids,$value['goods_sku'],$value['goods_num']);
             if($match['code']=='1'){
                 //这里不涉及一单多品
-                $value->where('id',$value['id'])->update(['goods_used'=>1,'goods_lock'=>1]);
+                $value->where('id',$value['id'])->update(['goods_used'=>1,'goods_lock'=>1,'warehouse_id'=>$match['warehouse_id']]);
                 $order->where('id',$orderId)->update(['order_lock'=>1,'order_used'=>1,'order_status'=>4,'warehouse_id'=>$match['warehouse_id']]);
                 return ['order_status'=>4,'order_text'=>'订单已锁库'];
             }elseif($match['code']=='2'){
-                $value->where('id',$value['id'])->update(['goods_used'=>1]);
-                $order->where('id',$orderId)->update(['order_used'=>1,'order_status'=>3]);
+                $value->where('id',$value['id'])->update(['goods_used'=>1,'warehouse_id'=>$match['warehouse_id']]);
+                $order->where('id',$orderId)->update(['order_used'=>1,'order_status'=>3,'warehouse_id'=>$match['warehouse_id']]);
                 return ['order_status'=>3,'order_text'=>'订单未锁库，占用等待中'];
             }else{
                 return ['order_status'=>1,'order_text'=>'订单已处理'];
@@ -68,14 +70,22 @@ class CommonController extends Controller
 
     }
 
-    //库存占用
-    public function stock_used($warehouse_id,$goods_sku,$used_num){
-        dd('aa');
-    }
 
     /*
      * 库存碰订单
      */
+    public function doInventory($goods_sku,$warehouse_id){
+        $order_info = OrderInfo::with(['order'=>function($query) use ($warehouse_id){
+            $query->whereBetween('order_status', [2,3]);
+        }])->where(function ($query) use ($goods_sku,$warehouse_id){
+            $query->where('goods_sku','=',$goods_sku);
+                //->where('warehouse_id','=',$warehouse_id);
+        })->orderBy('id','asc')->get();
+        foreach ($order_info as $key=>$value){
+            dd($value['order']);
+        }
+        dump($order_info);
+    }
 
 
     /*
@@ -88,7 +98,6 @@ class CommonController extends Controller
 
         foreach($inventory as $key=>$value){
             if($value['stock_unused_num']>=$goods_num){
-                //$this->stock_used($value['warehouse_id'],$goods_sku,$goods_num);
                 $value->stock_used_num += $goods_num;
                 $value->stock_unused_num -= $goods_num;
                 $result = $value->save();
@@ -99,7 +108,7 @@ class CommonController extends Controller
                     ];
                 }
 
-            }elseif($value['warehouse_id']==1 && $value['plan_unused_num']>=$goods_num){
+            }elseif($value['plan_unused_num']>=$goods_num){
                 $value->plan_used_num += $goods_num;
                 $value->plan_unused_num -= $goods_num;
                 $result = $value->save();
