@@ -13,6 +13,8 @@ class WarehousePick extends Model
     protected $table = "warehouse_pick";
     protected $dates = ['deleted_at'];
 
+    protected $guarded = [];
+
     //搜索
     public function search($request){
 

@@ -55,11 +55,11 @@ class Order extends Model
         $page = $request->page ?: 1;
         $limit = $request->limit ?: 100;
 
-        $count = static::where('order_sn','!=','')
+        $count = static::with('warehouse')->where('order_sn','!=','')
             ->keywords($keywords)
             ->date($start_date, $end_date)
             ->count();
-        $orders = static::where('order_sn','!=','')
+        $orders = static::with('warehouse')->where('order_sn','!=','')
             ->keywords($keywords)
             ->status($status)
             ->date($start_date, $end_date)
@@ -129,26 +129,30 @@ class Order extends Model
     public function searchOut($request){
 
         $keywords = $request->get('keywords')?:'';
-        $status = $request->get('order_status')?: 1;
+        $status = $request->get('order_status')?:4;
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
 
         $page = $request->page ?: 1;
         $limit = $request->limit ?: 100;
-
+        $count = static::where('order_lock','1')
+            ->keywords($keywords)
+            ->status($status)
+            ->date($start_date, $end_date)
+            ->count();
         $orders = static::where('order_lock','1')
             ->keywords($keywords)
-            ->exStatus($status)
+            ->status($status)
             ->date($start_date, $end_date)
             //->select('orders.*')
-            ->orderBy('id','desc')
+            ->orderBy('id','asc')
             ->offset(($page-1)*$limit)
             ->limit($limit)
             ->get();
 
 
 
-        return $orders;
+        return [$orders,$count];
     }
 
 
@@ -182,6 +186,10 @@ class Order extends Model
     //获取订单编号
     public function order_sn($order_sn){
         return self::where('order_sn', $order_sn)->first();
+    }
+
+    public function warehouse(){
+        return $this->belongsTo(Warehouse::class,'warehouse_id','id');
     }
 
     //一对多关联订单信息

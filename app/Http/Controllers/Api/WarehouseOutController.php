@@ -12,8 +12,7 @@ class WarehouseOutController extends Controller
     public function index(Request $request)
     {
         $order = new Order();
-        $orders = $order->searchOut($request);
-        $count = $orders->count();
+        list($orders,$count)  = $order->searchOut($request);
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$orders]);
     }
