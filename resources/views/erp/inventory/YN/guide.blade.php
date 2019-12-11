@@ -2,10 +2,14 @@
 @section('content')
 
 <div class="layui-row" style="margin:30px;">
-    <button type="button" class="layui-btn" id="in_store">入库</button>
-    <button type="button" class="layui-btn" id="store">库存</button>
-    <button type="button" class="layui-btn" id="out_store">出库</button>
+    <button type="button" class="layui-btn layui-btn-lg" id="in_store"> <span class="iconfont icon-ruku"></span> 入库</button>
+    <button type="button" class="layui-btn layui-btn-lg" id="store"><span class="iconfont icon-icon-p_dangqiankucun"></span>  库存</button>
+    <button type="button" class="layui-btn layui-btn-lg" id="out_store"><span class="iconfont icon-chuku"></span> 出库</button>
 
+</div>
+<div style="font-size: 40px;text-align: center;">
+<span class="iconfont icon-icon-p_dangqiankucun" style="font-size: 120px; color: #d2d2d2;"></span>
+<p style="color: #d2d2d2;">印尼仓</p>
 </div>
 
 
