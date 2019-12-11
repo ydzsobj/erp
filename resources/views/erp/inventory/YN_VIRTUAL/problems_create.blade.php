@@ -90,21 +90,22 @@
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type: 'checkbox', width:50}
-                        ,{field:'created_at', width:170, title: '业务时间', sort:true}
+                        ,{field:'created_at', width:160, title: '业务时间', sort:true}
                         ,{title: '产品名称',  templet: function(res){
                             return res.sku.sku_name;
                         }}
-                        ,{title: '属性值', width:100, templet: function(res){
+                        ,{title: '属性值', width:90, templet: function(res){
                             return res.sku.sku_attr_value_names;
                         }}
                         ,{field:'goods_sku', title: 'SKU编码', width:150}
                         ,{field:'in_num', width:80, title: '数量',style:'color:green'}
-                        ,{field:'stock_type', title: '业务类型', width:100,}
+                        ,{field:'stock_type', title: '业务类型', width:90}
+                        ,{field:'import_order_sn', title: '订单编号', width:120,}
 
                         ,{field:'user_id', title: '操作人',  width:100,templet: function(res){
                             return res.admin.admin_name;
                         }}
-                        ,{title:'操作', width:120, templet:function(){
+                        ,{title:'操作', width:100, templet:function(){
 
                             html_str = '<a class="layui-btn layui-btn-xs" lay-event="set_status">处理</a>';
                             return html_str;
