@@ -28,6 +28,8 @@ class InventoryImport implements ToCollection
         $failed = 0;
         $existed = 0;
 
+        $msg = '';
+
         //admin
         $admin = Auth::user();
 
@@ -47,6 +49,16 @@ class InventoryImport implements ToCollection
 
             if(!$sku_code){
                 $failed++;
+                continue;
+            }
+
+            $import_order_sn = $row[3];
+
+            $order_sn_existed = InventoryInfo::where('import_order_sn', $import_order_sn)->first();
+
+            if($order_sn_existed){
+                $existed++;
+                $msg .= '订单号:'.$import_order_sn. '已存在；';
                 continue;
             }
 
@@ -93,6 +105,13 @@ class InventoryImport implements ToCollection
             }
         }
 
-        echo '共'. (count($rows) -1).'条数据; 成功导入:'.$successed .'个; 失败：'.$failed. '个';
+        if($successed == 0){
+            //删除日志
+            $log_mod->delete();
+        }
+
+        echo '共'. (count($rows) -1).'条数据; 成功导入:'.$successed .'个; 失败：'.$failed. '个, 订单号已存在：'. $existed. '个;';
+        echo "\n";
+        echo $msg;
     }
 }
