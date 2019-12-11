@@ -242,7 +242,7 @@
                     // ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
-                    ,{field: 'goods_position', title: '库位',edit: true}
+                    // ,{field: 'goods_position', title: '库位',edit: true}
                     ,{field: 'goods_text', title: '商品备注', edit: true}
 
 

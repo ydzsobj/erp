@@ -108,6 +108,9 @@ class InventoryImport implements ToCollection
         if($successed == 0){
             //删除日志
             $log_mod->delete();
+        }else{
+            $log_mod->import_nums = $successed;
+            $log_mod->save();
         }
 
         echo '共'. (count($rows) -1).'条数据; 成功导入:'.$successed .'个; 失败：'.$failed. '个, 订单号已存在：'. $existed. '个;';
