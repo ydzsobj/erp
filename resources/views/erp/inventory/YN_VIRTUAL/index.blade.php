@@ -234,6 +234,7 @@
                     ,{field: 'goods_text', title: '商品备注', edit: true}
 
 
+
                 ]]
                 ,done:function (res, curr, count) {
                     var data = res.data;
@@ -337,9 +338,9 @@
                 ,limit: 50
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[
-                    {field:'created_at', width:200, title: '业务时间', sort:true}
-                    ,{field:'in_num', width:120, title: '入库数量'}
-                    ,{field:'out_num', width:120, title: '出库数量'}
+                    {field:'created_at', width:170, title: '业务时间', sort:true}
+                    ,{field:'in_num', width:90, title: '入库数量'}
+                    ,{field:'out_num', width:90, title: '出库数量'}
                     ,{field:'goods_sku', title: 'SKU编码'}
                     ,{title: '产品名称', wifth:260,  templet: function(res){
                         return res.sku.sku_name;
@@ -351,14 +352,15 @@
                     ,{field:'user_id', title: '操作人', templet: function(res){
                         return res.admin.admin_name;
                     }}
-                    ,{field:'out_status', title: '状态', templet: function(row){
-                        var status = '';
-
+                    ,{field:'import_order_sn', width:150, title: '订单号'}
+                    ,{field: 'out_status', title: '状态标记', width:90, templet:function(row){
                         if(row.out_status == 3){
-                            status = '<span style="color:red;">问题件</span>';
+                            return "<span style='color:red'>问题件</span>";
+                        }else if(row.out_status == 4){
+                            return "<span style='color:green'>问题件已处理</span>";
+                        }else{
+                            return '';
                         }
-
-                        return status;
                     }}
                 ]]
                 ,id: 'testReload'

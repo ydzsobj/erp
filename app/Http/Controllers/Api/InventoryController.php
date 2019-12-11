@@ -72,6 +72,16 @@ class InventoryController extends Controller
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data, 'count' => $data->total()]);
     }
 
+    //待入库列表
+    public function waiting_in(Request $request){
+
+        $obj = new InventoryInfo();
+        $data = $obj->waiting_in($request);
+
+        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data, 'count' => $data->total()]);
+
+    }
+
     /**
      * 订单出库
      */
@@ -118,5 +128,7 @@ class InventoryController extends Controller
 
         return $data;
     }
+
+
 
 }

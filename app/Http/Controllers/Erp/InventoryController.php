@@ -325,11 +325,13 @@ class InventoryController extends Controller
             }
             DB::transaction(function () use ($item, $admin) {
 
-                $inventory_info = InventoryInfo::find($item['id']);
-                $inventory_info->out_status = 2;//入库状态 已入真实库
-                $inventory_info->save();
+                InventoryInfo::whereIn('id', $item['waiting_ids'])->update(['out_status' => 2]);
 
-                $existed_data = Inventory::by_goods_sku(Warehouse::YN_WAREHOUSE_ID, $item['goods_sku']);
+                // $inventory_info = InventoryInfo::find($item['id']);
+                // $inventory_info->out_status = 2;//入库状态 已入真实库
+                // $inventory_info->save();
+
+                $existed_data = Inventory::by_goods_sku(Warehouse::YN_WAREHOUSE_ID, $item['sku_code']);
 
                 if($existed_data){
                     //sku已存在，追加库存信息 //虚拟仓出的 = 真实仓待入库的
@@ -340,7 +342,7 @@ class InventoryController extends Controller
                 }else{
                     //sku新入库 添加数据
                     $mod = Inventory::create([
-                        'goods_sku' => $item['goods_sku'],
+                        'goods_sku' => $item['sku_code'],
                         'warehouse_id' => Warehouse::YN_WAREHOUSE_ID,
                         'stock_num' => intval($item['out_num']),
                         'in_num' => intval($item['out_num'])
@@ -349,7 +351,7 @@ class InventoryController extends Controller
 
                 //添加详情
                 InventoryInfo::create([
-                    'goods_sku' => $item['goods_sku'],
+                    'goods_sku' => $item['sku_code'],
                     'warehouse_id' => Warehouse::YN_WAREHOUSE_ID,
                     'in_num' => intval($item['out_num']),
                     'stock_type' => '确认入库',

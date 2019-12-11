@@ -29,8 +29,8 @@
                     layer.open({
                         skin:'layui-layer-nobg',
                         type:2,
-                        title:'导入入库',
-                        area: ['60%', '60%'],
+                        title:'入库',
+                        area: ['95%', '95%'],
                         fixed:false,
                         maxmin:true,
                         content:"{{ route('inventory.yn_virtual_in_create') }}?warehouse_id={{ $warehouse_id }}",

@@ -73,6 +73,10 @@ $api->version('v1', function ($api) {
         $api->get('/inventory_info', 'InventoryController@api_info');
         //获取出库订单
         $api->get('/order_out', 'InventoryController@order_out');
+        //获取导入log
+        $api->resource('/inventory_import_logs', 'InventoryImportLogController', ['only' => ['index'] ]);
+        //获取待入库仓库数据
+        $api->get('/waiting_in', 'InventoryController@waiting_in');
         /*****仓库相关END */
 
 

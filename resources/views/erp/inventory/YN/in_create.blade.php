@@ -16,7 +16,7 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/inventory_info')}}" //数据接口
+                ,url: "{{url('api/waiting_in')}}" //数据接口
                 ,where: {
                     warehouse_id:  {{ $virtual_warehouse_id }},
                     out_status: 1
@@ -40,19 +40,14 @@
                 ,cols: [[ //表头
                     {type: 'checkbox', width:50}
                         ,{title: '产品名称',  templet: function(res){
-                            return res.sku.sku_name;
+                            return res.sku_name;
                         }}
                         ,{title: '属性值', templet: function(res){
-                            return res.sku.sku_attr_value_names;
+                            return res.sku_attr_value_names;
                         }}
-                        ,{field:'goods_sku', title: 'SKU编码'}
+                        ,{field:'sku_code', title: 'SKU编码'}
                         ,{field:'out_num', width:120, title: '待入库数量',style:'color:green'}
-                        ,{field:'stock_type', title: '业务类型', width:100,}
-                        ,{field:'created_at', width:170, title: '业务时间', sort:true}
-                        ,{field:'user_id', title: '操作人',  width:100,templet: function(res){
-                            return res.admin.admin_name;
-                        }}
-
+                        ,{title: '业务类型', width:100,templet:function(){return '虚拟仓出库';}}
                 ]]
             });
 
@@ -88,52 +83,15 @@
                 var data = obj.data;
 
                 if(obj.event === 'detail'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'基本信息',
-                        area:['350px','420px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/supplier/')}}/"+data.id
-                    });
-                    //layer.msg('ID：'+ data.id + ' 的查看操作');
+
                 } else if(obj.event === 'del'){
                     layer.confirm('真的删除行么', function(index){
 
-                        $.ajax({
-                            url:"{{url('admins/supplier/')}}/"+data.id,
-                            type:'delete',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('删除成功！',{icon:1,time:2000},function () {
-                                        obj.del();
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('删除失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
 
 
                     });
                 } else if(obj.event === 'edit'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'编辑信息',
-                        area:['800px','600px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
-                    });
-                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+
                 }
             });
 

@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\InventoryImportLog;
 use App\Models\Inventory;
 use App\Models\InventoryInfo;
 use App\Models\Order;
@@ -29,6 +30,13 @@ class InventoryImport implements ToCollection
 
         //admin
         $admin = Auth::user();
+
+        //增加导入日志
+        $log_mod = InventoryImportLog::create([
+            'import_nums' => count($rows) - 1,
+            'admin_id' => $admin->id,
+            'warehouse_id' => $this->warehouse_id
+        ]);
 
         foreach ($rows as $key=>$row){
             if($key == 0){
@@ -76,7 +84,9 @@ class InventoryImport implements ToCollection
                     'in_num' => intval($row[2]),
                     'stock_type' => '库存导入',
                     'user_id' => $admin->id,
-                    'order_sn' => $row[3],
+                    'import_order_sn' => $row[3],
+                    'targetable_type' => InventoryImportLog::TABLE,
+                    'targetable_id' => $log_mod->id
                 ]);
             }else{
                 $failed++;
