@@ -1,168 +1,397 @@
 @extends('erp.father.father')
 @section('content')
-    <div class="layui-fluid layui-card">
+    <style>
+        html,body{
+            height: 100%;
+        }
+        .split-pane-warpper{
+            width: 100%;
+            height: 100%;
+            position: relative;
+
+        }
+        .pane{
+            width: 100%;
+            position:absolute;
+
+        }
+        .pane-top{
+            /* background-color: palevioletred; */
+            height: calc(75% - 3px);
+            overflow: auto
+
+        }
+        .pane-bottom{
+            /* background-color:pink; */
+            bottom: 0;
+            top: calc(75% + 3px);
+            overflow: auto
+        }
+        .pane-trigger-con{
+            width: 100%;
+            background-color: red;
+            position: absolute;
+            z-index: 9;
+            user-select: none;
+            top: calc(75% - 3px);
+            height: 6px;
+            cursor: row-resize;
+        }
+        .layui-form-label{
+            padding: 9px 0
+        }
+    </style>
+    <div class="layui-row" style="margin-top:10px;">
         <form class="layui-form" action="">
-            {{csrf_field()}}
-            <input type="hidden" name="purchase_order_id" value="{{$id}}"/>
-            <fieldset class="layui-elem-field layui-field-title">
-                <legend>采购入库单</legend>
-            </fieldset>
+
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">订单编号</label>
-                    <div class="layui-form-mid" style="color: #ff0000">* 订单编号自动生成</div>
-                    <div class="layui-form-mid"></div>
-                    <label class="layui-form-label">自动拆分</label>
-                    <div class="layui-input-inline">
-                        <select name="">
-                            <option value="0">不自动拆分业务</option>
-                            <option value="1">自动拆分业务</option>
-                        </select>
-                    </div>
-                    <div class="layui-form-mid"></div>
-                    <label class="layui-form-label">供应商</label>
-                    <div class="layui-input-inline">
-                        <select name="supplier_id">
-                            <option value="0">请选择供应商</option>
-                            @foreach($supplier as $value)
-                                <option value="{{$value->id}}">{{$value->supplier_name}}</option>
-                            @endforeach
-                        </select>
+                    <label class="layui-form-label">关键字：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline" style="width:220px;">
+                            <input class="layui-input" name="keywords" id="searchReload" placeholder="请输入订单编号/运单编号/收货人姓名电话详细地址"  autocomplete="off">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">入库仓库</label>
+                    <label class="layui-form-label">状态：</label>
                     <div class="layui-input-inline">
-                        <select name="warehouse_id" lay-verify="required">
-                            <option value="">请选择入库仓库</option>
-                            @foreach($warehouse as $value)
-                                <option value="{{$value->id}}">{{$value->warehouse_name}}</option>
-                            @endforeach
+                        <select name="order_status" id="order_status">
+                            <option value="1">拣货中</option>
+                            <option value="2">已出库</option>
                         </select>
                     </div>
-                    <label class="layui-form-label">付款方式</label>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">日期：</label>
                     <div class="layui-input-inline">
-                        <select name="payment_type">
-                            <option value="0">记应付账款</option>
-                        </select>
+                        <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
                     </div>
-                    <label class="layui-form-label">备注</label>
+                    -
                     <div class="layui-input-inline">
-                        <input type="text" name="warehouse_text" placeholder="请输入备注信息" autocomplete="off" class="layui-input">
+                        <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
                     </div>
                 </div>
-            </div>
-            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-                <legend>采购商品详情</legend>
-            </fieldset>
 
-
-            <div id="dataTable" lay-filter="dataTable"></div>
-            <script type="text/html" id="table_tool">
-                <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
-                <a class="layui-btn layui-btn-xs" lay-event="add_1">add-↑</a>
-                <a class="layui-btn layui-btn-xs" lay-event="add_2">add-↓</a>
-            </script>
-
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit="" lay-filter="form">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <div class="layui-row demoTable">
+                    <a class="layui-btn" data-type="reload" style="margin-left:600px;" id='search'>搜索</a>
+                    &nbsp;<button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
+
             </div>
+
+
+
         </form>
-
     </div>
 
+    <div style="width: 100%;height: calc(100% - 92px);">
+        <div class="split-pane-warpper">
+            <div class="pane pane-top" >
+                <div class="layui-card-body">
+                    <table id="data_list" lay-filter="list"></table>
+                </div>
+            </div>
+            <div class="pane pane-trigger-con"></div>
+            <div class="pane pane-bottom" >
+                <!-- <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table> -->
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md12">
+                            <div class="layui-card">
+                                <div class="layui-tab layui-tab-card">
+                                    <ul class="layui-tab-title">
+                                        <li class="layui-this">商品信息</li>
+                                        <li>安全设置</li>
+                                    </ul>
+                                    <div class="layui-tab-content">
+                                        <div class="layui-tab-item layui-show">
+                                            <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
+                                        </div>
+                                        <div class="layui-tab-item">
 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container demoTable">
+            <button class="layui-btn" data-type="getCheckData">批量出库</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="status">
+        @{{# if(d.ex_status == 0){ }} <div style="color: #ff0000">未出库</div> @{{# }else if(d.ex_status == 1){  }} <div style="color: #0000FF">拣货中</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
+    </script>
 @endsection
 @section('js')
     <script>
-        //Demo
-        layui.config({
-            base: '{{asset("/admin/layuiadmin/")}}/' //静态资源所在路径
-        }).use(['form','upload','laydate','table','layer'], function(){
-            var form = layui.form
-                ,laydate = layui.laydate
-                ,table = layui.table
-                ,layer = layui.layer
-                ,upload = layui.upload;
-            var $=layui.jquery;
 
-            //日期时间选择器
-            laydate.render({
-                elem: '#dateTime'
-                ,type: 'datetime'
+        layui.use(['table','layer'], function(){
+            var table = layui.table,
+                layer = layui.layer,
+                laydate = layui.laydate;
+            $=layui.jquery;
+            var conMove = false;
+            $('.pane-trigger-con').mousedown(function(event){
+                conMove = true
+                $(document).mousemove(function  (event){
+                    if (!conMove) return
+                    // console.log(event)
+                    // console.log($('.split-pane-warpper').height())
+                    // console.log(event.pageY)
+                    // console.log($('.pane-top').height())
+                    // console.log($('.pane-bottom').height())
+                    var pageY=event.pageY-92
+                    if (pageY < 100) pageY = 100
+                    if (pageY > $('.split-pane-warpper').height()-40) pageY = $('.split-pane-warpper').height()-40
+                    $('.pane-top').height(pageY)
+                    $('.pane-bottom').css('top',pageY)
+                    $('.pane-trigger-con').css('top',pageY)
+                })
+                $(document).mouseup(function  (event){
+                    // console.log(event)
+                    conMove = false
+                })
             });
 
 
-
-            var tableIns = table.render({
-                elem: '#dataTable',
-                url: "{{url('api/purchase_order/goods')}}/{{$id}}", //数据接口
-                totalRow: true,
-                height: 512
-                ,cols: [[
-                    {field:'id', title: 'ID', width:80, sort: true}
-                    ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
-                    ,{field:'sku_name', title: '商品名称', width:180,templet:function(res){return res.goods_name;}}
-                    ,{field:'goods_attr_name', title: '属性名', width:100}
-                    ,{field:'goods_attr_value', title: '属性值', width:100}
-                    ,{field:'goods_num', title: '数量',width:80}
-                    ,{field:'goods_price', title: '单价',width:80}
-                    ,{field:'goods_money', title: '总价',  width:80}
-                    ,{field:'tax_rate', title: '税率', width:80}
-                    ,{field:'tax', title: '税费', width:80}
-                    ,{field:'price_tax', title: '单税率', width:80}
-                    ,{field:'money_tax', title: '总金额', width:80}
-                    ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
+            //渲染实例
+            table.render({
+                elem: '#data_list'
+                ,url: "{{url('api/warehouse_out')}}/{{$id}}" //数据接口
+                ,id: 'listReload'
+                ,toolbar: '#toolbar'
+                ,defaultToolbar: ['filter', 'exports', 'print']
+                ,title: '产品数据表'
+                ,count: 10000
+                ,limit: 100
+                ,limits: [100,300,500,1000,2000,5000,10000]
+                ,page: true //开启分页
+                ,height: 'full-350'
+                ,cols: [[ //表头
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field: 'order_sn', title: '订单号', width: 150, fixed: 'left'}
+                    ,{field: 'yunlu_sn', title: '运单号', width: 150, fixed: 'left'}
+                    ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
+                    ,{field: 'id', title: 'ID', width:80, sort: true,}
+                    ,{field: 'order_name', title: '收件人', width:100}
+                    ,{field: 'order_phone', title: '电话', width:120}
+                    ,{field: 'order_code', title: '邮编', width:80}
+                    ,{field: 'order_province', title: '省', width:120}
+                    ,{field: 'order_city', title: '市', width:120}
+                    ,{field: 'order_county', title: '县', width:120}
+                    ,{field: 'order_area', title: '区', width:120}
+                    ,{field: 'order_address', title: '详细地址', width:220}
+                    ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
                 ]]
             });
 
 
-            //监听提交
-            form.on('submit(form)', function(data){
-                //layer.msg(JSON.stringify(data.field));
-                data.field.table = table.cache;
-                for(var i=0, row; i < table.cache.dataTable.length; i++){
-                    row = table.cache.dataTable[i];
-                    if(!row.id || row.goods_num==0 || row.goods_num==''){
-                        layer.msg("检查每一行，请完善数据！", { icon: 5 }); //提示
-                        return false;
-                    }
+            create_show = function create_show(title,url,type,w,h) {
+                if(layui.device().android||layui.device().ios){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:type,
+                        title:title,
+                        area:['375px','667px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:url
+                    });
+                }else {
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:type,
+                        title:title,
+                        area:[w,h],
+                        fixed:false,
+                        maxmin:true,
+                        content:url
+                    });
                 }
-                $.ajax({
-                    url:"{{url('admins/purchase_warehouse')}}",
-                    type:'post',
-                    data:data.field,
-                    datatype:'json',
-                    success:function (msg) {
-                        if(msg=='0'){
-                            layer.msg('添加成功！',{icon:1,time:2000},function () {
-                                //刷新
-                                parent.window.location = parent.window.location;
-                                parent.layer.close(index);
-                            });
-                        }else{
-                            layer.msg('添加失败！',{icon:2,time:2000});
+            };
+
+
+            var active = {
+                //search
+                reload: function(){
+                    var searchReload = $('#searchReload');
+
+                    //执行重载
+                    table.reload('listReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
                         }
-                    },
-                    error: function(data){
-                        var errors = JSON.parse(data.responseText).errors;
-                        var msg = '';
-                        for(var a in errors){
-                            msg += errors[a][0]+'<br />';
+                        ,where: {
+                            keywords: searchReload.val(),
+                            order_status: $("#order_status").val(),
+                            start_date:$("#start_date").val(),
+                            end_date:$("#end_date").val(),
                         }
-                        layer.msg(msg,{icon:2,time:2000});
+                    }, 'data');
+                },
+                //批量审核
+                getCheckData:function(){
+                    var checkStatus = table.checkStatus('listReload');
+                    if(checkStatus.data.length==0){
+                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                        return ;
                     }
+                    var codeId= "";
+                    for(var i=0;i<checkStatus.data.length;i++){
+                        if(checkStatus.data[i].order_lock<1){
+                            parent.layer.msg('有订单未锁库，请核查订单状态！', {icon: 2});
+                            return ;
+                        }
+                        codeId += checkStatus.data[i].id+",";
+                    }
+                    parent.layer.msg('出库中...', {icon: 16,shade: 0.3,time:3000});
+                    json = JSON.stringify(checkStatus);
+                    $.ajax({
+                        url:"{{url('admins/warehouse_out/out')}}",
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}",'ids':codeId,'warehouse_id':"{{$id}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('审核成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('审核失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
+                }
+
+            };
+            $('.demoTable .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+
+
+            //监听行单击事件（单击事件为：rowDouble）
+            table.on('row(list)', function(obj){
+                var data = obj.data;
+                //console.log(data);
+                table.render({
+                    elem: '#table_list'
+                    ,url: "{{url('api/order/goods')}}/"+data.id //数据接口
+                    ,cols: [[
+                        {field:'id', title: 'ID', width:80, sort: true}
+                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
+                        ,{field:'goods_name', title: '商品名称', width:180}
+                        ,{field:'goods_attr_name', title: '属性名', width:100}
+                        ,{field:'goods_attr_value', title: '属性值', width:100}
+                        ,{field:'goods_num', title: '数量',width:80}
+                        ,{field:'goods_price', title: '单价',width:80}
+                        ,{field:'goods_money', title: '总价',  width:80}
+                        ,{field:'tax_rate', title: '税率', width:80}
+                        ,{field:'tax', title: '税费', width:80}
+                        ,{field:'price_tax', title: '单税率', width:80}
+                        ,{field:'money_tax', title: '总金额', width:80}
+                        ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
+                    ]]
+                    ,id: 'testReload'
                 });
-                return false;
+
+                //标注选中样式
+                obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            });
+
+
+            //监听工具条
+            table.on('tool(list)', function(obj){
+                var data = obj.data;
+
+                if(obj.event === 'detail'){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'基本信息',
+                        area:['100%','100%'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{url('admins/purchase_order/')}}/"+data.id
+                    });
+                    //layer.msg('ID：'+ data.id + ' 的查看操作');
+                } else if(obj.event === 'del'){
+                    layer.confirm('真的删除行么', function(index){
+
+                        $.ajax({
+                            url:"{{url('admins/supplier/')}}/"+data.id,
+                            type:'delete',
+                            data:{"_token":"{{csrf_token()}}"},
+                            datatype:'json',
+                            success:function (msg) {
+                                if(msg=='0'){
+                                    layer.msg('删除成功！',{icon:1,time:2000},function () {
+                                        obj.del();
+                                        layer.close(index);
+                                    });
+                                }else{
+                                    layer.msg('删除失败！',{icon:2,time:2000});
+                                }
+                            },
+                            error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.msg('error!',{icon:2,time:2000});
+                            }
+                        });
+
+
+                    });
+                } else if(obj.event === 'edit'){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'编辑信息',
+                        area:['800px','600px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
+                    });
+                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                }else if(obj.event === 'check'){
+                    $.ajax({
+                        url:"{{url('admins/purchase_order/check/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('审核成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('审核失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
+                }
             });
 
 
 
         });
+
     </script>
 @endsection

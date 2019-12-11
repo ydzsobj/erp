@@ -252,7 +252,7 @@
                         }
                         codeId += checkStatus.data[i].id+",";
                     }
-                    parent.layer.msg('生成中...', {icon: 16,shade: 0.3,time:3000});
+                    parent.layer.msg('出库中...', {icon: 16,shade: 0.3,time:3000});
                     json = JSON.stringify(checkStatus);
                     layui.use('layer', function () {
                         layer.open({

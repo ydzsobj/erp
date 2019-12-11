@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderLog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WarehouseOutController extends Controller
 {
@@ -48,6 +52,7 @@ class WarehouseOutController extends Controller
     public function show($id)
     {
         //
+        return view('erp.warehouse_out.show',compact('id'));
     }
 
     /**
@@ -83,4 +88,43 @@ class WarehouseOutController extends Controller
     {
         //
     }
+
+    /*
+     * 出库
+     */
+    public function out(Request $request){
+        $ids = $request->get('ids');
+        $warehouse_id = $request->get('warehouse_id');
+        $ids=explode(',',$ids);
+
+        foreach ($ids as $key=>$value){
+            if(empty($value)) continue;
+            $orderLogArr[$key] = [
+                'order_id' => intval($value),
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 6,
+                'order_text' => '订单已出库',
+                'created_at' => Carbon::now(),
+            ];
+
+            $order = Order::with(['order_info','inventory'=>function($query){
+                $query->where('warehouse_id','=','1');
+            }])->where(function ($query) use ($value,$warehouse_id){
+                $query->where('id',$value)->where('order_status','4')->where('order_lock','1')->where('warehouse_id',$warehouse_id);
+            })->first();
+
+dd($order['inventory']);
+            dd($order);
+
+        }
+
+        OrderLog::insert($orderLogArr);    //订单日志记录
+
+    }
+
+
+
+
+
+
 }

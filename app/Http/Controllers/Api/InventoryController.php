@@ -23,6 +23,13 @@ class InventoryController extends Controller
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
+    public function show(Request $request,$id){
+        $model = new Inventory();
+        list($data,$count) = $model->search($request,$id);
+
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
     //库存总账
     public function all(Request $request){
         $keywords = $request->get('keywords');

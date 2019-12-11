@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WarehouseRequest;
+use App\Models\Inventory;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -58,7 +59,15 @@ class WarehouseController extends Controller
      */
     public function show($id)
     {
-        //
+        //仓库引导页
+        switch($id){
+            case Inventory::SZ_WAREHOUSE_ID:
+                return view('erp.inventory.SZ.guide', compact('id'));  //深圳仓
+                break;
+            default:
+                return view('erp.inventory.SZ.guide', compact('id'));  //深圳仓
+                return false;
+        }
     }
 
     /**

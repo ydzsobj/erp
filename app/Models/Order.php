@@ -126,10 +126,11 @@ class Order extends Model
     }
 
     //出库单搜索
-    public function searchOut($request){
+    public function searchOut($request,$id=''){
 
         $keywords = $request->get('keywords')?:'';
         $status = $request->get('order_status')?:4;
+        $warehouse_id = $id??'';
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
 
@@ -138,11 +139,13 @@ class Order extends Model
         $count = static::where('order_lock','1')
             ->keywords($keywords)
             ->status($status)
+            ->warehouse($warehouse_id)
             ->date($start_date, $end_date)
             ->count();
         $orders = static::where('order_lock','1')
             ->keywords($keywords)
             ->status($status)
+            ->warehouse($warehouse_id)
             ->date($start_date, $end_date)
             //->select('orders.*')
             ->orderBy('id','asc')
@@ -175,6 +178,12 @@ class Order extends Model
     public function scopeExStatus($query, $status){
         if(!$status) return $query->where('ex_status',$status);
         return $query->where('ex_status',$status);
+    }
+
+    //仓库状态搜索
+    public function scopeWarehouse($query, $warehouse_id){
+        if(!$warehouse_id) return $query;
+        return $query->where('warehouse_id',$warehouse_id);
     }
 
     //时间搜索

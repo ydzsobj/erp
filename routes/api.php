@@ -40,14 +40,14 @@ $api->version('v1', function ($api) {
         $api->resource('/product_goods','ProductGoodsController', ['only' => ['index']]);
         $api->resource('/purchase_pool','PurchasePoolController', ['only' => ['index','show']]);
         $api->resource('/purchase_order','PurchaseOrderController', ['only' => ['index']]);
-        $api->resource('/purchase_warehouse','PurchaseWarehouseController', ['only' => ['index']]);
-        $api->resource('/inventory','InventoryController', ['only' => ['index']]);
+        $api->resource('/purchase_warehouse','PurchaseWarehouseController', ['only' => ['index','show']]);
+        $api->resource('/inventory','InventoryController', ['only' => ['index','show']]);
         $api->resource('/inventory_check','InventoryCheckController', ['only' => ['index']]);
         $api->resource('/inventory_transfer','InventoryTransferController', ['only' => ['index']]);
         $api->resource('/order','OrderController', ['only' => ['index']]);
         $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
         $api->resource('/warehouse_ex','WarehouseExController', ['only' => ['index']]);
-        $api->resource('/warehouse_out','WarehouseOutController', ['only' => ['index']]);
+        $api->resource('/warehouse_out','WarehouseOutController', ['only' => ['index','show']]);
         $api->resource('/warehouse_pick','WarehousePickController', ['only' => ['index']]);
 
         $api->get('/order/list','OrderController@list');
