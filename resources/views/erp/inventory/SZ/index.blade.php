@@ -170,10 +170,8 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/inventory')}}" //数据接口
+                ,url: "{{url('api/inventory')}}/{{$id}}" //数据接口
                 ,id: 'listReload'
-                ,toolbar: '#toolbar'
-                ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '库存数据表'
                 ,page: true //开启分页
                 ,count: 10000
@@ -317,7 +315,7 @@
                     success:function(msg){
                         if(msg=='0'){
                             layer.msg('设置成功！',{icon:1,time:2000},function () {
-                                window.location = window.location;
+                                //window.location = window.location;
                                 layer.close(index);
                             });
                         }else{

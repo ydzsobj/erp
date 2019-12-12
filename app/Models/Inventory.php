@@ -55,6 +55,36 @@ class Inventory extends Model
         return $this->belongsTo(ProductGoods::class, 'goods_sku', 'sku_code');
     }
 
+    //搜索
+    public function search($request,$id=''){
+
+        $keywords = $request->get('keywords')?:'';
+        $warehouse_id = $id??'';
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        $page = $request->page ?: 1;
+        $limit = $request->limit ?: 100;
+
+        $count = static::where('goods_sku','!=','')
+            ->keywords($keywords)
+            ->warehouse($warehouse_id)
+            ->date($start_date, $end_date)
+            ->count();
+        $data = static::with('warehouse','product_goods')->where('goods_sku','!=','')
+            ->keywords($keywords)
+            ->warehouse($warehouse_id)
+            ->date($start_date, $end_date)
+            //->select('orders.*')
+            ->orderBy('id','desc')
+            ->offset(($page-1)*$limit)
+            ->limit($limit)
+            ->get();
+
+
+        return [$data,$count];
+    }
+
     public function get_data($request){
 
         $warehouse_id = $request->get('warehouse_id');
@@ -82,5 +112,27 @@ class Inventory extends Model
            'warehouse_id' => $warehouse_id
         ])->first();
     }
+
+    //关键词搜索
+    public function scopeKeyWords($query, $keywords){
+        if(!$keywords) return $query;
+        return $query->where('order_sn','like',"%{$keywords}%")->orWhere('yunlu_sn','like',"%{$keywords}%")
+            ->orWhere('order_name','like',"%{$keywords}%")->orWhere('order_address','like',"%{$keywords}%")
+            ->orWhere('order_phone','like',"%{$keywords}%")->orWhere('id','like',"%{$keywords}%");
+    }
+
+    //仓库状态搜索
+    public function scopeWarehouse($query, $warehouse_id){
+        if(!$warehouse_id) return $query;
+        return $query->where('warehouse_id',$warehouse_id);
+    }
+
+    //时间搜索
+    public function scopeDate($query, $start_date,$end_date){
+        if(!$start_date || !$end_date) return $query;
+        $query->whereBetween('created_at', [$start_date, $end_date]);
+    }
+
+
 
 }

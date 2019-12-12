@@ -103,7 +103,16 @@ class InventoryController extends Controller
      */
     public function show($id)
     {
-        //
+        //仓库库存
+        switch($id){
+            case Inventory::SZ_WAREHOUSE_ID:
+                //深圳仓首页列表
+                return view('erp.inventory.SZ.index', compact('id'));
+                break;
+            default:
+                return view('erp.inventory.SZ.index', compact('id'));
+                return false;
+        }
     }
 
     /**

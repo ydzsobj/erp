@@ -146,6 +146,7 @@ class PurchaseWarehouseController extends CommonController
     public function show($id)
     {
         //
+        return view('erp.purchase_warehouse.show',compact('id'));
     }
 
     /**

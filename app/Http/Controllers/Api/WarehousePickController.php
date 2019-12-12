@@ -12,8 +12,8 @@ class WarehousePickController extends Controller
     //获取数据列表
     public function index(Request $request)
     {
-        $data = (new WarehousePick())->search($request);
-        $count = $data->count();
+        $model = new WarehousePick();
+        list($data,$count)  = $model->searchOut($request);
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
@@ -26,6 +26,13 @@ class WarehousePickController extends Controller
         $data = Order::whereIn('id', $ids)->get();
         $count = $data->count();
 
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
+    //采购入库展示
+    public function show(Request $request,$id){
+        $model = new Order();
+        list($data,$count) = $model->searchPick($request,$id);
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
 

@@ -317,7 +317,7 @@
                     success:function(msg){
                         if(msg=='0'){
                             layer.msg('设置成功！',{icon:1,time:2000},function () {
-                                window.location = window.location;
+                                //window.location = window.location;
                                 layer.close(index);
                             });
                         }else{

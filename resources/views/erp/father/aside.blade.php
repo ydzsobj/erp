@@ -100,16 +100,25 @@
                         <a href="javascript:;">深圳仓<span class="layui-nav-more"></span></a>
                         <dl class="layui-nav-child">
                             <dd data-name="list">
-                                <a lay-href="{{url('/admins/inventory?warehouse_id=1')}}">产品库存</a>
+                                <a lay-href="{{url('/admins/warehouse/1')}}">深圳仓总览</a>
+                            </dd>
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/inventory/1')}}">产品库存</a>
                             </dd>
                             <dd data-name="console">
-                                <a lay-href="{{url('/admins/purchase_warehouse/1/in')}}">验收入库</a>
+                                <a lay-href="{{url('/admins/purchase_warehouse/1')}}">验收入库</a>
                             </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
                             </dd>
                             <dd data-name="mobile">
                                 <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/warehouse_pick/1')}}">拣货列表</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/warehouse_out/1')}}">出库列表</a>
                             </dd>
                         </dl>
                     </dd>

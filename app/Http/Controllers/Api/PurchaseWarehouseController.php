@@ -37,6 +37,13 @@ class PurchaseWarehouseController extends Controller
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
+    //采购入库展示
+    public function show(Request $request,$id){
+        $model = new PurchaseWarehouse();
+        list($data,$count) = $model->search($request,$id);
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
 
     //获取单个采购订单信息
     public function goods($id)
