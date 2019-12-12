@@ -38,7 +38,8 @@ class Inventory extends Model
         'goods_position',
         'stock_num',
         'in_num',
-        'afloat_num'
+        'afloat_num',
+        'stock_unused_num'
     ];
 
     //仓库

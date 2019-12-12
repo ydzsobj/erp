@@ -79,6 +79,7 @@ class InventoryImport implements ToCollection
                     'goods_sku' => $row[1],
                     'warehouse_id' => $this->warehouse_id,
                     'stock_num' => intval($row[2]),
+                    'Inventory::create' => intval($row[2]),
                     'in_num' => intval($row[2]),
                     // 'afloat_num' => intval($row[3]),
                     // 'goods_position' => $row[3],

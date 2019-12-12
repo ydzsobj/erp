@@ -358,6 +358,7 @@ class InventoryController extends Controller
                         'goods_sku' => $item['sku_code'],
                         'warehouse_id' => Warehouse::YN_WAREHOUSE_ID,
                         'stock_num' => intval($item['out_num']),
+                        'stock_unused_num' => intval($item['out_num']),
                         'in_num' => intval($item['out_num'])
                     ]);
                 }
