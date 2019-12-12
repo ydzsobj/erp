@@ -107,17 +107,15 @@
                 page: {},
                 cols: [[
                     {title: '序号', type: 'numbers'},
-                    {field: 'id', title: 'ID',  edit: 'text',totalRow: true,event:'modify', width: 80},
-                    {field: 'goods_sku', title: 'SKU编码',  edit: 'text',totalRow: true, width: 135},
-                    {field: 'sku_name', edit: true, title: '商品名称', width: 180},
-                    {field: 'goods_attr_name', title: '属性名', width: 100},
-                    {field: 'goods_attr_value', title: '属性值', width: 100},
-                    {field: 'goods_price', title: '销售价', width: 100},
-                    {field: 'goods_num', title: '数量', edit:'text', width: 80},
-                    {field: 'goods_money', title: '金额', width: 100},
-                    {field: 'tax_rate', title: '税率', edit:'text', width: 80},
-                    {field: 'tax', title: '税费', width: 100},
-                    {field: 'money_tax', title: '税金小计', width: 100},
+                    {field: 'id', title: 'ID',  edit: 'text',totalRow: true,event:'modify', width: 100},
+                    {field: 'goods_sku', title: 'SKU编码',  edit: 'text',totalRow: true, width: 150},
+                    {field: 'sku_name', edit: true, title: '商品名称', width: 220},
+                    {field: 'goods_attr_name', title: '属性名', width: 120},
+                    {field: 'goods_attr_value', title: '属性值', width: 120},
+
+                    {field: 'goods_num', title: '数量', edit:'text', width: 100},
+                    {field: 'goods_money', title: '金额', width: 120},
+
                     {toolbar: '#table_tool', title: '操作', fixed: 'right', align: 'center', width: 180}
                 ]],
             });
