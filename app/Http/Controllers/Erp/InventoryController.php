@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Erp;
 
+use App\Exports\OrdersOutExport;
 use App\Http\Controllers\Controller;
 use App\Imports\InventoryImport;
 use App\Models\Inventory;
@@ -26,6 +27,7 @@ class InventoryController extends Controller
         $warehouse_id = $request->get('warehouse_id');
 
         $status_list = config('inventory_info.status_list');
+        $status = config('inventory.status_list');
 
         switch($warehouse_id){
             case Inventory::SZ_WAREHOUSE_ID:
@@ -34,7 +36,7 @@ class InventoryController extends Controller
             break;
             case Inventory::YN_WAREHOUSE_ID:
                 //印尼仓首页列表
-                return view('erp.inventory.YN.index', compact('warehouse_id'));
+                return view('erp.inventory.YN.index', compact('warehouse_id', 'status'));
             break;
             case Inventory::YN_VIRTUAL_WAREHOUSE_ID:
                 //印尼虚拟仓首页列表
@@ -423,6 +425,26 @@ class InventoryController extends Controller
 
         return returned($success, $msg);
 
+    }
+
+     //出库订单导出
+     public function order_out_export(Request $request){
+        $warehouse_id = $request->warehouse_id;
+        $o = new Order();
+        $data = $o->export($request, $warehouse_id);
+        return Excel::download(new OrdersOutExport($data), '待上传订单导出'.date('y-m-d H_i_s').'.xlsx');
+    }
+
+    //标记问题订单
+    public function set_order_status(Request $request){
+
+        $order_ids = $request->post('order_ids');
+
+        $o = new Order();
+        $result = $o->set_status($order_ids, Order::STATUS_EXCEPTION);
+        $msg = $result ? 'ok': '失败';
+
+        return returned($result, $msg);
     }
 
 }
