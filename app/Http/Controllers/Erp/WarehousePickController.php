@@ -94,6 +94,7 @@ class WarehousePickController extends CommonController
     public function show($id)
     {
         //
+        return view('erp.warehouse_pick.show',compact('id'));
     }
 
     /**
@@ -144,12 +145,36 @@ class WarehousePickController extends CommonController
 
 
     /*
-     * 出库
+     * 拣货审核
      */
-    public function out(Request $request, $id){
+    public function check(Request $request){
+        $ids = $request->get('ids');
+        $ids=explode(',',$ids);
 
+        foreach ($ids as $key=>$value){
+            if(empty($value)) continue;
 
+            $orderLogArr[$key] = [
+                'order_id' => intval($value),
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 5,
+                'order_text' => '订单拣货中',
+                'created_at' => Carbon::now(),
+            ];
 
+        }
+
+        $data = [
+            'ex_at' => Carbon::now(),
+            'ex_status' => 1,
+            'ex_id' => Auth::user()->id,
+            'order_status' => 5,
+        ];
+        OrderLog::insert($orderLogArr);    //订单日志记录
+
+        $result = Order::whereIn('id', $ids)->update($data);
+
+        return $result ? '0':'1';
 
     }
 

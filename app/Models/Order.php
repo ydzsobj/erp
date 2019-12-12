@@ -125,11 +125,44 @@ class Order extends Model
         return $orders;
     }
 
+    //拣货单搜索
+    public function searchPick($request,$id=''){
+
+        $keywords = $request->get('keywords')?:'';
+        $status = $request->get('order_status')?:4;
+        $warehouse_id = $id??'';
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        $page = $request->page ?: 1;
+        $limit = $request->limit ?: 100;
+        $count = static::where('order_lock','1')
+            ->keywords($keywords)
+            ->status($status)
+            ->warehouse($warehouse_id)
+            ->date($start_date, $end_date)
+            ->count();
+        $orders = static::where('order_lock','1')
+            ->keywords($keywords)
+            ->status($status)
+            ->warehouse($warehouse_id)
+            ->date($start_date, $end_date)
+            //->select('orders.*')
+            ->orderBy('id','asc')
+            ->offset(($page-1)*$limit)
+            ->limit($limit)
+            ->get();
+
+
+
+        return [$orders,$count];
+    }
+
     //出库单搜索
     public function searchOut($request,$id=''){
 
         $keywords = $request->get('keywords')?:'';
-        $status = $request->get('order_status')?:4;
+        $status = $request->get('order_status')?:5;
         $warehouse_id = $id??'';
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');

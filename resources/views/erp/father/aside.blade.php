@@ -115,7 +115,10 @@
                                 <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
                             </dd>
                             <dd data-name="console">
-                                <a lay-href="{{url('/admins/warehouse_out/1')}}">拣货出库</a>
+                                <a lay-href="{{url('/admins/warehouse_pick/1')}}">拣货列表</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/warehouse_out/1')}}">出库列表</a>
                             </dd>
                         </dl>
                     </dd>

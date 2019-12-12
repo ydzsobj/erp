@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\InventoryInfo;
 use App\Models\Order;
+use App\Models\OrderInfo;
 use App\Models\OrderLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -107,19 +109,44 @@ class WarehouseOutController extends Controller
                 'created_at' => Carbon::now(),
             ];
 
-            $order = Order::with(['order_info','inventory'=>function($query){
-                $query->where('warehouse_id','=','1');
-            }])->where(function ($query) use ($value,$warehouse_id){
-                $query->where('id',$value)->where('order_status','4')->where('order_lock','1')->where('warehouse_id',$warehouse_id);
-            })->first();
+            $order_info = OrderInfo::with(['inventory'=>function($query) use ($warehouse_id){
+                $query->where('warehouse_id',$warehouse_id);
+            }])->where('order_id',$value)->get();
+            foreach ($order_info as $k=>$v){
+                $inventory = $v->inventory[0];
+                $stock_num = $inventory['stock_num'];
+                $inventory['stock_num'] = $stock_num - $v['goods_num'];
+                $inventory['stock_used_num'] = $inventory['stock_used_num'] - $v['goods_num'];
+                $inventory['out_num'] = $inventory['out_num'] + $v['goods_num'];
 
-dd($order['inventory']);
-            dd($order);
+
+                $inventoryInfoArr[$key]['goods_id'] = $v['goods_id'];
+                $inventoryInfoArr[$key]['warehouse_id'] = $warehouse_id;
+                $inventoryInfoArr[$key]['goods_sku'] = $v['goods_sku'];
+                $inventoryInfoArr[$key]['goods_name'] = $v['goods_name'];
+                $inventoryInfoArr[$key]['out_num'] = $v['goods_num'];
+                $inventoryInfoArr[$key]['out_money'] = $v['goods_money'];
+                $inventoryInfoArr[$key]['stock_num'] = $stock_num  - $v['goods_num'];
+                $inventoryInfoArr[$key]['created_at'] = Carbon::now();
+
+
+                $inventory->save();
+            }
 
         }
-
         OrderLog::insert($orderLogArr);    //订单日志记录
+        InventoryInfo::insert($inventoryInfoArr);  //库存日志
 
+        $data = [
+            'ex_at' => Carbon::now(),
+            'ex_status' => 2,
+            'ex_id' => Auth::user()->id,
+            'order_status' => 6,
+        ];
+
+        $result = Order::whereIn('id', $ids)->update($data);
+
+        return $result ? '0':'1';
     }
 
 
