@@ -261,12 +261,12 @@
                         datatype:'json',
                         success:function (msg) {
                             if(msg=='0'){
-                                layer.msg('审核成功！',{icon:1,time:2000},function () {
+                                layer.msg('出库成功！',{icon:1,time:2000},function () {
                                     window.location = window.location;
                                     layer.close(index);
                                 });
                             }else{
-                                layer.msg('审核失败！',{icon:2,time:2000});
+                                layer.msg('出库失败！',{icon:2,time:2000});
                             }
                         },
                         error: function(XmlHttpRequest, textStatus, errorThrown){
