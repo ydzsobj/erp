@@ -276,7 +276,7 @@ class Order extends Model
                 ->where('inventory.warehouse_id', $warehouse_id );
         })
         ->where('order.order_lock', 1)
-        ->where('order.order_status', 5)
+        ->where('order.order_status', 4)
         ->where('order.warehouse_id', $warehouse_id)
         ->when($keywords, function($query) use($keywords){
             $query->where(function($sub_query) use($keywords){

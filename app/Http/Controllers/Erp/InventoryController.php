@@ -203,6 +203,10 @@ class InventoryController extends Controller
 
                 //修改虚拟库存
                 $inventory->out_num += $item['in_num'];
+                $inventory->stock_used_num -= $item['in_num'];
+                if($inventory->stock_used_num < 0){
+                    $inventory->stock_used_num = 0;
+                }
                 $inventory->save();
 
                 InventoryInfo::create([
