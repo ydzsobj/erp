@@ -201,7 +201,7 @@ class InventoryController extends Controller
                 $inventory_info->out_status = 1;
                 $inventory_info->save();
 
-                //修改真实仓库存
+                //修改虚拟库存
                 $inventory->out_num += $item['in_num'];
                 $inventory->save();
 
