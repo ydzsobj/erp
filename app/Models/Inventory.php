@@ -71,7 +71,7 @@ class Inventory extends Model
             ->warehouse($warehouse_id)
             ->date($start_date, $end_date)
             ->count();
-        $data = static::with('warehouse','product_goods')->where('goods_sku','!=','')
+        $data = static::with(['warehouse','product_goods'])->where('goods_sku','!=','')
             ->keywords($keywords)
             ->warehouse($warehouse_id)
             ->date($start_date, $end_date)

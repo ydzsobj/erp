@@ -170,11 +170,8 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/inventory/all')}}" //数据接口
+                ,url: "{{url('api/inventory/0')}}" //数据接口
                 ,id: 'listReload'
-                ,toolbar: '#toolbar'
-                ,defaultToolbar: ['filter', 'exports', 'print']
-                ,title: '库存数据表'
                 ,page: true //开启分页
                 ,count: 10000
                 ,limit: 100
@@ -186,7 +183,7 @@
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
                     ,{title: '商品名称', width:150,templet:function (res) {
-                            return res.product_goods.sku_name;
+                            if(res.product_goods){return res.product_goods.sku_name;}else{return '';}
                         }}
                     ,{title: '仓库名', width:120,templet:function (res) {
                             return res.warehouse.warehouse_name;
@@ -202,10 +199,10 @@
                     ,{field: 'in_num', title: '入库数量', width:90}
                     ,{field: 'out_num', title: '出库数量', width:90}
                     ,{title: '属性名', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_names;
+                            if(res.product_goods){return res.product_goods.sku_attr_names;}else{return '';}
                         }}
                     ,{title: '属性值', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_value_names;
+                            if(res.product_goods){return res.product_goods.sku_attr_value_names;}else{return '';}
                         }}
                     ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
                 ]]

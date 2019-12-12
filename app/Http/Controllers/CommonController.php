@@ -111,7 +111,7 @@ class CommonController extends Controller
                     ];
                 }
 
-            }elseif($value['plan_unused_num']>=$goods_num){
+            }elseif($value['warehouse_id']==1 && $value['plan_unused_num']>=$goods_num){
                 $value->plan_used_num += $goods_num;
                 $value->plan_unused_num -= $goods_num;
                 $result = $value->save();
@@ -137,10 +137,10 @@ class CommonController extends Controller
     public function checkCurrency($order_currency){
         switch ($order_currency){
             case 'IDR' :    //印尼
-                return [3,1];
+                return [3,4,1];
                 break;
             case 'PHP' :    //菲律宾
-                return [5,1];
+                return [5,6,1];
                 break;
             default :
                 return [1];

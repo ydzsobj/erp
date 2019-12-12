@@ -41,6 +41,7 @@ class InventoryController extends Controller
                 return view('erp.inventory.YN_VIRTUAL.index', compact('warehouse_id','status_list'));
             break;
             default:
+                return view('erp.inventory.all.index');
                 return false;
         }
 
