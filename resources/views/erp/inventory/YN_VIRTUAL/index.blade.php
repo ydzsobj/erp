@@ -239,6 +239,15 @@
                         return '<span style=color:' + color +'>' + row.stock_num + '</span>';
 
                     }}
+                    ,{field: 'stock_used_num', title: '库存占用', templet:function(row){
+                        if(row.stock_used_num > 0){
+                            color = 'red';
+                        }else{
+                            color = 'green';
+                        }
+                        return '<span style=color:' + color +'>' + row.stock_used_num + '</span>';
+
+                    }}
                     // ,{field: 'afloat_num', title: '在途',  style:'color: blue;'}
                     ,{field: 'in_num', title: '入库数量'}
                     ,{field: 'out_num', title: '出库数量'}
