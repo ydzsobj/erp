@@ -51,7 +51,7 @@ class OrdersOutExport implements FromCollection,WithHeadings,WithColumnFormattin
             '件数',
             '中文品名',
             '英文品名',
-            '属性',
+            // '属性',
             '属性值'
 
         ];

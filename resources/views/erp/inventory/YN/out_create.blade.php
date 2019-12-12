@@ -169,7 +169,7 @@
                     }
                     console.log(selected_ids);
 
-                    layer.confirm('确定出库吗?', function(index){
+                    layer.confirm('确定上传的订单已审核通过，可以出库了吗?', function(index){
                         layer.close(index);
                         //向服务端发送指令
                         $.ajax({
@@ -238,7 +238,6 @@
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="export_order" >下载上传订单</button>
-
         <button class="layui-btn layui-btn-sm" lay-event="problems" >标记问题订单</button>
         <button class="layui-btn layui-btn-sm" lay-event="batch_out_store" >确认发货</button>
 

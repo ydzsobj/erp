@@ -311,8 +311,10 @@ class Order extends Model
             'order_info.goods_num',
             'order_info.goods_name',
             'order_info.goods_english',
-            'order_info.goods_attr_names',
-            'order_info.goods_attr_values'
+
+            'product_goods.sku_attr_value_names'
+            // 'order_info.goods_attr_names',
+            // 'order_info.goods_attr_values'
 
         )
             ->get();
