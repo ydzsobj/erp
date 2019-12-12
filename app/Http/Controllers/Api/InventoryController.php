@@ -79,45 +79,11 @@ class InventoryController extends Controller
         $warehouse_id = $request->get('warehouse_id');
 
         //获取待出库的订单列表
-        $data = $this->waiting_out_order($warehouse_id, $request);
+        $o = new Order();
+        $data = $o->waiting_out_order($warehouse_id, $request);
 
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data, 'count' => $data->total()]);
 
     }
-
-    //待出库订单
-    public function waiting_out_order($warehouse_id, $request){
-
-        $keywords = $request->get('keywords');
-
-        $data = Order::leftJoin('order_info','order.id','order_info.order_id')
-            ->leftJoin('product_goods', 'product_goods.sku_code', 'order_info.goods_sku')
-            ->leftJoin('inventory',function($query) use($warehouse_id){
-                $query->on('inventory.goods_sku','product_goods.sku_code')
-                    ->where('inventory.warehouse_id', $warehouse_id );
-            })
-            ->where('order.order_lock', 1)
-            ->where('order.order_status', '<>',6)
-            ->where('order.warehouse_id', $warehouse_id)
-            ->when($keywords, function($query) use($keywords){
-                $query->where(function($sub_query) use($keywords){
-                    $sub_query->where('product_goods.sku_name', 'like', '%'.$keywords. '%')
-                        ->orWhere('order_info.goods_sku', $keywords)
-                        ->orWhere('order.order_sn', $keywords);
-                });
-            })
-            ->select(
-                'order.*',
-                'order_info.goods_sku',
-                'order_info.goods_num',
-                'product_goods.sku_name','product_goods.sku_attr_value_names',
-                'inventory.stock_num'
-            )
-            ->paginate(50);
-
-        return $data;
-    }
-
-
 
 }

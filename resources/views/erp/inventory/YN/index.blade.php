@@ -106,6 +106,18 @@
                                                     </div>
                                             </li>
                                             <li>
+                                                    状态：
+                                                    <div class="layui-inline" style="width:110px;">
+                                                            <select name="out_status" id="select_status" >
+                                                                <option></option>
+                                                                    @foreach ($status as $key=>$statu_name)
+                                                                        <option value={{ $key }}>{{ $statu_name }}</option>
+                                                                    @endforeach
+                                                            </select>
+                                                    </div>
+
+                                                </li>
+                                            <li>
                                                 <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
                                             </li>
                                             <li>
@@ -203,6 +215,7 @@
                             start_date: $("#start_date").val(),
                             end_date: $("#end_date").val(),
                             goods_sku:$("#goods_sku").val(),
+                            out_status: $("#select_status").val()
                         }
                     }, 'data');
 
@@ -275,6 +288,7 @@
                         goods_sku: data.goods_sku,
                         start_date: $("#start_date").val(),
                         end_date: $("#end_date").val(),
+                        out_status: $("#select_status").val()
                     }
                 })
                 // console.log(data);

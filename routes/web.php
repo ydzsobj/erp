@@ -136,6 +136,10 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
 
     //更新仓位
     Route::post('/inventory/{id}/update_fields', 'InventoryController@update_fields')->name('inventory.update_fields');
+    //订单出库导出
+    Route::get('/order_out_export', 'InventoryController@order_out_export')->name('inventory.order_out_export');
+    //设置订单异常
+    Route::put('/set_order_status', 'InventoryController@set_order_status')->name('inventory.set_order_status');
 
 
 });

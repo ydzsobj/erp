@@ -68,6 +68,7 @@ class InventoryImport implements ToCollection
                 //sku已存在，追加库存信息
                 $existed_data->stock_num += intval($row[2]);
                 $existed_data->in_num += intval($row[2]);
+                $existed_data->stock_unused_num += intval($row[2]);
                 // $existed_data->afloat_num += ($row[3]);
                 // $existed_data->goods_position = ($row[3]);
                 // $existed_data->goods_text = ($row[4]);
@@ -79,6 +80,7 @@ class InventoryImport implements ToCollection
                     'goods_sku' => $row[1],
                     'warehouse_id' => $this->warehouse_id,
                     'stock_num' => intval($row[2]),
+                    'stock_unused_num' => intval($row[2]),
                     'in_num' => intval($row[2]),
                     // 'afloat_num' => intval($row[3]),
                     // 'goods_position' => $row[3],

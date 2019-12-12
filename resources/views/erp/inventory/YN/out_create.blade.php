@@ -1,5 +1,10 @@
 @extends('erp.father.father')
 @section('content')
+<style>
+    .hidden_btn{
+        display: none;
+    }
+</style>
 <table id="data_list" lay-filter="data_list"></table>
 @endsection
 
@@ -90,7 +95,7 @@
                 ,limits: [50,100,300,500,1000,2000,5000,10000]
                 ,cols: [[ //表头
                     {type: 'checkbox', width:50}
-                        ,{field:'created_at', width:170, title: '下单时间', sort:true}
+                        ,{field:'ordered_at', width:170, title: '下单时间', sort:true}
                         ,{field:'order_sn', title: '订单号', width:180}
                         ,{field:'goods_num', width:100, title: '下单数量'}
                         ,{field:'order_name', title: '收货人', width:100}
@@ -134,7 +139,21 @@
 
                 console.log(checkStatus.data);
 
-                if(layEvent === 'in_store'){ //
+                if(layEvent === 'export_order'){
+
+
+                    //订单导出
+                    console.log('click export order');
+
+                    var params = {
+                        keywords: $("#keywords").val(),
+                        warehouse_id: {{ $warehouse_id }}
+                    };
+
+                    var route = "{{ route('inventory.order_out_export') }}";
+                    var href = route + '?'+ encodeSearchParams(params);
+                    console.log(href);
+                    location.href = href;
 
                 }else if(layEvent == 'batch_out_store'){
                     //批量审核
@@ -172,6 +191,42 @@
                         })
                     });
 
+                }else if(layEvent == 'problems'){
+                    //批量审核
+                    if(checkStatus.data.length == 0){
+                        layer.msg('请先勾选数据');
+                        return false;
+                    }
+
+                    var selected_rows = checkStatus.data;
+                    var selected_ids = [];
+                    for(var i=0;i<selected_rows.length;i++){
+                        selected_ids.push(selected_rows[i].id);
+                    }
+                    console.log(selected_ids);
+
+                    layer.confirm('确定要标记问题订单吗?', function(index){
+                        layer.close(index);
+                        //向服务端发送指令
+                        $.ajax({
+                            type:'POST',
+                            url: "{{ route('inventory.set_order_status') }}",
+                            data:{ _token: "{{ csrf_token() }}" ,order_ids: selected_ids, _method: 'put' },
+                            dataType:"json",
+                            success:function(msg){
+                                    console.log(msg);
+                                    layer.msg(msg.msg);
+                                    if(msg.success){
+                                       table.reload('listReload');
+                                    }
+                            },
+                            error: function(data){
+                                layer.msg('请求接口失败',{icon:2,time:2000});
+                            }
+
+                        })
+                    });
+
                 }
             });
 
@@ -182,6 +237,34 @@
 
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-      <button class="layui-btn layui-btn-sm" lay-event="batch_out_store" >确定出库</button>
+        <button class="layui-btn layui-btn-sm" lay-event="export_order" >下载上传订单</button>
+
+        <button class="layui-btn layui-btn-sm" lay-event="problems" >标记问题订单</button>
+        <button class="layui-btn layui-btn-sm" lay-event="batch_out_store" >确认发货</button>
+
     </div>
+
   </script>
+
+<script>
+/**
+ * 拼接对象为请求字符串
+ * @param {Object} obj - 待拼接的对象
+ * @returns {string} - 拼接成的请求字符串
+ */
+function encodeSearchParams(obj) {
+    const params = []
+
+    Object.keys(obj).forEach((key) => {
+    let value = obj[key]
+    // 如果值为undefined我们将其置空
+    if (typeof value === 'undefined') {
+        value = ''
+    }
+    // 对于需要编码的文本（比如说中文）我们要进行编码
+    params.push([key, encodeURIComponent(value)].join('='))
+    })
+
+    return params.join('&')
+}
+</script>
