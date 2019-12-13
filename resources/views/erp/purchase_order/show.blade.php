@@ -130,7 +130,7 @@
                     }
                 }
                 $.ajax({
-                    url:"{{url('admins/purchase_warehouse')}}",
+                    url:"{{url('admins/purchase_warehouse/add')}}",
                     type:'post',
                     data:data.field,
                     datatype:'json',

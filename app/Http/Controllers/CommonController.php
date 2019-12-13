@@ -6,6 +6,7 @@ use App\Models\AdminLog;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\OrderInfo;
+use App\Models\OrderLog;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
@@ -13,6 +14,7 @@ use App\Models\WarehousePick;
 use Carbon\Carbon;
 use function foo\func;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CommonController extends Controller
@@ -71,21 +73,60 @@ class CommonController extends Controller
 
     }
 
+    /*
+     * 锁定下单订单 (库存碰订单)
+     */
+    public function lockOrder($warehouse_id,$goods_sku,$order_num){
+        $order_info = OrderInfo::with('order')->where(function ($query) use ($warehouse_id,$goods_sku){
+            $query->where('goods_used',0)->where('goods_lock',0)->where('warehouse_id',0)->where('goods_status',1)->where('goods_sku',$goods_sku);
+        })->limit($order_num)->orderBy('id','asc')->get();
+
+        if(!$order_info->isEmpty()) $this->doLock($order_info,$warehouse_id);
+    }
 
     /*
-     * 库存碰订单
+     * 锁定备货订单 (库存碰订单)
      */
-    public function doInventory($goods_sku,$warehouse_id){
-        $order_info = OrderInfo::with(['order'=>function($query) use ($warehouse_id){
-            $query->whereBetween('order_status', [2,3]);
-        }])->where(function ($query) use ($goods_sku,$warehouse_id){
-            $query->where('goods_sku','=',$goods_sku);
-                //->where('warehouse_id','=',$warehouse_id);
-        })->orderBy('id','asc')->get();
-        foreach ($order_info as $key=>$value){
-            dd($value['order']);
+    public function lockUsed($warehouse_id,$goods_sku,$plan_num){
+        $order_info = OrderInfo::with('order')->where(function ($query) use ($warehouse_id,$goods_sku){
+            $query->where('goods_used',1)->where('goods_lock',0)->where('warehouse_id',$warehouse_id)->where('goods_sku',$goods_sku);
+        })->limit($plan_num)->orderBy('id','asc')->get();
+
+        if(!$order_info->isEmpty()) $this->doLock($order_info,$warehouse_id);
+    }
+
+    /*
+     * 处理锁定
+     */
+    public function doLock($order_info,$warehouse_id){
+        $order_info_ids = [];$order_ids = [];
+        foreach($order_info as $key=>$value){
+
+            array_push($order_info_ids,$value['id']);
+            array_push($order_ids,$value['order_id']);
+            $orderLogArr[$key] = [
+                'order_id' => $value['order_id'],
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 4,
+                'order_text' => '订单已锁库',
+                'created_at' => Carbon::now(),
+            ];
         }
-        dump($order_info);
+        $order_info_data = [
+            'goods_used'=>1,
+            'goods_lock'=>1,
+            'warehouse_id'=>$warehouse_id,
+        ];
+        $order_data = [
+            'order_status'=>4,
+            'order_lock'=>1,
+            'order_used'=>1,
+            'warehouse_id'=>$warehouse_id,
+        ];
+
+        OrderInfo::whereIn('id', $order_info_ids)->update($order_info_data);
+        Order::whereIn('id', $order_ids)->update($order_data);
+        OrderLog::insert($orderLogArr);    //订单日志记录
     }
 
 

@@ -5,6 +5,9 @@
         .layui-table-cell,.layui-table-col-special {
             height: auto;
         }
+        th>.laytable-cell-checkbox i{
+            display: none;
+        }
     </style>
 
 

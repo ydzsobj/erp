@@ -201,7 +201,7 @@
                             if(row.purchase_warehouse_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">验货</a>';
                             }else if(row.purchase_warehouse_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="add">入库</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="in">入库</a>';
                             }
                             return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                                 '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
@@ -385,9 +385,9 @@
                         }
                     });
 
-                }else if(obj.event === 'add'){
+                }else if(obj.event === 'in'){
                     $.ajax({
-                        url:"{{url('admins/purchase_warehouse/add/')}}/"+data.id,
+                        url:"{{url('admins/purchase_warehouse/in/')}}/"+data.id,
                         type:'post',
                         data:{"_token":"{{csrf_token()}}"},
                         datatype:'json',
