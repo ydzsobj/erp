@@ -51,6 +51,7 @@ class InventoryInfo extends Model
         $keywords = $request->get('keywords');
         $targetable_type = $request->get('targetable_type');
         $targetable_id = $request->get('targetable_id');
+        $import_order_sn = $request->get('import_order_sn');
 
         return self::with(['admin','sku'])
 
@@ -92,6 +93,13 @@ class InventoryInfo extends Model
                     'targetable_type' => $targetable_type,
                     'targetable_id' => $targetable_id
                 ]);
+            })
+            ->when(!is_null($import_order_sn), function($query) use ($import_order_sn){
+                if($import_order_sn){
+                    $query->where('import_order_sn', $import_order_sn);
+                }else{
+                    $query->whereNotNull('import_order_sn');
+                }
             })
             ->select(
                 'inventory_info.*',
