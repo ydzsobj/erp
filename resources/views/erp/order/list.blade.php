@@ -46,7 +46,14 @@
         <table id="list" lay-filter="list"></table>
     </div>
     <script type="text/html" id="status">
-        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">未导入</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">已导入</div>  @{{# }else{  }} <div style="color: #008000">已确定</div> @{{# }  }}
+        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">待处理</div> @{{# }else if(d.order_status == 1){  }} <div style="color: #0000FF">已处理</div>
+        @{{# }else if(d.order_status == 2){  }} <div style="color: #0000FF">需采购</div>@{{# }else if(d.order_status == 3){  }} <div style="color: #0000FF">已占未锁</div>
+        @{{# }else if(d.order_status == 4){  }} <div style="color: #0000FF">已锁定</div>@{{# }else if(d.order_status == 5){  }} <div style="color: #0000FF">捡货中</div>
+        @{{# }else if(d.order_status == 6){  }} <div style="color: #0000FF">已出库</div>@{{# }else if(d.order_status == 7){  }} <div style="color: #0000FF">配送中</div>
+        @{{# }else if(d.order_status == 8){  }} <div style="color: #0000FF">已签收</div>@{{# }else if(d.order_status == 9){  }} <div style="color: #0000FF">拒签</div>
+        @{{# }else if(d.order_status == 10){  }} <div style="color: #0000FF">问题件</div>@{{# }else{  }} <div style="color: #008000">已完成</div> @{{# }  }}
+
+
     </script>
     <script type="text/html" id="order_lock">
         @{{# if(d.order_lock == 0){ }} <div style="color: #ff0000">未锁定</div> @{{# }else if(d.order_lock == 1){  }} <div style="color: #008000">已锁定</div>  @{{# }else{  }} <div>未知</div> @{{# }  }}

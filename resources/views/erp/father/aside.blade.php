@@ -56,18 +56,17 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd data-name="console">
-                        <a lay-href="{{ url('/admins/order/list') }}">订单列表</a>
-                    </dd>
-                    <dd data-name="console">
                         <a lay-href="{{ url('/admins/order/import') }}">订单导入</a>
                     </dd>
                     <dd data-name="console">
                         <a lay-href="{{ url('/admins/order') }}">待采汇总</a>
                     </dd>
-                    <dd data-name="console">
+                    {{--<dd data-name="console">
                         <a lay-href="{{route('orders.index') }}">SHOPIFY订单</a>
+                    </dd>--}}
+                    <dd data-name="console">
+                        <a lay-href="{{ url('/admins/order/list') }}">订单列表</a>
                     </dd>
-
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
@@ -100,7 +99,7 @@
                         <a href="javascript:;">深圳仓<span class="layui-nav-more"></span></a>
                         <dl class="layui-nav-child">
                             <dd data-name="list">
-                                <a lay-href="{{url('/admins/warehouse/1')}}">深圳仓总览</a>
+                                <a lay-href="{{url('/admins/warehouse/1')}}">总览</a>
                             </dd>
                             <dd data-name="list">
                                 <a lay-href="{{url('/admins/inventory/1')}}">产品库存</a>
@@ -108,17 +107,28 @@
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/purchase_warehouse/1')}}">验收入库</a>
                             </dd>
-                            <dd data-name="console">
+                           {{-- <dd data-name="console">
                                 <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
                             </dd>
                             <dd data-name="mobile">
                                 <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
-                            </dd>
+                            </dd>--}}
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/warehouse_pick/1')}}">拣货列表</a>
                             </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/warehouse_out/1')}}">出库列表</a>
+                            </dd>
+                        </dl>
+                    </dd>
+                    <dd data-name="grid">
+                        <a href="javascript:;">海外仓<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/guide?warehouse_id=3')}}">印尼仓</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/guide?warehouse_id=4')}}">印尼虚拟仓</a>
                             </dd>
                         </dl>
                     </dd>
@@ -131,12 +141,12 @@
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/purchase_warehouse')}}">验收入库</a>
                             </dd>
-                            <dd data-name="console">
+                           {{-- <dd data-name="console">
                                 <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
                             </dd>
                             <dd data-name="mobile">
                                 <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
-                            </dd>
+                            </dd>--}}
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/warehouse_out')}}">出库列表</a>
                             </dd>
@@ -148,40 +158,6 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
                     </dd>
-
-                </dl>
-            </li>
-            <li data-name="home" class="layui-nav-item ">
-                <a href="javascript:;" lay-tips="仓库管理" lay-direction="2">
-                    <i class="layui-icon layui-icon-util"></i>
-                    <cite>海外仓管理</cite>
-                </a>
-                <dl class="layui-nav-child">
-
-                    {{-- <dd data-name="console">
-                        <a lay-href="{{url('/admins/warehouse')}}">仓库列表</a>
-                    </dd> --}}
-                    {{-- <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory?warehouse_id=1')}}">深圳仓</a>
-                    </dd> --}}
-                    {{-- <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory?warehouse_id=2')}}">深圳虚拟仓</a>
-                    </dd> --}}
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/guide?warehouse_id=3')}}">印尼仓</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/guide?warehouse_id=4')}}">印尼虚拟仓</a>
-                    </dd>
-                    {{-- <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory')}}">菲律宾仓</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory')}}">菲律宾虚拟仓</a>
-                    </dd> --}}
-                    {{--  <dd data-name="console">
-                        <a lay-href="{{url('/admins/inventory_check')}}">库存盘点</a>
-                    </dd>  --}}
 
                 </dl>
             </li>
