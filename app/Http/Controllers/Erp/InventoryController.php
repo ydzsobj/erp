@@ -208,6 +208,10 @@ class InventoryController extends Controller
                 if($inventory->stock_used_num < 0){
                     $inventory->stock_used_num = 0;
                 }
+                $inventory->stock_unused_num -= $item['in_num'];
+                if($inventory->stock_unused_num < 0){
+                    $inventory->stock_unused_num = 0;
+                }
                 $inventory->save();
 
                 InventoryInfo::create([
