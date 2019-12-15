@@ -65,11 +65,10 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">日期：</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间">
+                        <input class="layui-input" name="start_date" id="start_date" placeholder="开始时间" autocomplete="off">
                     </div>
-                    -
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间">
+                        <input class="layui-input" name="end_date" id="end_date" placeholder="结束时间" autocomplete="off">
                     </div>
                 </div>
 
@@ -127,7 +126,7 @@
     </script>
 
     <script type="text/html" id="status">
-        @{{# if(d.pick_status == 0){ }} <div style="color: #ff0000">未出库</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
+        @{{# if(d.pick_status == 0){ }} <div style="color: #ff0000">未出库</div> @{{# if(d.pick_status == 1){ }} <div style="color: #008000">捡货中</div> @{{# }else{  }} <div style="color: #0000FF">已出库</div> @{{# }  }}
     </script>
 @endsection
 @section('js')

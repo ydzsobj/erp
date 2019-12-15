@@ -119,6 +119,9 @@
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/warehouse_out/1')}}">出库列表</a>
                             </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/problem/1')}}">问题订单</a>
+                            </dd>
                         </dl>
                     </dd>
                     <dd data-name="grid">

@@ -73,7 +73,7 @@ class OrderImport implements ToCollection
                 'order_currency' => trim($row[11]),  //币种
                 'order_country' => trim($row[21]),  //目的国家
                 'order_type' => '普通订单',  //订单类型
-                'coustomer_text' => trim($row[22]),  //客服备注
+                'customer_text' => trim($row[22]),  //客服备注
                 'order_from' => trim($row[11]),  //订单来源
                 'created_at' => date('Y-m-d H:i:s', time()),
             ];
@@ -96,6 +96,8 @@ class OrderImport implements ToCollection
                 'goods_sku' => $goods_sku,
                 'goods_num' => intval(trim($row[13])),
                 'goods_name' => trim($row[14]),
+                'goods_color' => trim($row[15]),
+                'goods_size' => trim($row[16]),
                 'goods_english' => trim($row[18]),
             ];
             if(isset($order_id)) {

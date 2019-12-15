@@ -121,10 +121,10 @@
             //监听提交
             form.on('submit(form)', function(data){
                 //layer.msg(JSON.stringify(data.field));
-                data.field.table = table.cache;
+                data.field.table = table.cache;console.log(table.cache.dataTable);
                 for(var i=0, row; i < table.cache.dataTable.length; i++){
                     row = table.cache.dataTable[i];
-                    if(!row.id || row.goods_num==0 || row.goods_num==''){
+                    if(!row.id || row.plan_num=='' || row.order_num!=0){
                         layer.msg("检查每一行，请完善数据！", { icon: 5 }); //提示
                         return false;
                     }

@@ -131,9 +131,20 @@ class WarehousePickController extends CommonController
         //
     }
 
-
     //拣货单导出
     public function export(Request $request,$id)
+    {
+        $order = Order::with('order_info','inventory')->where(function ($query) use ($id){
+            $query->where('warehouse_id',$id)->where('order_status',5)->where('order_lock',1);
+        })->get();
+
+        return Excel::download(new OrderExport($order), '拣货单导出'.date('y-m-d H_i_s').'.xlsx');
+
+    }
+
+
+    //拣货单导出
+    public function pick_export(Request $request,$id)
     {
         $pick = WarehousePick::where('id',$id)->first();
         $ids = explode(',',$pick->pick_ids);
@@ -169,6 +180,40 @@ class WarehousePickController extends CommonController
             'ex_status' => 1,
             'ex_id' => Auth::user()->id,
             'order_status' => 5,
+        ];
+        OrderLog::insert($orderLogArr);    //订单日志记录
+
+        $result = Order::whereIn('id', $ids)->update($data);
+
+        return $result ? '0':'1';
+
+    }
+
+    /*
+     * 问题件处理
+     */
+    public function problem(Request $request){
+        $ids = $request->get('ids');
+        $ids=explode(',',$ids);
+
+        foreach ($ids as $key=>$value){
+            if(empty($value)) continue;
+
+            $orderLogArr[$key] = [
+                'order_id' => intval($value),
+                'user_id' =>  Auth::guard('admin')->user()->id,
+                'order_status' => 10,
+                'order_text' => '标记问题订单',
+                'created_at' => Carbon::now(),
+            ];
+
+        }
+
+        $data = [
+            'ex_at' => Carbon::now(),
+            'ex_status' => 3,
+            'ex_id' => Auth::user()->id,
+            'order_status' => 10,
         ];
         OrderLog::insert($orderLogArr);    //订单日志记录
 

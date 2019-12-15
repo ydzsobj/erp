@@ -40,13 +40,6 @@
                     ,{field: 'order_sn', title: '订单编码', width: 200, fixed: 'left'}
                     ,{field: 'order_used', title: '订单占用', width: 100, fixed: 'left',templet:'#order_used'}
                     ,{field: 'id', title: 'ID', width:80, sort: true,}
-                    ,{field: 'order_name', title: '收件人', width:100}
-                    ,{field: 'order_phone', title: '电话', width:120}
-                    ,{field: 'order_code', title: '邮编', width:80}
-                    ,{field: 'order_province', title: '省', width:120}
-                    ,{field: 'order_city', title: '市', width:120}
-                    ,{field: 'order_area', title: '区', width:120}
-                    ,{field: 'order_address', title: '详细地址', width:220}
                     ,{field: 'ordered_at', title: '下单时间', width: 160, sort: true}
                     ,{field: 'created_at', title: '导入时间', width: 160, sort: true}
                 ]]

@@ -49,6 +49,7 @@ $api->version('v1', function ($api) {
         $api->resource('/warehouse_ex','WarehouseExController', ['only' => ['index']]);
         $api->resource('/warehouse_out','WarehouseOutController', ['only' => ['index','show']]);
         $api->resource('/warehouse_pick','WarehousePickController', ['only' => ['index','show']]);
+        $api->resource('/problem','ProblemController', ['only' => ['index','show']]);
 
         $api->get('/order/list','OrderController@list');
         $api->get('/order/import','OrderController@import');

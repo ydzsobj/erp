@@ -119,16 +119,10 @@
             </div>
         </div>
     </div>
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container demoTable">
-            <button class="layui-btn layui-btn-sm" data-type="getCheckData">批量拣货</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" data-type="getExport" id="export">导出拣货单</button>
-            <button class="layui-btn layui-btn-sm" data-type="getProblem" >问题订单</button>
-        </div>
-    </script>
+
 
     <script type="text/html" id="status">
-        @{{# if(d.ex_status == 0){ }} <div style="color: #ff0000">未出库</div> @{{# }else if(d.ex_status == 1){  }} <div style="color: #0000FF">拣货中</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
+        @{{# if(d.order_status == 0){ }} <div style="color: #ff0000">未出库</div> @{{# }else if(d.order_status == 10){  }} <div style="color: #ff0000">问题订单</div>  @{{# }else{  }} <div style="color: #008000">已出库</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -166,7 +160,7 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/warehouse_pick')}}/{{$id}}" //数据接口
+                ,url: "{{url('api/problem')}}/{{$id}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
@@ -178,10 +172,9 @@
                 ,height: 'full-350'
                 ,cols: [[ //表头
                     {type:'checkbox', fixed: 'left'}
-                    ,{field: 'order_sn', title: '订单号', width: 150, fixed: 'left'}
-                    ,{field: 'yunlu_sn', title: '运单号', width: 150, fixed: 'left'}
-                    ,{title: '状态', width: 80, fixed: 'left',templet:'#status'}
-                    ,{field: 'id', title: 'ID', width:80, sort: true,}
+                    ,{field: 'order_sn', title: '订单号', width: 180, fixed: 'left'}
+                    ,{title: '状态', width: 100, fixed: 'left',templet:'#status'}
+                    ,{field: 'id', title: 'ID', width:100, sort: true,}
                     ,{field: 'order_name', title: '收件人', width:100}
                     ,{field: 'order_phone', title: '电话', width:120}
                     ,{field: 'order_code', title: '邮编', width:80}

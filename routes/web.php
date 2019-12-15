@@ -35,6 +35,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('purchase_warehouse/add', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
     Route::post('inventory/{id}/goods_position', 'InventoryController@goods_position')->name('inventory.goodsPosition');
     Route::post('warehouse_pick/check', 'WarehousePickController@check')->name('warehouse_pick.check');
+    Route::post('warehouse_pick/problem', 'WarehousePickController@problem')->name('warehouse_pick.problem');
     Route::post('warehouse_out/out', 'WarehouseOutController@out')->name('warehouse_out.out');
 
 
@@ -66,6 +67,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('warehouse_ex', 'WarehouseExController');
     Route::resource('warehouse_out', 'WarehouseOutController');
     Route::resource('warehouse_pick', 'WarehousePickController');
+    Route::resource('problem', 'ProblemController');
 
 
 

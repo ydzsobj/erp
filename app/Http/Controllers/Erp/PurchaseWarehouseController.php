@@ -232,7 +232,7 @@ class PurchaseWarehouseController extends CommonController
                 'purchase_order_id'=>$purchase_order_id,
                 'purchase_warehouse_id'=>$lastId
             ]);
-            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'3']);
+            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'2']);
             $this->purchaseOrderLog($purchase_order_id,'入库订单已生成！');
         }
 

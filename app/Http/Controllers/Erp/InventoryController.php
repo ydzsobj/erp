@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Exports\OrdersOutExport;
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Imports\InventoryImport;
 use App\Models\Inventory;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class InventoryController extends Controller
+class InventoryController extends CommonController
 {
     /**
      * Display a listing of the resource.
@@ -367,7 +368,7 @@ class InventoryController extends Controller
                         'in_num' => intval($item['out_num'])
                     ]);
                 }
-
+                $this->lockOrder(Warehouse::YN_WAREHOUSE_ID,$item['sku_code'],intval($item['out_num']));  //实体仓入库锁定
                 //添加详情
                 InventoryInfo::create([
                     'goods_sku' => $item['sku_code'],

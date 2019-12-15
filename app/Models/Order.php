@@ -158,6 +158,37 @@ class Order extends Model
             ->get();
 
 
+        return [$orders,$count];
+    }
+
+    //问题订单搜索
+    public function searchProblem($request,$id=''){
+
+        $keywords = $request->get('keywords')?:'';
+        $status = $request->get('order_status')?:10;
+        $warehouse_id = $id??'';
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        $page = $request->page ?: 1;
+        $limit = $request->limit ?: 100;
+        $count = static::where('order_lock','1')
+            ->keywords($keywords)
+            ->status($status)
+            ->warehouse($warehouse_id)
+            ->date($start_date, $end_date)
+            ->count();
+        $orders = static::where('order_lock','1')
+            ->keywords($keywords)
+            ->status($status)
+            ->warehouse($warehouse_id)
+            ->date($start_date, $end_date)
+            //->select('orders.*')
+            ->orderBy('id','asc')
+            ->offset(($page-1)*$limit)
+            ->limit($limit)
+            ->get();
+
 
         return [$orders,$count];
     }

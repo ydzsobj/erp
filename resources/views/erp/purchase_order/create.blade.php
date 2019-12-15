@@ -12,9 +12,9 @@
                     <div class="layui-form-mid" style="color: #ff0000">* 订单编号自动生成</div>
                     <div class="layui-form-mid"></div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">交货日期</label>
+                        <label class="layui-form-label" style="width: 90px">预计出货日期</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="deliver_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                            <input type="text" name="expect_out_at" autocomplete="off" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
                         </div>
                     </div>
                     <div class="layui-form-mid"></div>
@@ -32,9 +32,9 @@
 
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">交货日期</label>
+                    <label class="layui-form-label" style="width: 90px">预计到货日期</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="deliver_at" lay-verify="required" class="layui-input" id="dateTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                        <input type="text" name="expect_deliver_at" autocomplete="off" lay-verify="required" class="layui-input" id="dateTime2" placeholder="yyyy-MM-dd HH:mm:ss">
                     </div>
                 </div>
                 <label class="layui-form-label">付款方式</label>
@@ -90,6 +90,10 @@
                 elem: '#dateTime'
                 ,type: 'datetime'
             });
+            laydate.render({
+                elem: '#dateTime2'
+                ,type: 'datetime'
+            });
 
 
             var tableIns = table.render({
@@ -107,12 +111,8 @@
                     {field: 'sku_name', edit: true, title: '商品名称', width: 180},
                     {field: 'goods_attr_name', title: '属性名', width: 100},
                     {field: 'goods_attr_value', title: '属性值', width: 100},
-                    {field: 'goods_price', title: '销售价', width: 100},
-                    {field: 'goods_num', title: '数量', edit:'text', width: 80},
-                    {field: 'goods_money', title: '金额', width: 100},
-                    {field: 'tax_rate', title: '税率', edit:'text', width: 80},
-                    {field: 'tax', title: '税费', width: 100},
-                    {field: 'money_tax', title: '税金小计', width: 100},
+                    {field: 'goods_num', title: '数量', edit:'text', width: 100},
+                    {field: 'goods_money', title: '金额', edit:'text', width: 100},
                     {toolbar: '#table_tool', title: '操作', fixed: 'right', align: 'center', width: 180}
                 ]],
             });
