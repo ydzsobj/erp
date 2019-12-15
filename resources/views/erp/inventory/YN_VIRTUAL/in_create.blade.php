@@ -103,12 +103,21 @@
                                             <ul class="layui-tab-title">
                                                 <li class="layui-this"><b id="target_product_info"></b> 导入明细</li>
 
-                                                {{-- <li>
+                                                <li>
+                                                    <label>
+                                                        订单编码 :
+                                                    </label>
+                                                    <div class="layui-inline" style="width:180px;">
+                                                        <input class="layui-input" name="import_order_sn" id="import_order_sn" placeholder="请输入订单sn">
+                                                    </div>
+                                                </li>
+
+                                                <li>
                                                     <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
                                                 </li>
                                                 <li>
                                                     <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
-                                                </li> --}}
+                                                </li>
 
                                             </ul>
                                         </form>
@@ -226,6 +235,7 @@
                         ,where: {
                             start_date: $("#start_date").val(),
                             end_date: $("#end_date").val(),
+
                         }
                     }, 'data');
 
@@ -240,6 +250,9 @@
                     table.reload('testReload', {
                         page: {
                             curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            import_order_sn: $("#import_order_sn").val(),
                         }
 
                     }, 'data');
@@ -278,6 +291,7 @@
                 ,url: "{{ url('api/inventory_info')}}"//数据接口
                 ,where: {
                     warehouse_id:  {{ $warehouse_id }},
+                    import_order_sn: 0
                 }
                 ,page: true //开启分页
                 ,parseData: function(res){ //res 即为原始返回的数据
