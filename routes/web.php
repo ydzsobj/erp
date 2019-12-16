@@ -45,6 +45,8 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('order/create_order_pool','OrderController@createOrderPool');
     Route::any('order/order_pool','OrderController@orderPool');
     Route::post('warehouse_ex/create_ex','WarehouseExController@createEx');
+    Route::get('inventory_check/import/{id}','InventoryCheckController@import')->name('inventory_check.import');
+
 
     Route::resource('admin','AdminController');
     Route::resource('category','CategoryController');

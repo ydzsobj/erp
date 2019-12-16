@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
 use App\Models\Inventory;
+use App\Models\InventoryCheck;
 use App\Models\Order;
 use App\Models\OrderInfo;
 use App\Models\OrderLog;
@@ -262,6 +263,28 @@ class CommonController extends Controller
                 $code = substr($warehousePick,1);
             }else{
                 $code = $warehousePick;
+            }
+            $number = intval(substr($code,strlen($ymd))) + 1;
+            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
+        }
+        return $codeStr . $ymd . $subCode;
+    }
+
+    /*
+     * 创建出库拣货编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
+     */
+    public function createInventoryCheckCode($code){
+        $ymd = substr(date('Ymd'),2);
+        $codeLength = 5;
+        $codeStr = strtoupper($code);
+        $data = InventoryCheck::Where('inventory_check_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
+        $code_data = $data['inventory_check_code'];
+        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
+        if ($code_data) {
+            if(strstr($code_data,$codeStr)){
+                $code = substr($code_data,1);
+            }else{
+                $code = $code_data;
             }
             $number = intval(substr($code,strlen($ymd))) + 1;
             $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);

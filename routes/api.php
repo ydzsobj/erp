@@ -42,7 +42,7 @@ $api->version('v1', function ($api) {
         $api->resource('/purchase_order','PurchaseOrderController', ['only' => ['index']]);
         $api->resource('/purchase_warehouse','PurchaseWarehouseController', ['only' => ['index','show']]);
         $api->resource('/inventory','InventoryController', ['only' => ['index','show']]);
-        $api->resource('/inventory_check','InventoryCheckController', ['only' => ['index']]);
+        $api->resource('/inventory_check','InventoryCheckController', ['only' => ['index','show']]);
         $api->resource('/inventory_transfer','InventoryTransferController', ['only' => ['index']]);
         $api->resource('/order','OrderController', ['only' => ['index']]);
         $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
@@ -62,6 +62,7 @@ $api->version('v1', function ($api) {
         $api->get('/inventory/goods/{id}','InventoryController@goods');
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');
         $api->get('/warehouse_pick/order/{id}','WarehousePickController@order');
+        $api->get('/inventory_check/goods/{id}','InventoryCheckController@goods');
 
         /******订单相关****/
         // $api->get('/orders','OrderController@index')->name('api.orders.index');

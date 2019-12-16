@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Erp;
 
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
+use App\Imports\InventoryCheckImport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
-class InventoryCheckController extends Controller
+class InventoryCheckController extends CommonController
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +38,16 @@ class InventoryCheckController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $filename = $request->upload_file;
+        $warehouse_id = $request->get('warehouse_id');
+        $inventory_check_code = $this->createInventoryCheckCode('P');
+        $import = new InventoryCheckImport($warehouse_id,$inventory_check_code);
+
+        $collection = Excel::import($import, $filename);
+        //$collection = Excel::toCollection($import, $filename);
+        //dd($collection);
+        $msg = session()->get('excel');
+        return response()->json(['code'=>'0','msg'=>$msg]);
     }
 
     /**
@@ -47,6 +59,7 @@ class InventoryCheckController extends Controller
     public function show($id)
     {
         //
+        return view('erp.inventory_check.show',compact('id'));
     }
 
     /**
@@ -82,4 +95,11 @@ class InventoryCheckController extends Controller
     {
         //
     }
+
+    //盘点单导入
+    public function import($id)
+    {
+        return view('erp.inventory_check.import',compact('id'));
+    }
+
 }
