@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Erp;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Imports\InventoryCheckImport;
+use App\Models\Inventory;
+use App\Models\InventoryCheckInfo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -101,5 +104,42 @@ class InventoryCheckController extends CommonController
     {
         return view('erp.inventory_check.import',compact('id'));
     }
+
+    //盘点单导入
+    public function change(Request $request,$id='')
+    {
+        $warehouse_id = $request->get('warehouse_id');
+        $check_info = InventoryCheckInfo::where(function ($query) use ($id,$warehouse_id){
+            $query->where('id',$id)->where('warehouse_id',$warehouse_id);
+        })->first();
+        if($check_info['goods_num']<0) return '1';
+        $goods_sku = $check_info['goods_sku'];
+        $inventory = Inventory::where(function ($query) use ($goods_sku,$warehouse_id){
+            $query->where('goods_sku',$goods_sku)->where('warehouse_id',$warehouse_id);
+        })->first();
+
+
+        $inventoryArr['goods_sku'] = $check_info['goods_sku'];
+        $inventoryArr['warehouse_id'] = $check_info['warehouse_id'];
+        $inventoryArr['stock_num'] = $check_info['goods_num'];
+        $inventoryArr['stock_unused_num'] = $check_info['goods_num'];
+        $inventoryArr['goods_position'] = $check_info['goods_position'];
+        $inventoryArr['goods_created'] = Carbon::now();
+
+
+        if($inventory){
+            $balance = $check_info['goods_num'] - $inventory->stock_num;
+            $inventory->stock_num = $check_info['goods_num'];
+            $inventory->stock_unused_num = $inventory->stock_used_num + $balance;
+            $inventory->save();
+        }else{
+            Inventory::insert($inventoryArr);
+        }
+        return '0';
+
+    }
+
+
+
 
 }

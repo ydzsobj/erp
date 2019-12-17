@@ -37,6 +37,8 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('warehouse_pick/check', 'WarehousePickController@check')->name('warehouse_pick.check');
     Route::post('warehouse_pick/problem', 'WarehousePickController@problem')->name('warehouse_pick.problem');
     Route::post('warehouse_out/out', 'WarehouseOutController@out')->name('warehouse_out.out');
+    Route::post('inventory_check/check/{id}', 'InventoryCheckController@check')->name('inventory_check.check');
+    Route::post('inventory_check/change/{id}', 'InventoryCheckController@change')->name('inventory_check.change');
 
 
     Route::get('order/list','OrderController@list')->name('order.list');

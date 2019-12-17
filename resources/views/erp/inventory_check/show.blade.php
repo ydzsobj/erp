@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(30% - 3px);
+            height: calc(25% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(30% + 3px);
+            top: calc(25% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(30% - 3px);
+            top: calc(25% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -57,16 +57,39 @@
                         <div class="layui-col-md12">
                             <div class="layui-card">
                                 <div class="layui-tab layui-tab-card">
-                                    <ul class="layui-tab-title">
-                                        <li class="layui-this">基本设置</li>
-                                        <li>安全设置</li>
-                                    </ul>
+                                    <form class="layui-form" action="">
+                                        <ul class="layui-tab-title">
+                                            <li class="layui-this"><b id="target_product_info"></b> 盘点信息</li>
+                                            <li>
+                                                <label>
+                                                    SKU编码 :
+                                                </label>
+                                                <div class="layui-inline" style="width:150px;">
+                                                    <input class="layui-input" name="goods_sku" id="goods_sku" placeholder="请输入sku">
+                                                </div>
+                                            </li>
+                                            <li>
+                                                状态：
+                                                <div class="layui-inline" style="width:110px;">
+                                                    <select name="out_status" id="select_status" >
+                                                        <option value="0">未更新</option>
+                                                        <option value="1">已更新</option>
+                                                    </select>
+                                                </div>
+
+                                            </li>
+                                            <li>
+                                                <a class="layui-btn layui-btn-sm" data-type="sub_reload"  id='sub_search'>查询</a>
+                                            </li>
+                                            <li>
+                                                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+                                            </li>
+
+                                        </ul>
+                                    </form>
                                     <div class="layui-tab-content">
                                         <div class="layui-tab-item layui-show">
                                             <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
-                                        </div>
-                                        <div class="layui-tab-item">
-
                                         </div>
                                     </div>
                                 </div>
@@ -80,6 +103,11 @@
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('导入盘点单','{{url("admins/inventory_check/import/1")}}',2,'50%','50%');">导入盘点单</button>
+        </div>
+    </script>
+    <script type="text/html" id="tool-bar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" data-type="add">批量更新</button>
         </div>
     </script>
 
@@ -128,7 +156,7 @@
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-600'
+                ,height: 'full-750'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
@@ -218,8 +246,17 @@
                 table.render({
                     elem: '#table_list'
                     ,url: "{{url('api/inventory_check/goods')}}/"+data.id //数据接口
+                    ,toolbar: '#tool-bar'
+                    ,defaultToolbar: ['filter', 'exports', 'print']
+                    ,title: '盘点数据表'
+                    ,page: true //开启分页
+                    ,count: 10000
+                    ,limit: 100
+                    ,limits: [100,300,500,1000,2000,5000,10000]
+                    ,height: 'full-400'
                     ,cols: [[
-                        {field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
+                        {type: 'checkbox', fixed: 'left'}
+                        ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
                         ,{field:'id', title: 'ID', width:100, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:180}
                         ,{field:'goods_color', title: '颜色', width:100}
@@ -230,7 +267,7 @@
                             templet: function(row){
                                 var status = '';
                                 if(row.inventory_check_info_status == 0){
-                                    status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="update">更新库存</a>';
+                                    status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="change">更新库存</a>';
                                 }
                                 return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
                                     '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
@@ -295,24 +332,9 @@
                         content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
                     });
                     //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-                }else if(obj.event === 'show_img'){
-                    $('#show_big').attr('src',data.brand_pic);
-                    //console.log($('#show_big').attr('url'));
-                    layer.open({
-                        type:1,
-                        title: false,
-                        scrollbar: false,
-                        closeBtn: 0,
-                        //content: ['浏览器滚动条已锁','no'],
-                        shadeClose: true,
-                        area:'600px',
-                        skin: 'layui-layer-nobg', //没有背景色
-                        shadeClose: true,
-                        content:$('#show_big')
-                    })
                 }else if(obj.event === 'check'){
                     $.ajax({
-                        url:"{{url('admins/purchase_warehouse/check/')}}/"+data.id,
+                        url:"{{url('admins/inventory_check/check/')}}/"+data.id,
                         type:'post',
                         data:{"_token":"{{csrf_token()}}"},
                         datatype:'json',
@@ -332,6 +354,50 @@
                     });
 
                 }
+
+
+            });
+
+
+            //监听工具条
+            table.on('tool(table_list)', function(obj){
+                var data = obj.data;
+
+                if(obj.event === 'detail'){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'基本信息',
+                        area:['350px','420px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{url('admins/supplier/')}}/"+data.id
+                    });
+                    //layer.msg('ID：'+ data.id + ' 的查看操作');
+                } else if(obj.event === 'change'){
+                    $.ajax({
+                        url:"{{url('admins/inventory_check/change/')}}/"+data.id,
+                        type:'post',
+                        data:{"_token":"{{csrf_token()}}","warehouse_id":"{{$id}}"},
+                        datatype:'json',
+                        success:function (msg) {
+                            if(msg=='0'){
+                                layer.msg('操作成功！',{icon:1,time:2000},function () {
+                                    window.location = window.location;
+                                    layer.close(index);
+                                });
+                            }else{
+                                layer.msg('操作失败！',{icon:2,time:2000});
+                            }
+                        },
+                        error: function(XmlHttpRequest, textStatus, errorThrown){
+                            layer.msg('error!',{icon:2,time:2000});
+                        }
+                    });
+
+                }
+
+
             });
 
 

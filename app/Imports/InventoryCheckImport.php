@@ -38,18 +38,20 @@ class InventoryCheckImport implements ToCollection
         $lastId = DB::table('inventory_check')->insertGetId($check_data);
 
         foreach ($collection as $key => $row) {
-            if ($key < 2) {
+            if ($key == 0) {
                 continue;
             }
 
-
             $excel_data[$key] = [
-                'goods_sku'=>trim($row[0]),
-                'goods_name'=>trim($row[1]),
-                'goods_color'=>trim($row[2]),
-                'goods_size'=>trim($row[3]),
-                'goods_num'=>intval($row[4]),
+                'goods_position'=>trim($row[0]),
+                'goods_sku'=>trim($row[1]),
+                'goods_name'=>trim($row[2]),
+                'goods_color'=>trim($row[3]),
+                'goods_size'=>trim($row[4]),
+                'goods_num'=>intval($row[5]),
+                'inventory_check_info_text'=>intval($row[6]),
                 'inventory_check_id'=>$lastId,
+                'warehouse_id'=>$this->warehouse_id,
                 'created_at' => Carbon::now()
             ];
 

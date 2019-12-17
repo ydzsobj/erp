@@ -19,10 +19,15 @@ class InventoryCheckController extends Controller
     }
 
     //获取单个采购订单信息
-    public function goods($id)
+    public function goods(Request $request,$id)
     {
-        $data = InventoryCheckInfo::where('inventory_check_id',$id)->get();
-        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
+        //$data = InventoryCheckInfo::where('inventory_check_id',$id)->get();
+        //return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
+        $model = new InventoryCheckInfo();
+        list($data,$count) = $model->search($request,$id);
+
+        return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$data]);
+
     }
 
 }
