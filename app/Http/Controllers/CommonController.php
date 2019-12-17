@@ -13,7 +13,6 @@ use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
 use App\Models\WarehousePick;
 use Carbon\Carbon;
-use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
