@@ -101,23 +101,23 @@
                             <dd data-name="list">
                                 <a lay-href="{{url('/admins/warehouse/1')}}">总览</a>
                             </dd>
-                            <dd data-name="list">
-                                <a lay-href="{{url('/admins/inventory/1')}}">产品库存</a>
-                            </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/purchase_warehouse/1')}}">验收入库</a>
                             </dd>
-                            {{--<dd data-name="console">
-                                <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
-                            </dd>--}}
-                            <dd data-name="mobile">
-                                <a lay-href="{{url('/admins/inventory_check/1')}}">库存盘点</a>
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/inventory/1')}}">产品库存</a>
                             </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/warehouse_pick/1')}}">拣货列表</a>
                             </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/warehouse_out/1')}}">出库列表</a>
+                            </dd>
+                            {{--<dd data-name="console">
+                                <a lay-href="{{url('/admins/inventory_transfer')}}">库间调拨</a>
+                            </dd>--}}
+                            <dd data-name="mobile">
+                                <a lay-href="{{url('/admins/inventory_check/1')}}">库存盘点</a>
                             </dd>
                             <dd data-name="console">
                                 <a lay-href="{{url('/admins/problem/1')}}">问题订单</a>

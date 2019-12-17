@@ -100,14 +100,14 @@
             </div>
         </div>
     </div>
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('导入盘点单','{{url("admins/inventory_check/import/1")}}',2,'50%','50%');">导入盘点单</button>
+    <script type="text/html" id="bar">
+        <div class="layui-btn-container demo">
+            <button class="layui-btn" data-type="getCheckData">批量生成采购汇总单</button>
         </div>
     </script>
-    <script type="text/html" id="tool-bar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" data-type="add">批量更新</button>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container demoTable">
+            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('导入盘点单','{{url("admins/inventory_check/import/1")}}',2,'50%','50%');">导入盘点单</button>
         </div>
     </script>
 
@@ -115,7 +115,7 @@
         @{{# if(d.inventory_check_status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.inventory_check_status == 1){  }} <div style="color: #008000">验货中</div>  @{{# }else{  }} <div>已退货</div> @{{# }  }}
     </script>
     <script type="text/html" id="inventory_check_info_status">
-        @{{# if(d.inventory_check_info_status == 0){ }} <div style="color: #ff0000">未更新</div> @{{# }else if(d.inventory_check_info_status == 1){  }} <div style="color: #008000">已更新</div> @{{# }  }}
+        @{{# if(d.inventory_check_info_status == 0){ }} <div style="color: #ff0000">未更新</div> @{{# }else if(d.inventory_check_info_status == 1){  }} <div style="color: #008000">已更新</div> @{{# }else{  }} <div>已完成</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -221,32 +221,65 @@
                             keywords: searchReload.val()
                         }
                     }, 'data');
+                },
+                getCheckData:function(){
+                    var checkStatus = table.checkStatus('testReload');
+                    if(checkStatus.data.length==0){
+                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                        return ;
+                    }
+                    var codeId= "";
+                    for(var i=0;i<checkStatus.data.length;i++){
+                        codeId += checkStatus.data[i].id+",";
+                    }
+                    parent.layer.msg('更新中...', {icon: 16,shade: 0.3,time:2000});
+
+                    $.ajax({
+                        type:"POST",
+                        url: "{{url('admins/inventory_check/all')}}",
+                        data:{"ids":codeId,"_token":"{{csrf_token()}}","warehouse_id":"{{$id}}"},
+                        success:function (data) {
+                            layer.closeAll('loading');
+                            if(data==0){
+                                parent.layer.msg('生成成功！', {icon: 1,time:2000,shade:0.2},function () {
+                                    location.reload(true);
+                                });
+                            }else{
+                                parent.layer.msg('生成失败！', {icon: 2,time:3000,shade:0.2});
+                            }
+                        },
+                        end: function () {
+                            var data1 = table.cache["list"];
+                            t.where = data1.field;
+                            //重新加载数据表格
+                            table.reload('listReload',t);
+                        }
+                    })
+
+
                 }
+
+
             };
             $('.demoTable .layui-btn').on('click', function(){
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
             });
 
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
+            $('body').on('click','.demo .layui-btn', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
             });
+
 
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(list)', function(obj){
                 var data = obj.data;
-                console.log(data);
+
                 table.render({
                     elem: '#table_list'
                     ,url: "{{url('api/inventory_check/goods')}}/"+data.id //数据接口
-                    ,toolbar: '#tool-bar'
+                    ,toolbar: '#bar'
                     ,defaultToolbar: ['filter', 'exports', 'print']
                     ,title: '盘点数据表'
                     ,page: true //开启分页
