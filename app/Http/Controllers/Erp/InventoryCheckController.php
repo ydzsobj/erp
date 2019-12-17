@@ -46,9 +46,9 @@ class InventoryCheckController extends CommonController
         $inventory_check_code = $this->createInventoryCheckCode('P');
         $import = new InventoryCheckImport($warehouse_id,$inventory_check_code);
 
-        //$collection = Excel::import($import, $filename);
-        $collection = Excel::toCollection($import, $filename);
-        dd($collection);
+        $collection = Excel::import($import, $filename);
+        //$collection = Excel::toCollection($import, $filename);
+        //dd($collection);
         $msg = session()->get('excel');
         return response()->json(['code'=>'0','msg'=>$msg]);
     }
