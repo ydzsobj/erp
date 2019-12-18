@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(25% - 3px);
+            height: calc(33% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(25% + 3px);
+            top: calc(33% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(25% - 3px);
+            top: calc(33% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -156,7 +156,7 @@
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-750'
+                ,height: 'full-700'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
@@ -286,7 +286,7 @@
                     ,count: 10000
                     ,limit: 100
                     ,limits: [100,300,500,1000,2000,5000,10000]
-                    ,height: 'full-400'
+                    ,height: 'full-470'
                     ,cols: [[
                         {type: 'checkbox', fixed: 'left'}
                         ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
