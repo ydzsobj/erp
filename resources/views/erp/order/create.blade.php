@@ -22,6 +22,10 @@
 
     </form>
 
+    <div style="margin-top: 50px;text-align: center">
+        <a href="{{ asset('admin/order.xlsx') }}"><span style="color:red;">下载订单导入模板</span></a>
+    </div>
+
 
 
 @endsection

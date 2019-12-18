@@ -23,7 +23,9 @@
 
     </form>
 
-
+    <div style="margin-top: 50px;text-align: center">
+        <a href="{{ asset('admin/inventory_check.xlsx') }}"><span style="color:red;">下载盘点单模板</span></a>
+    </div>
 
 @endsection
 @section('js')
