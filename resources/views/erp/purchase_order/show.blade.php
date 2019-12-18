@@ -124,7 +124,7 @@
                 data.field.table = table.cache;console.log(table.cache.dataTable);
                 for(var i=0, row; i < table.cache.dataTable.length; i++){
                     row = table.cache.dataTable[i];
-                    if(!row.id || row.plan_num=='' || row.order_num==''){
+                    if(!row.id || row.plan_num < 0 || row.order_num < 0){
                         layer.msg("检查每一行，请完善数据！", { icon: 5 }); //提示
                         return false;
                     }
