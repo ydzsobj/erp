@@ -180,11 +180,11 @@
                 ,height: 'full-400'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
-                    ,{field: 'goods_position',title: '库位', width:80, fixed: 'left',edit:true}
+                    ,{field: 'goods_position',title: '库位', width:120, fixed: 'left',edit:true}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'goods_id', title: '商品ID', width:100, sort: true}
                     ,{title: '商品名称', width:150,templet:function (res) {
-                            return res.product_goods.sku_name;
+                            if(res.product_goods){return res.product_goods.sku_name;}else{return '';}
                         }}
                     ,{title: '仓库名', width:120,templet:function (res) {
                             return res.warehouse.warehouse_name;
@@ -200,10 +200,10 @@
                     ,{field: 'in_num', title: '入库数量', width:90}
                     ,{field: 'out_num', title: '出库数量', width:90}
                     ,{title: '属性名', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_names;
+                            if(res.product_goods){return res.product_goods.sku_attr_names;}else{return '';}
                         }}
                     ,{title: '属性值', width:100,templet:function (res) {
-                            return res.product_goods.sku_attr_value_names;
+                            if(res.product_goods){return res.product_goods.sku_attr_value_names;}else{return '';}
                         }}
                     ,{field: 'goods_sku', title: '商品编码', width:150,fixed:'right'}
                 ]]

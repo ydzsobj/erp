@@ -49,7 +49,7 @@ class Inventory extends Model
 
     //商品
     public function product_goods(){
-        return $this->hasOne('App\Models\ProductGoods','id','goods_id');
+        return $this->hasOne('App\Models\ProductGoods','sku_code','goods_sku');
     }
 
     public function sku(){

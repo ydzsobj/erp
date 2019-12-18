@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\InventoryCheckInfo;
+use App\Models\ProductGoods;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,7 @@ class InventoryCheckImport implements ToCollection
                 'warehouse_id'=>$this->warehouse_id,
                 'created_at' => Carbon::now()
             ];
+
 
 
         }
