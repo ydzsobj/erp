@@ -153,6 +153,15 @@ class PurchaseOrderController extends CommonController
         return view('erp.purchase_order.show_goods');
     }
 
+    /*
+     *更新物流单号
+     */
+    public function code(Request $request,$id){
+        //更新操作
+        $result = PurchaseOrder::find($id);
+        $result->logistics_code = $request->code;
+        return $result->save()?'0':'1';
+    }
 
     /*
      *审核

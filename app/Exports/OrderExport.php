@@ -5,7 +5,9 @@ namespace App\Exports;
 use App\Imports\OrderImport;
 use App\Models\Order;
 use App\Models\OrderInfo;
+use App\Models\OrderLog;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -35,7 +37,7 @@ class OrderExport implements FromCollection, WithHeadings ,WithEvents
             $data[$key]['order_sn'] = $value['order_sn'];
             //$data[$key]['order_type']=$value['order_type']??'普通订单';
             $data[$key]['order_name']=$value['order_name'];
-            $data[$key]['order_name']=$value['order_code'];
+            $data[$key]['order_code']=$value['order_code'];
             $data[$key]['order_phone']=$value['order_phone'];
             $data[$key]['order_province']=$value['order_province'];
             $data[$key]['order_city']=$value['order_city'];
@@ -48,8 +50,8 @@ class OrderExport implements FromCollection, WithHeadings ,WithEvents
                 $data[$key]['goods_sku']=$v['goods_sku'];
                 $data[$key]['goods_num']=$v['goods_num'];
                 $data[$key]['goods_name']=$v['goods_name'];
-                $data[$key]['goods_color']=$v['goods_name'];
-                $data[$key]['goods_size']='xl';
+                $data[$key]['goods_color']=$v['goods_color'];
+                $data[$key]['goods_size']=$v['goods_size'];
                 $data[$key]['goods_text']=$data[$key]['goods_name']=$v['goods_name'].'x'.$v['goods_num'];
                 $data[$key]['goods_english']=$v['goods_english'];
             }
@@ -59,7 +61,8 @@ class OrderExport implements FromCollection, WithHeadings ,WithEvents
             foreach ($value['inventory'] as $kk=>$vv){
                 $data[$key]['goods_position']=$vv['goods_position'];
             }
-            $data[$key]['picked_at']=Carbon::now()->toDateTimeString();
+            $data[$key]['picked_at'] = date('Y-m-d H:i:s', time());
+
         }
 
         return collect($data);
@@ -104,7 +107,7 @@ class OrderExport implements FromCollection, WithHeadings ,WithEvents
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $num = count($this->data) + 1;
-                $cell_num = 'A1:W'.$num;
+                $cell_num = 'A1:X'.$num;
                 $data_map = [
                     'A' => ['name' => '下单时间', 'key' => 'ordered_at', 'data_type' => DataType::TYPE_STRING],
                     'B' => ['name' => '审核时间', 'key' => 'order_checked_at', 'data_type' => DataType::TYPE_STRING],
@@ -115,20 +118,21 @@ class OrderExport implements FromCollection, WithHeadings ,WithEvents
                     'G' => ['name' => '省', 'key' => 'order_province', 'data_type' => DataType::TYPE_STRING],
                     'H' => ['name' => '城市', 'key' => 'order_city', 'data_type' => DataType::TYPE_STRING],
                     'I' => ['name' => '地区', 'key' => 'order_area', 'data_type' => DataType::TYPE_STRING],
-                    'J' => ['name' => '总金额', 'key' => 'order_money', 'data_type' => DataType::TYPE_STRING],
-                    'K' => ['name' => '币种', 'key' => 'order_currency', 'data_type' => DataType::TYPE_STRING],
-                    'L' => ['name' => 'SKU码', 'key' => 'goods_sku', 'data_type' => DataType::TYPE_STRING],
-                    'M' => ['name' => '件数', 'key' => 'goods_num', 'data_type' => DataType::TYPE_STRING],
-                    'N' => ['name' => '产品名称', 'key' => 'goods_name', 'data_type' => DataType::TYPE_STRING],
-                    'O' => ['name' => '颜色', 'key' => 'goods_color', 'data_type' => DataType::TYPE_STRING],
-                    'P' => ['name' => '尺码', 'key' => 'goods_size', 'data_type' => DataType::TYPE_STRING],
-                    'Q' => ['name' => '备注', 'key' => 'goods_text', 'data_type' => DataType::TYPE_STRING],
-                    'R' => ['name' => '产品英文名称', 'key' => 'goods_english', 'data_type' => DataType::TYPE_STRING],
-                    'S' => ['name' => '物品描述', 'key' => 'order_text', 'data_type' => DataType::TYPE_STRING],
-                    'T' => ['name' => '审核状态', 'key' => 'check_status', 'data_type' => DataType::TYPE_STRING],
-                    'U' => ['name' => '客服备注', 'key' => 'customer_text', 'data_type' => DataType::TYPE_STRING],
-                    'V' => ['name' => '货架号', 'key' => 'order_position', 'data_type' => DataType::TYPE_STRING],
-                    'W' => ['name' => '出库日期', 'key' => 'picked_at', 'data_type' => DataType::TYPE_STRING],
+                    'J' => ['name' => '详细地址', 'key' => 'order_address', 'data_type' => DataType::TYPE_STRING],
+                    'K' => ['name' => '总金额', 'key' => 'order_money', 'data_type' => DataType::TYPE_STRING],
+                    'L' => ['name' => '币种', 'key' => 'order_currency', 'data_type' => DataType::TYPE_STRING],
+                    'M' => ['name' => 'SKU码', 'key' => 'goods_sku', 'data_type' => DataType::TYPE_STRING],
+                    'N' => ['name' => '件数', 'key' => 'goods_num', 'data_type' => DataType::TYPE_STRING],
+                    'O' => ['name' => '产品名称', 'key' => 'goods_name', 'data_type' => DataType::TYPE_STRING],
+                    'P' => ['name' => '颜色', 'key' => 'goods_color', 'data_type' => DataType::TYPE_STRING],
+                    'Q' => ['name' => '尺码', 'key' => 'goods_size', 'data_type' => DataType::TYPE_STRING],
+                    'R' => ['name' => '备注', 'key' => 'goods_text', 'data_type' => DataType::TYPE_STRING],
+                    'S' => ['name' => '产品英文名称', 'key' => 'goods_english', 'data_type' => DataType::TYPE_STRING],
+                    'T' => ['name' => '物品描述', 'key' => 'order_text', 'data_type' => DataType::TYPE_STRING],
+                    'U' => ['name' => '审核状态', 'key' => 'check_status', 'data_type' => DataType::TYPE_STRING],
+                    'V' => ['name' => '客服备注', 'key' => 'customer_text', 'data_type' => DataType::TYPE_STRING],
+                    'W' => ['name' => '库位码', 'key' => 'order_position', 'data_type' => DataType::TYPE_STRING],
+                    'X' => ['name' => '出库日期', 'key' => 'picked_at', 'data_type' => DataType::TYPE_STRING],
 
                 ];
 

@@ -44,6 +44,7 @@
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,title: '计量单位数据表'
                 ,page: true //开启分页
+                ,totalRow: true
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
@@ -52,13 +53,12 @@
                     {type:'checkbox'}
                     ,{field: 'id', title: 'ID', width: 80}
                     ,{field: 'goods_sku', title: 'SKU编码', width: 150}
-                    ,{field: 'purchase_num', title: '建议采购数量', width:120}
-                    ,{field: 'order_num', title: '订单数量', width:120}
+                    ,{field: 'order_num', title: '订单数量',totalRow: true, width:120}
                     ,{field: 'goods_name', title: '商品名称', width:180}
                     ,{field: 'goods_english', title: '英文名称', width:180}
                     ,{field: 'goods_attr_name', title: '属性名', width: 100}
                     ,{field: 'goods_attr_value', title: '属性值', width: 100}
-                    ,{field: 'goods_price', title: '商品价格', width: 100}
+                    ,{field: 'goods_price', title: '商品价格',totalRow: true, width: 100}
                     ,{title: '仓储数量', width:350 , templet:'#inventory'}
                 ]]
             });

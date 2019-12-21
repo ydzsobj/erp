@@ -186,7 +186,7 @@
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,height: 'full-400'
                 ,cols: [[ //表头
-                    {type: 'radio', fixed: 'left'}
+                    {field: 'logistics_code', fixed: 'left',title: '物流单号', width:150,edit:true}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
                     ,{field: 'purchase_order_status', title: '状态', width:70,templet:"#purchase_order_status"}
                     ,{field: 'purchase_order_code', title: '采购单号', width:130}
@@ -207,8 +207,10 @@
                             }
                             else if(row.purchase_order_status == 2){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>';
+                            }else{
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">记录</a>';
                             }
-                        return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
+                        return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">维护</a>'+
                             '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
                         }
                     }
@@ -266,16 +268,37 @@
                 active[type] ? active[type].call(this) : '';
             });
 
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
+
+            //监听单元格编辑
+            table.on('edit(list)', function(obj){
+                var value = obj.value //得到修改后的值
+                    ,data = obj.data //得到所在行所有键值
+                    ,field = obj.field; //得到字段
+                console.log(obj);
+                $.ajax({
+                    type:'post',
+                    url:"/admins/purchase_order/" + obj.data.id + '/code',
+                    data:{_token:"{{ csrf_token() }}", code: obj.value},
+                    success:function(msg){
+                        if(msg=='0'){
+                            layer.msg('设置成功！',{icon:1,time:1000},function () {
+                                layer.close(index);
+                            });
+                        }else{
+                            layer.msg('设置失败！',{icon:2,time:2000});
+                        }
+                    },
+                    error: function(data){
+                        var errors = JSON.parse(data.responseText).errors;
+                        var msg = '';
+                        for(var a in errors){
+                            msg += errors[a][0]+'<br />';
+                        }
+                        layer.msg(msg,{icon:2,time:2000});
+                    }
+                });
             });
+
 
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(list)', function(obj){

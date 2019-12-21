@@ -106,13 +106,13 @@
                 page: {},
                 cols: [[
                     {title: '序号', type: 'numbers'},
-                    {field: 'id', title: 'ID',  edit: 'text',totalRow: true,event:'modify', width: 80},
-                    {field: 'goods_sku', title: 'SKU编码',  edit: 'text',totalRow: true, width: 135},
+                    {field: 'id', title: 'ID',  edit: 'text',event:'modify', width: 80},
+                    {field: 'goods_sku', title: 'SKU编码',  edit: 'text', width: 135},
                     {field: 'sku_name', edit: true, title: '商品名称', width: 180},
                     {field: 'goods_attr_name', title: '属性名', width: 100},
                     {field: 'goods_attr_value', title: '属性值', width: 100},
-                    {field: 'goods_num', title: '数量', edit:'text', width: 100},
-                    {field: 'goods_money', title: '金额', edit:'text', width: 100},
+                    {field: 'goods_num', title: '数量', height: 512,edit:'text', width: 100},
+                    {field: 'goods_money', title: '金额', height: 512,edit:'text', width: 100},
                     {toolbar: '#table_tool', title: '操作', fixed: 'right', align: 'center', width: 180}
                 ]],
             });

@@ -174,6 +174,7 @@
                 ,id: 'listReload'
                 ,title: '库存数据表'
                 ,page: true //开启分页
+                ,totalRow: true
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
@@ -189,16 +190,16 @@
                     ,{title: '仓库名', width:120,templet:function (res) {
                             return res.warehouse.warehouse_name;
                         }}
-                    ,{field: 'stock_num', title: '库存数量', width:90, style:'background-color: #eee; color: green;'}
-                    ,{field: 'stock_used_num', title: '库存占用', width:90}
-                    ,{field: 'stock_unused_num', title: '库存未占', width:90}
-                    ,{field: 'afloat_num', title: '在途数量', width:90, style:'background-color: #eee; color: blue;'}
-                    ,{field: 'order_num', title: '在途订单', width:90}
-                    ,{field: 'plan_num', title: '在途备货', width:90}
-                    ,{field: 'plan_used_num', title: '备货占用', width:90}
-                    ,{field: 'plan_unused_num', title: '备货未占', width:90, style:'background-color: #eee; color: blue;'}
-                    ,{field: 'in_num', title: '入库数量', width:90}
-                    ,{field: 'out_num', title: '出库数量', width:90}
+                    ,{field: 'stock_num', title: '库存数量A', width:90, totalRow: true, style:'background-color: #eee; color: green;'}
+                    ,{field: 'stock_used_num', title: '库存占用', totalRow: true, width:90}
+                    ,{field: 'stock_unused_num', title: '库存未占', totalRow: true, width:90}
+                    ,{field: 'afloat_num', title: '在途数量', width:90, totalRow: true, style:'background-color: #eee; color: blue;'}
+                    ,{field: 'order_num', title: '在途订单', totalRow: true, width:90}
+                    ,{field: 'plan_num', title: '在途备货', totalRow: true, width:90}
+                    ,{field: 'plan_used_num', title: '备货占用', totalRow: true, width:90}
+                    ,{field: 'plan_unused_num', title: '备货未占', totalRow: true, width:90, style:'background-color: #eee; color: blue;'}
+                    ,{field: 'in_num', title: '入库数量', totalRow: true, width:90}
+                    ,{field: 'out_num', title: '出库数量', totalRow: true, width:90}
                     ,{title: '属性名', width:100,templet:function (res) {
                             if(res.product_goods){return res.product_goods.sku_attr_names;}else{return '';}
                         }}

@@ -277,16 +277,22 @@
                     elem: '#table_list'
                     ,url: "{{url('api/purchase_warehouse/goods')}}/"+data.id //数据接口
                     ,cols: [[
-                        {field:'id', title: 'ID', width:80, sort: true}
-                        ,{field:'goods_id', title: '商品ID', width:100, sort: true}
+                        {field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
+                        ,{field:'id', title: 'ID', width:80, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:180}
                         ,{field:'goods_attr_name', title: '属性名', width:100}
                         ,{field:'goods_attr_value', title: '属性值', width:100}
-                        ,{field:'goods_num', title: '商品总数',width:120}
-                        ,{field:'order_num', title: '订单数量',width:120}
-                        ,{field:'plan_num', title: '备货数量',width:120}
-                        ,{field:'goods_money', title: '总价',  width:120}
-                        ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
+                        ,{field:'goods_num', title: '商品总数',width:100}
+                        ,{field:'order_num', title: '订单数量',width:100}
+                        ,{field:'plan_num', title: '备货数量',width:100}
+                        ,{field:'goods_money', title: '总价',  width:100}
+                        ,{field:'real_num', title: '验收数量',  width:100}
+                        ,{field:'goods_text', title: '备注',  width:120}
+                        ,{field: 'button', title: '验收操作', width: 120, fixed: 'right',
+                            templet: function(row){
+                                return '<a class="layui-btn layui-btn-xs" lay-event="edit">维护</a>';
+                            }
+                        }
                     ]]
                     ,id: 'testReload'
                 });
@@ -404,6 +410,26 @@
                     });
 
                 }
+            });
+
+
+            //监听工具条
+            table.on('tool(table_list)', function(obj){
+                var data = obj.data;
+
+                if(obj.event === 'edit'){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'编辑信息',
+                        area:['800px','600px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{url('admins/purchase_warehouse_info/')}}/"+data.id+"/edit"
+                    });
+                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                }
+
             });
 
 

@@ -30,6 +30,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::get('purchase_order/show_goods','PurchaseOrderController@show_goods');
     Route::post('purchase_order/check/{id}', 'PurchaseOrderController@check')->name('purchase_order.check');
     Route::post('purchase_order/time/{id}', 'PurchaseOrderController@time')->name('purchase_order.time');
+    Route::post('purchase_order/{id}/code', 'PurchaseOrderController@code')->name('purchase_order.code');
     Route::post('purchase_warehouse/check/{id}', 'PurchaseWarehouseController@check')->name('purchase_warehouse.check');
     Route::post('purchase_warehouse/in/{id}', 'PurchaseWarehouseController@in')->name('purchase_warehouse.in');
     Route::post('purchase_warehouse/add', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
@@ -64,6 +65,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('purchase_pool','PurchasePoolController');
     Route::resource('purchase_order','PurchaseOrderController');
     Route::resource('purchase_warehouse','PurchaseWarehouseController');
+    Route::resource('purchase_warehouse_info','PurchaseWarehouseInfoController');
     Route::resource('inventory','InventoryController');
     Route::resource('inventory_check','InventoryCheckController');
     Route::resource('inventory_transfer','InventoryTransferController');

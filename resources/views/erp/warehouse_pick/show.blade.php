@@ -121,8 +121,8 @@
     </div>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container demoTable">
-            <button class="layui-btn layui-btn-sm" data-type="getCheckData">批量拣货</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" data-type="getExport" id="export">导出拣货单</button>
+            <button class="layui-btn layui-btn-sm" data-type="getCheckData">批量审核</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" data-type="getExport" id="export">导出上传拣货单</button>
             <button class="layui-btn layui-btn-sm" data-type="getProblem" >问题订单</button>
         </div>
     </script>
@@ -275,11 +275,32 @@
                         }
                     });
 
+
                 },
                 //导出
                 getExport:function(){
-                        href = "{{url('admins/warehouse_pick/export')}}/{{$id}}";
+                    var checkStatus = table.checkStatus('listReload');
+
+                    var codeId= "";
+                    if(checkStatus.data.length!=0){
+                        for(var i=0;i<checkStatus.data.length;i++){
+                            if(checkStatus.data[i].order_lock<1){
+                                parent.layer.msg('有订单未锁库，请核查订单状态！', {icon: 2});
+                                return ;
+                            }
+                            codeId += checkStatus.data[i].id+",";
+                        }
+                    }
+
+                    layer.confirm('是否确定批量审核订单并下载拣货单?', function(index){
+                        parent.layer.msg('操作中...', {icon: 16,shade: 0.3,time:3000});
+                        json = JSON.stringify(checkStatus);
+
+                        href = "{{url('admins/warehouse_pick/export')}}/{{$id}}"+'?ids='+codeId;
                         location.href = href;
+                        layer.close(index);
+
+                    });
                 },
                 //问题件
                 getProblem:function () {
@@ -436,5 +457,27 @@
 
         });
 
+    </script>
+    <script>
+        /**
+         * 拼接对象为请求字符串
+         * @param {Object} obj - 待拼接的对象
+         * @returns {string} - 拼接成的请求字符串
+         */
+        function encodeSearchParams(obj) {
+            const params = []
+
+            Object.keys(obj).forEach((key) => {
+                let value = obj[key]
+                // 如果值为undefined我们将其置空
+                if (typeof value === 'undefined') {
+                    value = ''
+                }
+                // 对于需要编码的文本（比如说中文）我们要进行编码
+                params.push([key, encodeURIComponent(value)].join('='))
+            })
+
+            return params.join('&')
+        }
     </script>
 @endsection

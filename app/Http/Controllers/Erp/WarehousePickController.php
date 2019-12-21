@@ -134,11 +134,21 @@ class WarehousePickController extends CommonController
     //拣货单导出
     public function export(Request $request,$id)
     {
-        $order = Order::with('order_info','inventory')->where(function ($query) use ($id){
-            $query->where('warehouse_id',$id)->where('order_status',5)->where('order_lock',1);
-        })->get();
+        $ids = $request->get('ids');dd($ids);
+        if($ids){
+            $ids = explode(',',$ids);
+            $order = Order::with('order_info','inventory')->where(function ($query) use ($id,$ids){
+                $query->where('warehouse_id',$id)->whereIn('id',$ids)->where('order_lock',1);
+            })->get();
+        }else{
+            $order = Order::with('order_info','inventory')->where(function ($query) use ($id){
+                $query->where('warehouse_id',$id)->where('order_status',4)->where('order_lock',1);
+            })->get();
+        }
+
 
         return Excel::download(new OrderExport($order), '拣货单导出'.date('y-m-d H_i_s').'.xlsx');
+
 
     }
 
