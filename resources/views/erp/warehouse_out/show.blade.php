@@ -239,39 +239,41 @@
                 },
                 //批量审核
                 getCheckData:function(){
-                    var checkStatus = table.checkStatus('listReload');
-                    if(checkStatus.data.length==0){
-                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
-                        return ;
-                    }
-                    var codeId= "";
-                    for(var i=0;i<checkStatus.data.length;i++){
-                        if(checkStatus.data[i].order_lock<1){
-                            parent.layer.msg('有订单未锁库，请核查订单状态！', {icon: 2});
+                    layer.confirm('是否确定批量出库？', function(index) {
+                        var checkStatus = table.checkStatus('listReload');
+                        if(checkStatus.data.length==0){
+                            parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
                             return ;
                         }
-                        codeId += checkStatus.data[i].id+",";
-                    }
-                    parent.layer.msg('出库中...', {icon: 16,shade: 0.3,time:3000});
-                    json = JSON.stringify(checkStatus);
-                    $.ajax({
-                        url:"{{url('admins/warehouse_out/out')}}",
-                        type:'post',
-                        data:{"_token":"{{csrf_token()}}",'ids':codeId,'warehouse_id':"{{$id}}"},
-                        datatype:'json',
-                        success:function (msg) {
-                            if(msg=='0'){
-                                layer.msg('出库成功！',{icon:1,time:2000},function () {
-                                    window.location = window.location;
-                                    layer.close(index);
-                                });
-                            }else{
-                                layer.msg('出库失败！',{icon:2,time:2000});
+                        var codeId= "";
+                        for(var i=0;i<checkStatus.data.length;i++){
+                            if(checkStatus.data[i].order_lock<1){
+                                parent.layer.msg('有订单未锁库，请核查订单状态！', {icon: 2});
+                                return ;
                             }
-                        },
-                        error: function(XmlHttpRequest, textStatus, errorThrown){
-                            layer.msg('error!',{icon:2,time:2000});
+                            codeId += checkStatus.data[i].id+",";
                         }
+                        parent.layer.msg('出库中...', {icon: 16,shade: 0.3,time:3000});
+                        json = JSON.stringify(checkStatus);
+                        $.ajax({
+                            url:"{{url('admins/warehouse_out/out')}}",
+                            type:'post',
+                            data:{"_token":"{{csrf_token()}}",'ids':codeId,'warehouse_id':"{{$id}}"},
+                            datatype:'json',
+                            success:function (msg) {
+                                if(msg=='0'){
+                                    layer.msg('出库成功！',{icon:1,time:2000},function () {
+                                        window.location = window.location;
+                                        layer.close(index);
+                                    });
+                                }else{
+                                    layer.msg('出库失败！',{icon:2,time:2000});
+                                }
+                            },
+                            error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.msg('error!',{icon:2,time:2000});
+                            }
+                        });
                     });
 
                 }

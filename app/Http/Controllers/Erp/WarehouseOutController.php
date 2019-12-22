@@ -127,6 +127,7 @@ class WarehouseOutController extends Controller
                 $inventoryInfoArr[$key]['out_num'] = $v['goods_num'];
                 $inventoryInfoArr[$key]['out_money'] = $v['goods_money'];
                 $inventoryInfoArr[$key]['stock_num'] = $stock_num  - $v['goods_num'];
+                $inventoryInfoArr[$key]['stock_code'] = 'K'.date('YmdHis', time());
                 $inventoryInfoArr[$key]['created_at'] = Carbon::now();
 
 

@@ -184,7 +184,7 @@
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-400'
+                ,height: 'full-300'
                 ,cols: [[ //表头
                     {field: 'logistics_code', fixed: 'left',title: '物流单号', width:150,edit:true}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
@@ -197,7 +197,7 @@
                     ,{field: 'created_at', title: '创建时间', width: 160}
                     ,{field: 'checked_at', title: '审核时间', width: 160}
                     ,{field: 'purchase_text', title: '备注', width: 160}
-                    ,{field: 'button', title: '操作', width: 180, fixed: 'right',
+                    ,{field: 'button', title: '操作', width: 200, fixed: 'right',
                         templet: function(row){
                             var status = '';
                             if(row.purchase_order_status == 0){
@@ -206,11 +206,11 @@
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
                             }
                             else if(row.purchase_order_status == 2){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>';
-                            }else{
-                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">记录</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>'
+                                + '<a class="layui-btn layui-btn-xs layui-btn" lay-event="note">记录</a>';
                             }
-                        return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">维护</a>'+
+                        return status + '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="look">查看</a>'+
+                            '<a class="layui-btn layui-btn-xs" lay-event="edit">维护</a>'+
                             '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
                         }
                     }
@@ -331,7 +331,18 @@
             table.on('tool(list)', function(obj){
                 var data = obj.data;
 
-                if(obj.event === 'add'){
+                if(obj.event === 'look'){
+                    layer.open({
+                        skin:'layui-layer-nobg',
+                        type:2,
+                        title:'基本信息',
+                        area:['600px','600px'],
+                        fixed:false,
+                        maxmin:true,
+                        content:"{{url('admins/purchase_order/')}}/"+data.id+"/look"
+                    });
+                    //layer.msg('ID：'+ data.id + ' 的查看操作');
+                }else if(obj.event === 'add'){
                     layer.open({
                         skin:'layui-layer-nobg',
                         type:2,
@@ -420,7 +431,31 @@
                         }
                     });
 
+
+                }else if(obj.event === 'note'){
+                    layer.prompt({ title: '添加物流轨迹，并确认', formType: 2 }, function (text, index) {
+                        $.ajax({
+                            url:"{{url('admins/purchase_order/note/')}}/"+data.id,
+                            type:'post',
+                            data:{"_token":"{{csrf_token()}}","text":text},
+                            datatype:'json',
+                            success:function (msg) {
+                                if(msg=='0'){
+                                    layer.close(index);
+                                    layer.msg('添加完毕！已获取您输入的物流轨迹，<br>您最后写下了：' + text);
+                                }else{
+                                    layer.msg('操作失败！',{icon:2,time:2000});
+                                }
+                            },
+                            error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.msg('error!',{icon:2,time:2000});
+                            }
+                        });
+
+                    });
+
                 }
+
 
 
             });

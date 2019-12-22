@@ -39,12 +39,12 @@ class InventoryController extends Controller
     }
 
     //获取单个信息
-    public function goods(Request $request,$goods_id)
+    public function goods(Request $request,$goods_sku)
     {
         $page = $request->page ? $request->page : 1;
         $limit = $request->limit ? $request->limit :50;
-        $data = InventoryInfo::where(function($query) use($goods_id,$request) {
-            $query->where(['goods_id'=>$goods_id,'warehouse_id'=>$request->warehouse_id]);
+        $data = InventoryInfo::where(function($query) use($goods_sku,$request) {
+            $query->where(['goods_sku'=>$goods_sku,'warehouse_id'=>$request->warehouse_id]);
         })->orderBy('id','desc')->offset(($page-1)*$limit)->limit($limit)->get();
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }

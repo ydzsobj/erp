@@ -6,6 +6,7 @@ use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Imports\InventoryCheckImport;
 use App\Models\Inventory;
+use App\Models\InventoryCheck;
 use App\Models\InventoryCheckInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -96,7 +97,9 @@ class InventoryCheckController extends CommonController
      */
     public function destroy($id)
     {
-        //
+        //删除
+        $result = InventoryCheck::find($id);
+        return $result->delete()?'0':'1';
     }
 
     //盘点单导入

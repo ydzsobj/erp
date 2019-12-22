@@ -17,14 +17,14 @@
         }
         .pane-top{
             /* background-color: palevioletred; */
-            height: calc(33% - 3px);
+            height: calc(40% - 3px);
             overflow: auto
 
         }
         .pane-bottom{
             /* background-color:pink; */
             bottom: 0;
-            top: calc(33% + 3px);
+            top: calc(40% + 3px);
             overflow: auto
         }
         .pane-trigger-con{
@@ -33,7 +33,7 @@
             position: absolute;
             z-index: 9;
             user-select: none;
-            top: calc(33% - 3px);
+            top: calc(40% - 3px);
             height: 6px;
             cursor: row-resize;
         }
@@ -102,7 +102,7 @@
     </div>
     <script type="text/html" id="bar">
         <div class="layui-btn-container demo">
-            <button class="layui-btn" data-type="getCheckData">批量生成采购汇总单</button>
+            <button class="layui-btn" data-type="getCheckData">批量更新库存</button>
         </div>
     </script>
     <script type="text/html" id="toolbar">
@@ -156,7 +156,7 @@
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-700'
+                ,height: '280px'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
@@ -170,7 +170,7 @@
                             if(row.inventory_check_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
                             }
-                            return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
+                            return status + '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="look">查看</a>'+
                                 '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
                         }
                     }
@@ -223,39 +223,40 @@
                     }, 'data');
                 },
                 getCheckData:function(){
-                    var checkStatus = table.checkStatus('testReload');
-                    if(checkStatus.data.length==0){
-                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
-                        return ;
-                    }
-                    var codeId= "";
-                    for(var i=0;i<checkStatus.data.length;i++){
-                        codeId += checkStatus.data[i].id+",";
-                    }
-                    parent.layer.msg('更新中...', {icon: 16,shade: 0.3,time:2000});
-
-                    $.ajax({
-                        type:"POST",
-                        url: "{{url('admins/inventory_check/all')}}",
-                        data:{"ids":codeId,"_token":"{{csrf_token()}}","warehouse_id":"{{$id}}"},
-                        success:function (data) {
-                            layer.closeAll('loading');
-                            if(data==0){
-                                parent.layer.msg('生成成功！', {icon: 1,time:2000,shade:0.2},function () {
-                                    location.reload(true);
-                                });
-                            }else{
-                                parent.layer.msg('生成失败！', {icon: 2,time:3000,shade:0.2});
-                            }
-                        },
-                        end: function () {
-                            var data1 = table.cache["list"];
-                            t.where = data1.field;
-                            //重新加载数据表格
-                            table.reload('listReload',t);
+                    layer.confirm('是否确定批量更新库存？', function(index) {
+                        var checkStatus = table.checkStatus('testReload');
+                        if(checkStatus.data.length==0){
+                            parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                            return ;
                         }
-                    })
-
+                        var codeId= "";
+                        for(var i=0;i<checkStatus.data.length;i++){
+                            codeId += checkStatus.data[i].id+",";
+                        }
+                        parent.layer.msg('更新中...', {icon: 16,shade: 0.3,time:2000});
+                        layer.close(index);
+                        $.ajax({
+                            type:"POST",
+                            url: "{{url('admins/inventory_check/all')}}",
+                            data:{"ids":codeId,"_token":"{{csrf_token()}}","warehouse_id":"{{$id}}"},
+                            success:function (data) {
+                                layer.closeAll('loading');
+                                if(data==0){
+                                    parent.layer.msg('生成成功！', {icon: 1,time:2000,shade:0.2},function () {
+                                        location.reload(true);
+                                    });
+                                }else{
+                                    parent.layer.msg('生成失败！', {icon: 2,time:3000,shade:0.2});
+                                }
+                            },
+                            end: function () {
+                                var data1 = table.cache["list"];
+                                t.where = data1.field;
+                                //重新加载数据表格
+                                table.reload('listReload',t);
+                            }
+                        })
+                    });
 
                 }
 
@@ -286,7 +287,7 @@
                     ,count: 10000
                     ,limit: 100
                     ,limits: [100,300,500,1000,2000,5000,10000]
-                    ,height: 'full-470'
+                    ,height: '500px'
                     ,cols: [[
                         {type: 'checkbox', fixed: 'left'}
                         ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
@@ -302,8 +303,7 @@
                                 if(row.inventory_check_info_status == 0){
                                     status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="change">更新库存</a>';
                                 }
-                                return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
-                                    '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                                return status;
                             }
                         }
                     ]]
@@ -333,7 +333,7 @@
                     layer.confirm('真的删除行么', function(index){
 
                         $.ajax({
-                            url:"{{url('admins/supplier/')}}/"+data.id,
+                            url:"{{url('admins/inventory_check/')}}/"+data.id,
                             type:'delete',
                             data:{"_token":"{{csrf_token()}}"},
                             datatype:'json',
@@ -354,17 +354,6 @@
 
 
                     });
-                } else if(obj.event === 'edit'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'编辑信息',
-                        area:['800px','600px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
-                    });
-                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
                 }else if(obj.event === 'check'){
                     $.ajax({
                         url:"{{url('admins/inventory_check/check/')}}/"+data.id,
@@ -394,41 +383,34 @@
 
             //监听工具条
             table.on('tool(table_list)', function(obj){
-                var data = obj.data;
-
-                if(obj.event === 'detail'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'基本信息',
-                        area:['350px','420px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/supplier/')}}/"+data.id
-                    });
-                    //layer.msg('ID：'+ data.id + ' 的查看操作');
-                } else if(obj.event === 'change'){
-                    $.ajax({
-                        url:"{{url('admins/inventory_check/change/')}}/"+data.id,
-                        type:'post',
-                        data:{"_token":"{{csrf_token()}}","warehouse_id":"{{$id}}"},
-                        datatype:'json',
-                        success:function (msg) {
-                            if(msg=='0'){
-                                layer.msg('操作成功！',{icon:1,time:2000},function () {
-                                    window.location = window.location;
-                                    layer.close(index);
-                                });
-                            }else{
-                                layer.msg('操作失败！',{icon:2,time:2000});
+                layer.confirm('是否确定更新入库！？', function(index) {
+                    var data = obj.data;
+                    layer.close(index);
+                    if(obj.event === 'change'){
+                        $.ajax({
+                            url:"{{url('admins/inventory_check/change/')}}/"+data.id,
+                            type:'post',
+                            data:{"_token":"{{csrf_token()}}","warehouse_id":"{{$id}}"},
+                            datatype:'json',
+                            success:function (msg) {
+                                if(msg=='0'){
+                                    layer.msg('操作成功！',{icon:1,time:1000},function () {
+                                        window.location = window.location;
+                                        layer.close(index);
+                                    });
+                                }else{
+                                    layer.msg('操作失败！',{icon:2,time:2000});
+                                }
+                            },
+                            error: function(XmlHttpRequest, textStatus, errorThrown){
+                                layer.msg('error!',{icon:2,time:2000});
                             }
-                        },
-                        error: function(XmlHttpRequest, textStatus, errorThrown){
-                            layer.msg('error!',{icon:2,time:2000});
-                        }
-                    });
+                        });
 
-                }
+                    }
+
+
+                });
 
 
             });

@@ -92,38 +92,41 @@
                 },
                 //批量审核
                 getCheckData:function(){
-                    var checkStatus = table.checkStatus('listReload');
-                    if(checkStatus.data.length==0){
-                        parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
-                        return ;
-                    }
-                    var codeId= "";
-                    for(var i=0;i<checkStatus.data.length;i++){
-                        codeId += checkStatus.data[i].id+",";
-                    }
-                    parent.layer.msg('上传匹配库存中...', {icon: 16,shade: 0.3,time:5000});
-
-                    $.ajax({
-                        type:"POST",
-                        url: "{{url('admins/order/match')}}",
-                        data:{"ids":codeId,"_token":"{{csrf_token()}}"},
-                        success:function (data) {
-                            layer.closeAll('loading');
-                            if(data==0){
-                                parent.layer.msg('上传成功！', {icon: 1,time:2000,shade:0.2},function () {
-                                    location.reload(true);
-                                });
-                            }else{
-                                parent.layer.msg('上传失败！', {icon: 2,time:3000,shade:0.2});
-                            }
-                        },
-                        end: function () {
-                            var data1 = table.cache["list"];
-                            t.where = data1.field;
-                            //重新加载数据表格
-                            table.reload('listReload',t);
+                    layer.confirm('是否确定批量上传匹配库存？', function(index) {
+                        var checkStatus = table.checkStatus('listReload');
+                        if(checkStatus.data.length==0){
+                            parent.layer.msg('请先选择要生成的数据行！', {icon: 2});
+                            return ;
                         }
-                    })
+                        var codeId= "";
+                        for(var i=0;i<checkStatus.data.length;i++){
+                            codeId += checkStatus.data[i].id+",";
+                        }
+                        parent.layer.msg('上传匹配库存中...', {icon: 16,shade: 0.3,time:5000});
+                        layer.close(index);
+                        $.ajax({
+                            type:"POST",
+                            url: "{{url('admins/order/match')}}",
+                            data:{"ids":codeId,"_token":"{{csrf_token()}}"},
+                            success:function (data) {
+                                layer.closeAll('loading');
+                                if(data==0){
+                                    parent.layer.msg('上传成功！', {icon: 1,time:2000,shade:0.2},function () {
+                                        location.reload(true);
+                                    });
+                                }else{
+                                    parent.layer.msg('上传失败！', {icon: 2,time:3000,shade:0.2});
+                                }
+                            },
+                            end: function () {
+                                var data1 = table.cache["list"];
+                                t.where = data1.field;
+                                //重新加载数据表格
+                                table.reload('listReload',t);
+                            }
+                        });
+
+                    });
 
                 }
 

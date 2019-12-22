@@ -278,7 +278,7 @@
                 console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{url('api/inventory/goods')}}/"+data.goods_id //数据接口
+                    ,url: "{{url('api/inventory/goods')}}/"+data.goods_sku //数据接口
                     ,where: {warehouse_id: data.warehouse_id}
                     ,page: true //开启分页
                     ,count: 10000

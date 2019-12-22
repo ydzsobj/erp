@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AdminLog;
 use App\Models\Inventory;
 use App\Models\InventoryCheck;
+use App\Models\LogisticsLog;
 use App\Models\Order;
 use App\Models\OrderInfo;
 use App\Models\OrderLog;
@@ -202,6 +203,18 @@ class CommonController extends Controller
     }
 
     /*
+     * 物流轨迹记录
+     */
+    public function logisticsLog($id,$text,$type=0){
+        return LogisticsLog::create([
+            'relate_id'=>$id,
+            'logistics_log'=>$text,
+            'type'=>$type,
+            'created_at' => Carbon::now()
+        ]);
+    }
+
+    /*
      * 创建采购订单编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
      */
     public function createPurchaseOrderCode($code){
@@ -251,6 +264,28 @@ class CommonController extends Controller
      * 创建出库拣货编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
      */
     public function createWarehousePickCode($code){
+        $ymd = substr(date('Ymd'),2);
+        $codeLength = 5;
+        $codeStr = strtoupper($code);
+        $pick = WarehousePick::Where('pick_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
+        $warehousePick = $pick['pick_code'];
+        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
+        if ($warehousePick) {
+            if(strstr($warehousePick,$codeStr)){
+                $code = substr($warehousePick,1);
+            }else{
+                $code = $warehousePick;
+            }
+            $number = intval(substr($code,strlen($ymd))) + 1;
+            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
+        }
+        return $codeStr . $ymd . $subCode;
+    }
+
+    /*
+     * 创建出库拣货编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
+     */
+    public function createWarehouseOutCode($code){
         $ymd = substr(date('Ymd'),2);
         $codeLength = 5;
         $codeStr = strtoupper($code);

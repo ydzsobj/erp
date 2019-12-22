@@ -134,7 +134,7 @@ class WarehousePickController extends CommonController
     //拣货单导出
     public function export(Request $request,$id)
     {
-        $ids = $request->get('ids');dd($ids);
+        $ids = $request->get('ids');
         if($ids){
             $ids = explode(',',$ids);
             $order = Order::with('order_info','inventory')->where(function ($query) use ($id,$ids){

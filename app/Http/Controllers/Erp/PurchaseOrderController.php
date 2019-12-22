@@ -6,6 +6,7 @@ use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\InventoryInfo;
+use App\Models\LogisticsLog;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderInfo;
 use App\Models\PurchaseOrderTrace;
@@ -188,6 +189,31 @@ class PurchaseOrderController extends CommonController
         $this->purchaseOrderLog($id,'供应商已出货！');
 
         return $result->save()?'0':'1';
+    }
+
+    /*
+     *查看物流详细轨迹
+     */
+    public function look(Request $request,$id)
+    {
+        //展示操作
+        $data = PurchaseOrder::find($id);
+        $trace = PurchaseOrderTrace::where('purchase_order_id',$id)->orderBy('id','asc')->get();
+        $note = LogisticsLog::where(function ($query) use ($id) {
+            return $query->where('relate_id',$id)->where('type',1);
+        })->orderBy('id','asc')->get();
+        return view('erp.purchase_order.look',compact('data','trace','note'));
+    }
+
+    /*
+     *记录物流轨迹
+     */
+    public function note(Request $request,$id)
+    {
+        //展示操作
+        $text = $request->get('text');
+        $result = $this->logisticsLog($id,$text,1);
+        return $result ? '0' : '1';
     }
 
 
