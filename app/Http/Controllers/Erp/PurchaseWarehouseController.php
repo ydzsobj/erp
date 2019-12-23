@@ -192,7 +192,7 @@ class PurchaseWarehouseController extends CommonController
         $result->checked_id = Auth::guard('admin')->user()->id;
         $result->checked_at = Carbon::now();
         if(isset($result['purchase_order_warehouse'])){
-            PurchaseOrder::where('id',$result['purchase_order_warehouse']->purchase_order_id)->update(['deliver_at'=>Carbon::now()]);
+            PurchaseOrder::where('id',$result['purchase_order_warehouse']->purchase_order_id)->update(['purchase_order_status'=>4,'deliver_at'=>Carbon::now()]);
             $this->purchaseOrderLog($result->purchase_order_warehouse->purchase_order_id,'采购订单已到货！');
         }
 

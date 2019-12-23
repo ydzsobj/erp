@@ -139,7 +139,7 @@
     <script type="text/html" id="purchase_order_status">
         @{{# if(d.purchase_order_status == 0){ }} <div style="color: #ff0000">未审核</div> @{{# }else if(d.purchase_order_status == 1){  }} <div style="color: #008000">已审核</div>
         @{{# }else if(d.purchase_order_status == 2){  }} <div style="color: #0000FF">入库单</div> @{{# }else if(d.purchase_order_status == 3){  }} <div style="color: #fcd000">已出货</div>
-        @{{# }else{  }} <div style="color: #000">已完成</div>@{{# }  }}
+        @{{# }else if(d.purchase_order_status == 4){  }} <div style="color: #008000">已到货</div>@{{# }else{  }} <div style="color: #000">已完成</div>@{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -206,8 +206,9 @@
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
                             }
                             else if(row.purchase_order_status == 2){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>'
-                                + '<a class="layui-btn layui-btn-xs layui-btn" lay-event="note">记录</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>';
+                            }else if(row.purchase_order_status == 3){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="note">记录</a>';
                             }
                         return status + '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="look">查看</a>'+
                             '<a class="layui-btn layui-btn-xs" lay-event="edit">维护</a>'+
