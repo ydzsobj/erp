@@ -186,7 +186,7 @@
                     <i class="layui-icon layui-icon-util"></i>
                     <cite>财务管理</cite>
                 </a>
-                <dl class="layui-nav-child">
+                {{--<dl class="layui-nav-child">
                     <dd data-name="grid">
                         <a href="javascript:;">栅格<span class="layui-nav-more"></span></a>
                         <dl class="layui-nav-child">
@@ -202,7 +202,7 @@
                         <a lay-href="component/button/index.html">按钮</a>
                     </dd>
 
-                </dl>
+                </dl>--}}
             </li>
             <li data-name="home" class="layui-nav-item ">
                 <a href="javascript:;" lay-tips="用户管理" lay-direction="2">
@@ -225,6 +225,55 @@
                     <dd data-name="console">
                         <a lay-href="{{url('/admins/admin/log')}}">登录日志</a>
                     </dd>
+                </dl>
+            </li>
+            <li data-name="home" class="layui-nav-item ">
+                <a href="javascript:;" lay-tips="问题处理" lay-direction="2">
+                    <i class="layui-icon layui-icon-util"></i>
+                    <cite>问题处理</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="grid">
+                        <a href="javascript:;">问题订单<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/problem/all')}}">总览</a>
+                            </dd>
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/problem/order')}}">自建站问题订单</a>
+                            </dd>
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/problem/purchase_order')}}">采购问题订单</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/problem/purchase_warehouse')}}">入库问题订单</a>
+                            </dd>
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/problem/inventory_check')}}">盘点问题订单</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/problem/warehouse_pick')}}">拣货问题订单</a>
+                            </dd>
+                            <dd data-name="console">
+                                <a lay-href="{{url('/admins/problem/warehouse_out')}}">出库问题订单</a>
+                            </dd>
+                        </dl>
+                    </dd>
+                    <dd data-name="grid">
+                        <a href="javascript:;">问题件<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/problem/lost')}}">商品丢失</a>
+                            </dd>
+                            <dd data-name="list">
+                                <a lay-href="{{url('/admins/problem/torn')}}">包装破损</a>
+                            </dd>
+                        </dl>
+                    </dd>
+                    <dd data-name="console">
+                        <a lay-href="{{url('/admins/problem')}}">问题列表</a>
+                    </dd>
+
                 </dl>
             </li>
             <li data-name="home" class="layui-nav-item ">
@@ -251,20 +300,6 @@
                         <a lay-href="{{route('shopify_accounts.index') }}">店铺管理</a>
                     </dd>
 
-                </dl>
-            </li>
-            <li data-name="home" class="layui-nav-item ">
-                <a href="javascript:;" lay-tips="辅助工具" lay-direction="2">
-                    <i class="layui-icon layui-icon-util"></i>
-                    <cite>辅助工具</cite>
-                </a>
-                <dl class="layui-nav-child">
-                    <dd data-name="console">
-                        <a lay-href="http://baidu.com">Baidu</a>
-                    </dd>
-                    <dd data-name="console">
-                        <a lay-href="/admins/jsq">科学计算器</a>
-                    </dd>
                 </dl>
             </li>
         </ul>

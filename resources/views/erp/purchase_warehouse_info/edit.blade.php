@@ -5,6 +5,22 @@
             {{csrf_field()}}
             <div class="layui-form-item">
                 <div class="layui-inline">
+                    <label class="layui-form-label">采购数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="goods_num" autocomplete="off" disabled class="layui-input">
+                    </div>
+                    <label class="layui-form-label">订单数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="order_num" autocomplete="off" disabled class="layui-input">
+                    </div>
+                    <label class="layui-form-label">备货数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="plan_num" disabled autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
                     <label class="layui-form-label">验货数量</label>
                     <div class="layui-input-inline" style="width: 300px;">
                         <input type="text" name="real_num" lay-verify="number" lay-reqtext="供应商名称不能为空" placeholder="请输入供应商名称" autocomplete="off" class="layui-input">
@@ -43,6 +59,9 @@
 
             //表单初始赋值
             form.val('formData', {
+                "goods_num": "{{$data->goods_num}}",
+                "order_num": "{{$data->order_num}}",
+                "plan_num": "{{$data->plan_num}}",
                 "real_num": "{{$data->real_num}}",
                 "goods_text": "{{$data->goods_text}}"
             });
@@ -52,8 +71,8 @@
             form.on('submit(form)', function (data) {
                 //layer.msg(JSON.stringify(data.field));
                 $.ajax({
-                    url: "{{url('admins/purchase_warehouse_info/'.$data->id)}}",
-                    type: 'put',
+                    url: "{{url('admins/purchase_warehouse_info/in/')}}/{{$data->id}}",
+                    type: 'post',
                     data: data.field,
                     datatype: 'json',
                     success: function (msg) {

@@ -36,6 +36,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('purchase_warehouse/check/{id}', 'PurchaseWarehouseController@check')->name('purchase_warehouse.check');
     Route::post('purchase_warehouse/in/{id}', 'PurchaseWarehouseController@in')->name('purchase_warehouse.in');
     Route::post('purchase_warehouse/add', 'PurchaseWarehouseController@add')->name('purchase_warehouse.add');
+    Route::post('purchase_warehouse_info/problem/{id}', 'PurchaseWarehouseInfoController@problem')->name('purchase_warehouse_info.problem');
     Route::post('inventory/{id}/goods_position', 'InventoryController@goods_position')->name('inventory.goodsPosition');
     Route::post('warehouse_pick/check', 'WarehousePickController@check')->name('warehouse_pick.check');
     Route::post('warehouse_pick/problem', 'WarehousePickController@problem')->name('warehouse_pick.problem');
@@ -52,6 +53,9 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::any('order/order_pool','OrderController@orderPool');
     Route::post('warehouse_ex/create_ex','WarehouseExController@createEx');
     Route::get('inventory_check/import/{id}','InventoryCheckController@import')->name('inventory_check.import');
+
+    /* 问题处理 */
+    Route::post('problem/check/{id}', 'ProblemController@check')->name('problem.check');
 
 
     Route::resource('admin','AdminController');

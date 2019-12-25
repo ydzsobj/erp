@@ -1,46 +1,5 @@
 @extends('erp.father.father')
 @section('content')
-    <style>
-        html,body{
-            height: 100%;
-        }
-        .split-pane-warpper{
-            width: 100%;
-            height: 100%;
-            position: relative;
-
-        }
-        .pane{
-            width: 100%;
-            position:absolute;
-
-        }
-        .pane-top{
-            /* background-color: palevioletred; */
-            height: calc(70% - 3px);
-            overflow: auto
-
-        }
-        .pane-bottom{
-            /* background-color:pink; */
-            bottom: 0;
-            top: calc(70% + 3px);
-            overflow: auto
-        }
-        .pane-trigger-con{
-            width: 100%;
-            background-color: red;
-            position: absolute;
-            z-index: 9;
-            user-select: none;
-            top: calc(70% - 3px);
-            height: 6px;
-            cursor: row-resize;
-        }
-        .layui-form-label{
-            padding: 9px 0
-        }
-    </style>
 
     <div class="layui-form" style="padding: 4px 0;height:40px;">
         <div class="layui-inline">
@@ -102,46 +61,14 @@
                     <table id="data_list" lay-filter="list"></table>
                 </div>
             </div>
-            <div class="pane pane-trigger-con"></div>
-            <div class="pane pane-bottom" >
-                <!-- <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table> -->
-                <div class="layui-fluid">
-                    <div class="layui-row layui-col-space15">
-                        <div class="layui-col-md12">
-                            <div class="layui-card">
-                                <div class="layui-tab layui-tab-card">
-                                    <ul class="layui-tab-title">
-                                        <li class="layui-this">基本设置</li>
-                                        <li>安全设置</li>
-                                    </ul>
-                                    <div class="layui-tab-content">
-                                        <div class="layui-tab-item layui-show">
-                                            <table class="layui-hide" id="table_list" lay-filter="table_list"></table>
-                                        </div>
-                                        <div class="layui-tab-item">
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加入库单','{{url("admins/purchase_warehouse/create")}}',2,'100%','100%');">添加入库单</button>
-        </div>
-    </script>
 
 
-    <script type="text/html" id="purchase_warehouse_info_status">
-        @{{# if(d.status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.status == 1){  }} <div style="color: #008000">已入库</div> @{{# }else if(d.status == 2){  }} <div style="color: #0000FF">分批入库</div>@{{# }else if(d.status == 4){  }} <div style="color: #ff0000">问题订单</div>  @{{# }else if(d.status == 3){  }} <div>已处理</div> @{{# }  }}
-    </script>
+
     <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.purchase_warehouse_status == 1){  }} <div style="color: #008000">验货中</div> @{{# }else if(d.purchase_warehouse_status == 2){  }} <div style="color: #0000FF">已入库</div> @{{# }else if(d.purchase_warehouse_status == 3){  }} <div style="color: #0000FF">已退货</div> @{{# }else if(d.purchase_warehouse_status == 4){  }} <div style="color:#ff0000">问题订单</div> @{{# }  }}
+        @{{# if(d.problem_status == 0){ }} <div style="color: #ff0000">待处理</div> @{{# }else if(d.problem_status == 1){  }} <div style="color: #008000">处理中</div> @{{# }else if(d.problem_status == 2){  }} <div style="color: #0000FF">已处理</div> @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -177,7 +104,7 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/purchase_warehouse')}}/{{$id}}" //数据接口
+                ,url: "{{url('api/problem')}}/{{$id}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
@@ -186,21 +113,41 @@
                 ,count: 10000
                 ,limit: 100
                 ,limits: [100,300,500,1000,2000,5000,10000]
-                ,height: 'full-400'
+                ,height: 'full-100'
                 ,cols: [[ //表头
                     {type: 'radio', fixed: 'left'}
                     ,{field: 'id', title: 'ID', width:80, sort: true}
-                    ,{field: 'purchase_warehouse_status', title: '状态', width:80,templet:"#purchase_order_status"}
-                    ,{field: 'purchase_warehouse_code', title: '入库单号', width:150}
+                    ,{title: '状态', width:80,templet:"#purchase_order_status"}
+                    ,{field: 'relate_id', title: '关联ID', width:80}
+                    ,{title: '商品名称', width: 180,templet:function (res) {
+                            return res.purchase_warehouse_info.goods_name;
+                        }}
+                    ,{title: '商品sku', width: 120,templet:function (res) {
+                            return res.purchase_warehouse_info.goods_sku;
+                        }}
+                    ,{title: '采购数量', width: 100,templet:function (res) {
+                            return res.purchase_warehouse_info.goods_num;
+                        }}
+                    ,{title: '入库数量', width: 100,templet:function (res) {
+                            return res.purchase_warehouse_info.real_num;
+                        }}
+                    ,{title: '差额数量', width: 100,templet:function (res) {
+                            return res.purchase_warehouse_info.balance;
+                        }}
+                    ,{title: '订单数量', width: 100,templet:function (res) {
+                            return res.purchase_warehouse_info.order_num;
+                        }}
+                    ,{title: '备货数量', width: 100,templet:function (res) {
+                            return res.purchase_warehouse_info.plan_num;
+                        }}
                     ,{field: 'created_at', title: '创建时间', width: 160}
-                    ,{field: 'stored_at', title: '入库时间', width: 160}
-                    ,{field: 'warehouse_text', title: '备注', width: 300}
+                    ,{field: 'problem_text', title: '备注', width: 300}
                     ,{field: 'button', title: '操作', width: 220, fixed: 'right',
                         templet: function(row){
                             var status = '';
-                            if(row.purchase_warehouse_status == 0){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">验货</a>';
-                            }else if(row.purchase_warehouse_status == 1){
+                            if(row.problem_status == 0){
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">处理</a>';
+                            }else if(row.problem_status == 1){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="in">入库</a>';
                             }
                             return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
@@ -278,7 +225,7 @@
                 console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{url('api/purchase_warehouse/goods')}}/"+data.id //数据接口
+                    ,url: "{{url('api/purchase_warehouse/goods')}}/"+data.relate_id //数据接口
                     ,cols: [[
                         {field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
                         ,{field:'id', title: 'ID', width:80, sort: true}
@@ -377,7 +324,7 @@
                     })
                 }else if(obj.event === 'check'){
                     $.ajax({
-                        url:"{{url('admins/purchase_warehouse/check/')}}/"+data.id,
+                        url:"{{url('admins/problem/check/')}}/"+data.id,
                         type:'post',
                         data:{"_token":"{{csrf_token()}}"},
                         datatype:'json',
@@ -397,35 +344,6 @@
                     });
 
                 }else if(obj.event === 'in'){
-                    $.ajax({
-                        url:"{{url('admins/purchase_warehouse/in/')}}/"+data.id,
-                        type:'post',
-                        data:{"_token":"{{csrf_token()}}"},
-                        datatype:'json',
-                        success:function (msg) {
-                            if(msg=='0'){
-                                layer.msg('提交成功！',{icon:1,time:2000},function () {
-                                    window.location = window.location;
-                                    layer.close(index);
-                                });
-                            }else{
-                                layer.msg('提交失败！',{icon:2,time:2000});
-                            }
-                        },
-                        error: function(XmlHttpRequest, textStatus, errorThrown){
-                            layer.msg('error!',{icon:2,time:2000});
-                        }
-                    });
-
-                }
-            });
-
-
-            //监听工具条
-            table.on('tool(table_list)', function(obj){
-                var data = obj.data;
-
-                if(obj.event === 'edit'){
                     layer.open({
                         skin:'layui-layer-nobg',
                         type:2,
@@ -433,39 +351,15 @@
                         area:['800px','600px'],
                         fixed:false,
                         maxmin:true,
-                        content:"{{url('admins/purchase_warehouse_info/')}}/"+data.id+"/edit"
-                    });
-                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-                }else if(obj.event === 'problem'){
-                    layer.confirm('确定标记为问题订单？', function(index){
-
-                        $.ajax({
-                            url:"{{url('admins/purchase_warehouse_info/problem')}}/"+data.id,
-                            type:'post',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('操作成功！',{icon:1,time:2000},function () {
-                                        obj.del();
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('操作失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
-
-
+                        content:"{{url('admins/purchase_warehouse_info/')}}/"+data.relate_id+"/edit"
                     });
 
 
                 }
-
             });
+
+
+
 
 
 

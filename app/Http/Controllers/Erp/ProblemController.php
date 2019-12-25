@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Erp;
 
 use App\Http\Controllers\Controller;
+use App\Models\Problem;
 use Illuminate\Http\Request;
 
 class ProblemController extends Controller
@@ -47,7 +48,15 @@ class ProblemController extends Controller
     public function show($id)
     {
         //
-        return view('erp.problem.show',compact('id'));
+        switch ($id) {
+            case 'purchase_warehouse':
+                return view('erp.problem.purchase_warehouse', compact('id'));
+                break;
+            default:
+                return view('erp.problem.show', compact('id'));
+                break;
+
+        }
     }
 
     /**
@@ -83,4 +92,26 @@ class ProblemController extends Controller
     {
         //
     }
+
+
+    /*
+       *审核
+       */
+    public function check(Request $request, $id){
+        $result = Problem::find($id);
+        $result->problem_status = 1;
+
+        return $result->save()?'0':'1';
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

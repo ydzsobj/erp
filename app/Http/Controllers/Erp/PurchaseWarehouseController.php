@@ -293,7 +293,10 @@ class PurchaseWarehouseController extends CommonController
     public function in(Request $request, $id){
         $warehouse = PurchaseWarehouse::where('id',$id)->first();
         $info = PurchaseWarehouseInfo::where('purchase_warehouse_id',$id)->orderBy('id','asc')->get();
+        $inventoryInfoArr = [];$problemNum = 0;
         foreach($info as $key=>$value){
+            if($value->status==4) {$problemNum++;continue;}
+            if($value->status==1) {continue;}
             $inventory = Inventory::where(function ($query) use ($value,$warehouse){
                 $query->where('goods_sku','=',$value['goods_sku'])->where('warehouse_id','=',$warehouse['warehouse_id']);
             })->first();
@@ -343,7 +346,8 @@ class PurchaseWarehouseController extends CommonController
 
 
             $inventory->save();
-
+            $value->status = 1;
+            $value->save();
             //库存匹配订单
 
 
@@ -357,15 +361,25 @@ class PurchaseWarehouseController extends CommonController
 
 
         }
-        $warehouse->purchase_warehouse_status = 2;
+
+        InventoryInfo::insert($inventoryInfoArr);
+
+
+        if($problemNum>0){
+            $warehouse->purchase_warehouse_status = 4;
+        }else{
+            $warehouse->purchase_warehouse_status = 2;
+        }
+
         $warehouse->stored_id = Auth::guard('admin')->user()->id;
         $warehouse->stored_at = date('Y-m-d H:i:s', time());
-        $warehouse->save();
+        $result = $warehouse->save();
 
-        $result = InventoryInfo::insert($inventoryInfoArr);
         return $result ? '0' : '1';
 
     }
+
+
 
 
 

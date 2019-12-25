@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Erp;
 
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseWarehouseInfoRequest;
+use App\Models\Inventory;
+use App\Models\Problem;
 use App\Models\PurchaseWarehouseInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
-class PurchaseWarehouseInfoController extends Controller
+class PurchaseWarehouseInfoController extends CommonController
 {
     /**
      * Display a listing of the resource.
@@ -90,4 +94,27 @@ class PurchaseWarehouseInfoController extends Controller
     {
         //
     }
+
+    /*
+     *标记问题订单
+     */
+    public function problem($id){
+        $result = PurchaseWarehouseInfo::find($id);
+        $problemArr = [
+            'type_id'=>0,
+            'order_type'=>2,   //入库
+            'relate_id'=>$id,
+            'problem_text'=>'采购入库问题订单',
+            'problem_status'=>0,
+            'created_at'=>Carbon::now()
+        ];
+        Problem::create($problemArr);
+        $result->status = 4;
+        return $result->save() ? '0' : '1';
+    }
+
+
+
+
+
 }
