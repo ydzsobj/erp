@@ -203,7 +203,7 @@
                             if(row.purchase_order_status == 0){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">审核</a>';
                             }else if(row.purchase_order_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成入库单</a>';
+                                status = '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">生成验货单</a>';
                             }
                             else if(row.purchase_order_status == 2){
                                 status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="time">已出货</a>';
