@@ -44,6 +44,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::post('inventory_check/check/{id}', 'InventoryCheckController@check')->name('inventory_check.check');
     Route::post('inventory_check/change/{id}', 'InventoryCheckController@change')->name('inventory_check.change');
     Route::post('inventory_check/all', 'InventoryCheckController@all')->name('inventory_check.all');
+    Route::post('warehouse_in/in/{id}', 'WarehouseInController@in')->name('warehouse_in.in');
 
 
     Route::get('order/list','OrderController@list')->name('order.list');
@@ -76,6 +77,7 @@ Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],
     Route::resource('inventory_check','InventoryCheckController');
     Route::resource('inventory_transfer','InventoryTransferController');
     Route::resource('order', 'OrderController');
+    Route::resource('warehouse_in', 'WarehouseInController');
     Route::resource('warehouse','WarehouseController');
     Route::resource('warehouse_ex', 'WarehouseExController');
     Route::resource('warehouse_out', 'WarehouseOutController');

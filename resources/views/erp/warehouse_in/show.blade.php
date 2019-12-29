@@ -130,16 +130,13 @@
             </div>
         </div>
     </div>
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" data-type="add" onclick="create_show('添加验货单','{{url("admins/purchase_warehouse/create")}}',2,'100%','100%');">添加验货单</button>
-        </div>
+
+
+    <script type="text/html" id="warehouse_in_info_status">
+        @{{# if(d.status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.status == 1){  }} <div style="color: #008000">已入库</div> @{{# }  }}
     </script>
-
-
-
-    <script type="text/html" id="purchase_order_status">
-        @{{# if(d.purchase_warehouse_status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.purchase_warehouse_status == 1){  }} <div style="color: #008000">验货中</div> @{{# }else if(d.purchase_warehouse_status == 2){  }} <div style="color: #0000FF">已入库</div> @{{# }else if(d.purchase_warehouse_status == 3){  }} <div style="color: #0000FF">已退货</div> @{{# }else if(d.purchase_warehouse_status == 4){  }} <div style="color:#ff0000">批次验收</div> @{{# }  }}
+    <script type="text/html" id="warehouse_in_status">
+        @{{# if(d.status == 0){ }} <div style="color: #ff0000">待入库</div> @{{# }else if(d.status == 1){  }} <div style="color: #008000">已入库</div>  @{{# }  }}
     </script>
 @endsection
 @section('js')
@@ -153,19 +150,15 @@
             $('.pane-trigger-con').mousedown(function(event){
                 conMove = true
                 $(document).mousemove(function  (event){
-                    if (!conMove) return
-                    // console.log(event)
-                    // console.log($('.split-pane-warpper').height())
-                    // console.log(event.pageY)
-                    // console.log($('.pane-top').height())
-                    // console.log($('.pane-bottom').height())
-                    var pageY=event.pageY-92
-                    if (pageY < 100) pageY = 100
-                    if (pageY > $('.split-pane-warpper').height()-40) pageY = $('.split-pane-warpper').height()-40
-                    $('.pane-top').height(pageY)
-                    $('.pane-bottom').css('top',pageY)
-                    $('.pane-trigger-con').css('top',pageY)
-                })
+                    if (!conMove) return;
+
+                    var pageY=event.pageY-92;
+                    if (pageY < 100) pageY = 100;
+                    if (pageY > $('.split-pane-warpper').height()-40) pageY = $('.split-pane-warpper').height()-40;
+                    $('.pane-top').height(pageY);
+                    $('.pane-bottom').css('top',pageY);
+                    $('.pane-trigger-con').css('top',pageY);
+                });
                 $(document).mouseup(function  (event){
                     // console.log(event)
                     conMove = false
@@ -175,7 +168,7 @@
             //渲染实例
             table.render({
                 elem: '#data_list'
-                ,url: "{{url('api/purchase_warehouse')}}/{{$id}}" //数据接口
+                ,url: "{{url('api/warehouse_in')}}/{{$id}}" //数据接口
                 ,id: 'listReload'
                 ,toolbar: '#toolbar'
                 ,defaultToolbar: ['filter', 'exports', 'print']
@@ -186,25 +179,21 @@
                 ,limits: [100,300,500,1000,2000,5000,10000]
                 ,height: 'full-400'
                 ,cols: [[ //表头
-                    {type: 'radio', fixed: 'left'}
-                    ,{field: 'id', title: 'ID', width:80, sort: true}
-                    ,{field: 'purchase_warehouse_status', title: '状态', width:80,templet:"#purchase_order_status"}
-                    ,{field: 'purchase_warehouse_code', title: '入库单号', width:150}
+                    {field: 'id', title: 'ID', width:80, sort: true}
+                    ,{field: 'status', title: '状态', width:80,templet:"#warehouse_in_status"}
+                    ,{field: 'warehouse_in_code', title: '入库单号', width:150}
                     ,{field: 'created_at', title: '创建时间', width: 160}
                     ,{field: 'stored_at', title: '入库时间', width: 160}
                     ,{field: 'warehouse_text', title: '备注', width: 300}
                     ,{field: 'button', title: '操作', width: 220, fixed: 'right',
                         templet: function(row){
                             var status = '';
-                            if(row.purchase_warehouse_status == 0){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="check">验货</a>';
-                            }else if(row.purchase_warehouse_status == 1){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="in">入库单</a>';
-                            }else if(row.purchase_warehouse_status == 4){
-                                status = '<a class="layui-btn layui-btn-xs layui-btn" lay-event="in">入库单</a>';
+                            if(row.status == 0){
+                               return '<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="in">入库</a>';
+                            }else if(row.status == 1){
+                                return '';
                             }
-                            return status + '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+
-                                '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+
                         }
                     }
                 ]]
@@ -261,16 +250,7 @@
                 active[type] ? active[type].call(this) : '';
             });
 
-            //头工具栏事件
-            table.on('toolbar(list)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-                switch(obj.event){
-                    case 'getCheckData':
-                        var data = checkStatus.data;  //获取选中行数据
-                        layer.alert(JSON.stringify(data));
-                        break;
-                };
-            });
+
 
             //监听行单击事件（单击事件为：rowDouble）
             table.on('row(list)', function(obj){
@@ -278,28 +258,19 @@
                 console.log(data);
                 table.render({
                     elem: '#table_list'
-                    ,url: "{{url('api/purchase_warehouse/goods')}}/"+data.id //数据接口
+                    ,url: "{{url('api/warehouse_in/goods')}}/"+data.id //数据接口
                     ,cols: [[
                         {field:'goods_sku', title: '商品编码', width:135, fixed: 'left'}
                         ,{field:'id', title: 'ID', width:80, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:180}
-                        ,{field:'goods_attr_name', title: '属性名', width:100}
-                        ,{field:'goods_attr_value', title: '属性值', width:100}
+                        ,{field:'goods_color', title: '颜色', width:100}
+                        ,{field:'goods_size', title: '尺寸', width:100}
                         ,{field:'goods_num', title: '商品总数',width:100}
                         ,{field:'order_num', title: '订单数量',width:100}
                         ,{field:'plan_num', title: '备货数量',width:100}
                         ,{field:'goods_money', title: '总价',  width:100}
-                        ,{field: 'button', title: '验收操作', width: 120, fixed: 'right',
-                            templet: function(row){
-                                //return '<a class="layui-btn layui-btn-xs" lay-event="edit">维护</a>';
-                                if(row.status==0){
-                                    return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="problem">问题标记</a>';
-                                }else{
-                                    return '';
-                                }
+                        ,{title: '状态',templet:"#warehouse_in_info_status"}
 
-                            }
-                        }
                     ]]
                     ,id: 'testReload'
                 });
@@ -312,123 +283,32 @@
             table.on('tool(list)', function(obj){
                 var data = obj.data;
 
-                if(obj.event === 'del'){
-                    layer.confirm('真的删除行么', function(index){
-
+                if(obj.event === 'in'){
+                    layer.confirm('真的确定入库？', function(index){
                         $.ajax({
-                            url:"{{url('admins/purchase_warehouse/')}}/"+data.id,
-                            type:'delete',
-                            data:{"_token":"{{csrf_token()}}"},
-                            datatype:'json',
-                            success:function (msg) {
-                                if(msg=='0'){
-                                    layer.msg('删除成功！',{icon:1,time:2000},function () {
-                                        obj.del();
-                                        layer.close(index);
-                                    });
-                                }else{
-                                    layer.msg('删除失败！',{icon:2,time:2000});
-                                }
-                            },
-                            error: function(XmlHttpRequest, textStatus, errorThrown){
-                                layer.msg('error!',{icon:2,time:2000});
-                            }
-                        });
-
-
-                    });
-                } else if(obj.event === 'edit'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'编辑信息',
-                        area:['800px','600px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/supplier/')}}/"+data.id+"/edit"
-                    });
-                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-                }else if(obj.event === 'check'){
-                    $.ajax({
-                        url:"{{url('admins/purchase_warehouse/check/')}}/"+data.id,
-                        type:'post',
-                        data:{"_token":"{{csrf_token()}}"},
-                        datatype:'json',
-                        success:function (msg) {
-                            if(msg=='0'){
-                                layer.msg('操作成功！',{icon:1,time:2000},function () {
-                                    window.location = window.location;
-                                    layer.close(index);
-                                });
-                            }else{
-                                layer.msg('操作失败！',{icon:2,time:2000});
-                            }
-                        },
-                        error: function(XmlHttpRequest, textStatus, errorThrown){
-                            layer.msg('error!',{icon:2,time:2000});
-                        }
-                    });
-
-                }else if(obj.event === 'in'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'编辑信息',
-                        area:['100%','100%'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/warehouse_in/')}}/"+data.id+"/edit"
-                    });
-
-                }
-            });
-
-
-            //监听工具条
-            table.on('tool(table_list)', function(obj){
-                var data = obj.data;
-
-                if(obj.event === 'edit'){
-                    layer.open({
-                        skin:'layui-layer-nobg',
-                        type:2,
-                        title:'编辑信息',
-                        area:['800px','600px'],
-                        fixed:false,
-                        maxmin:true,
-                        content:"{{url('admins/purchase_warehouse_info/')}}/"+data.id+"/edit"
-                    });
-                    //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-                }else if(obj.event === 'problem'){
-                    layer.confirm('确定标记为问题订单？', function(index){
-
-                        $.ajax({
-                            url:"{{url('admins/purchase_warehouse_info/problem')}}/"+data.id,
+                            url:"{{url('admins/warehouse_in/in/')}}/"+data.id,
                             type:'post',
                             data:{"_token":"{{csrf_token()}}"},
                             datatype:'json',
                             success:function (msg) {
                                 if(msg=='0'){
-                                    layer.msg('操作成功！',{icon:1,time:2000},function () {
-                                        obj.del();
+                                    layer.msg('提交成功！',{icon:1,time:2000},function () {
+                                        window.location = window.location;
                                         layer.close(index);
                                     });
                                 }else{
-                                    layer.msg('操作失败！',{icon:2,time:2000});
+                                    layer.msg(msg.msg,{icon:2,time:2000});
                                 }
                             },
                             error: function(XmlHttpRequest, textStatus, errorThrown){
                                 layer.msg('error!',{icon:2,time:2000});
                             }
                         });
-
-
                     });
 
-
                 }
-
             });
+
 
 
 

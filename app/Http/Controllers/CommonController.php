@@ -12,6 +12,7 @@ use App\Models\OrderLog;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderTrace;
 use App\Models\PurchaseWarehouse;
+use App\Models\WarehouseIn;
 use App\Models\WarehousePick;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -239,7 +240,7 @@ class CommonController extends Controller
 
 
     /*
-     * 创建采购入库编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
+     * 创建采购验收编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
      */
     public function createPurchaseWarehouseCode($code){
         $ymd = substr(date('Ymd'),2);
@@ -253,6 +254,28 @@ class CommonController extends Controller
                 $code = substr($purchaseWarehouse,1);
             }else{
                 $code = $purchaseWarehouse;
+            }
+            $number = intval(substr($code,strlen($ymd))) + 1;
+            $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);
+        }
+        return $codeStr . $ymd . $subCode;
+    }
+
+    /*
+     * 创建验收入库编号  8位  分类ID(2位)+年份(2位)+分类商品数量(4位)
+     */
+    public function createWarehouseInCode($code){
+        $ymd = substr(date('Ymd'),2);
+        $codeLength = 5;
+        $codeStr = strtoupper($code);
+        $purchase = WarehouseIn::Where('warehouse_in_code','like','%'.$ymd.'%')->orderBy('id','desc')->first();
+        $WarehouseIn = $purchase['warehouse_in_code'];
+        $subCode = str_pad('1',$codeLength,'0',STR_PAD_LEFT);
+        if ($WarehouseIn) {
+            if(strstr($WarehouseIn,$codeStr)){
+                $code = substr($WarehouseIn,1);
+            }else{
+                $code = $WarehouseIn;
             }
             $number = intval(substr($code,strlen($ymd))) + 1;
             $subCode = str_pad($number,$codeLength,'0',STR_PAD_LEFT);

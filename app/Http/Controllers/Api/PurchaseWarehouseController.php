@@ -52,4 +52,13 @@ class PurchaseWarehouseController extends Controller
         return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
+    //获取单个验收订单信息
+    public function balance($id)
+    {
+        $data = PurchaseWarehouseInfo::where(function ($query) use ($id){
+            return $query->where('purchase_warehouse_id',$id)->where('balance_num','>',0);
+        })->get();
+        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
+    }
+
 }

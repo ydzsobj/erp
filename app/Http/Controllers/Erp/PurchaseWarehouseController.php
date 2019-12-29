@@ -96,8 +96,10 @@ class PurchaseWarehouseController extends CommonController
                 $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
                 //$infoArr[$key]['goods_price'] = $value['goods_price'];
                 $infoArr[$key]['goods_num'] = $value['goods_num'];
+                $infoArr[$key]['balance_num'] = $value['goods_num'];
                 //$infoArr[$key]['order_num'] = $value['order_num'];
                 $infoArr[$key]['plan_num'] = $value['goods_num'];
+                $infoArr[$key]['balance_plan_num'] = $value['goods_num'];
                 $infoArr[$key]['goods_money'] = $value['goods_money'];
                 $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
@@ -233,7 +235,7 @@ class PurchaseWarehouseController extends CommonController
                 'purchase_warehouse_id'=>$lastId
             ]);
             PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'2']);
-            $this->purchaseOrderLog($purchase_order_id,'入库订单已生成！');
+            $this->purchaseOrderLog($purchase_order_id,'验货单已生成！');
         }
 
         if(isset($request->table)) {
@@ -249,6 +251,9 @@ class PurchaseWarehouseController extends CommonController
                 $infoArr[$key]['goods_num'] = $value['goods_num'];
                 $infoArr[$key]['order_num'] = $value['order_num'];
                 $infoArr[$key]['plan_num'] = $value['plan_num'];
+                $infoArr[$key]['balance_num'] = $value['goods_num'];
+                $infoArr[$key]['balance_order_num'] = $value['order_num'];
+                $infoArr[$key]['balance_plan_num'] = $value['plan_num'];
                 $infoArr[$key]['goods_money'] = $value['goods_money'];
                 $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
@@ -292,6 +297,7 @@ class PurchaseWarehouseController extends CommonController
     //提交入库
     public function in(Request $request, $id){
         $warehouse = PurchaseWarehouse::where('id',$id)->first();
+
         $info = PurchaseWarehouseInfo::where('purchase_warehouse_id',$id)->orderBy('id','asc')->get();
         $inventoryInfoArr = [];$problemNum = 0;
         foreach($info as $key=>$value){

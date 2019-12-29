@@ -45,6 +45,7 @@ $api->version('v1', function ($api) {
         $api->resource('/inventory_check','InventoryCheckController', ['only' => ['index','show']]);
         $api->resource('/inventory_transfer','InventoryTransferController', ['only' => ['index']]);
         $api->resource('/order','OrderController', ['only' => ['index']]);
+        $api->resource('/warehouse_in','WarehouseInController', ['only' => ['index','show']]);
         $api->resource('/warehouse','WarehouseController', ['only' => ['index']]);
         $api->resource('/warehouse_ex','WarehouseExController', ['only' => ['index']]);
         $api->resource('/warehouse_out','WarehouseOutController', ['only' => ['index','show']]);
@@ -53,11 +54,14 @@ $api->version('v1', function ($api) {
 
         $api->get('/order/list','OrderController@list');
         $api->get('/order/import','OrderController@import');
+        $api->get('/order/goods/{id}','OrderController@goods');
 
         $api->get('/product/sku/{id}','ProductController@sku');
         $api->get('/product/get_sku/{id}','ProductController@get_sku');
         $api->get('/purchase_order/goods/{id}','PurchaseOrderController@goods');
         $api->get('/purchase_warehouse/goods/{id}','PurchaseWarehouseController@goods');
+        $api->get('/purchase_warehouse/balance/{id}','PurchaseWarehouseController@balance');
+        $api->get('/warehouse_in/goods/{id}','WarehouseInController@goods');
         $api->get('/inventory/all','InventoryController@all');
         $api->get('/inventory/goods/{id}','InventoryController@goods');
         $api->get('/attribute/get_attr_value/{id}','AttributeController@get_attr_value');

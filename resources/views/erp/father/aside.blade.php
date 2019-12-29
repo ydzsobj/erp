@@ -105,7 +105,7 @@
                                 <a lay-href="{{url('/admins/purchase_warehouse/1')}}">验收入库</a>
                             </dd>
                             <dd data-name="console">
-                                <a lay-href="{{url('/admins/purchase_warehouse/1')}}">入库列表</a>
+                                <a lay-href="{{url('/admins/warehouse_in/1')}}">入库列表</a>
                             </dd>
                             <dd data-name="list">
                                 <a lay-href="{{url('/admins/inventory/1')}}">产品库存</a>

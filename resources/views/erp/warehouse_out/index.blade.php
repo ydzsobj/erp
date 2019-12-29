@@ -288,17 +288,13 @@
                     ,url: "{{url('api/order/goods')}}/"+data.id //数据接口
                     ,cols: [[
                         {field:'id', title: 'ID', width:80, sort: true}
-                        ,{field:'goods_id', title: 'SKU ID', width:100, sort: true}
+                        ,{field:'goods_sku', title: 'SKU ID', width:100, sort: true}
                         ,{field:'goods_name', title: '商品名称', width:180}
-                        ,{field:'goods_attr_name', title: '属性名', width:100}
-                        ,{field:'goods_attr_value', title: '属性值', width:100}
+                        ,{field:'goods_color', title: '颜色', width:100}
+                        ,{field:'goods_size', title: '尺码', width:100}
                         ,{field:'goods_num', title: '数量',width:80}
                         ,{field:'goods_price', title: '单价',width:80}
                         ,{field:'goods_money', title: '总价',  width:80}
-                        ,{field:'tax_rate', title: '税率', width:80}
-                        ,{field:'tax', title: '税费', width:80}
-                        ,{field:'price_tax', title: '单税率', width:80}
-                        ,{field:'money_tax', title: '总金额', width:80}
                         ,{field:'goods_sku', title: '商品编码', width:135, fixed: 'right'}
                     ]]
                     ,id: 'testReload'

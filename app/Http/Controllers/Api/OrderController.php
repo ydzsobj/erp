@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderInfo;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -33,6 +34,13 @@ class OrderController extends Controller
         list($orders,$count)  = $order->searchAll($request);
 
         return response()->json(['code'=>0,'count'=>$count,'msg'=>'成功获取数据！','data'=>$orders]);
+    }
+
+    //获取单个订单信息
+    public function goods($id)
+    {
+        $data = OrderInfo::where('order_id',$id)->get();
+        return response()->json(['code'=>0,'msg'=>'成功获取数据！','data'=>$data]);
     }
 
 }
