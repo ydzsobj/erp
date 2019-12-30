@@ -53,90 +53,95 @@ class PurchaseWarehouseController extends CommonController
      */
     public function store(PurchaseWarehouseRequest $request)
     {
-        //dd($request->table);
-        //存储表单信息
-        $purchase_warehouse_code = $this->createPurchaseWarehouseCode('R');
-        //$purchase_order_id = $request->purchase_order_id;
-        $arr = [
-            'purchase_warehouse_code' => $purchase_warehouse_code,
-            'payment_type' => $request->payment_type,
-            'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
-            'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
-            'supplier_id' => $request->supplier_id,
-            'warehouse_id' => $request->warehouse_id,
-            'user_id' => Auth::guard('admin')->user()->id,
-            'warehouse_text' => $request->warehouse_text,
-            'stored_at' => $request->stored_at,
-            'purchase_warehouse_status' => '0',
-            'created_at' => date('Y-m-d H:i:s', time()),
+        $exception = DB::transaction(function () use ($request){
 
-            //'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
-            //'money_tax' => isset($request->money_tax)?$request->money_tax:0,
-        ];
+            //dd($request->table);
+            //存储表单信息
+            $purchase_warehouse_code = $this->createPurchaseWarehouseCode('R');
+            //$purchase_order_id = $request->purchase_order_id;
+            $arr = [
+                'purchase_warehouse_code' => $purchase_warehouse_code,
+                'payment_type' => $request->payment_type,
+                'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
+                'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
+                'supplier_id' => $request->supplier_id,
+                'warehouse_id' => $request->warehouse_id,
+                'user_id' => Auth::guard('admin')->user()->id,
+                'warehouse_text' => $request->warehouse_text,
+                'stored_at' => $request->stored_at,
+                'purchase_warehouse_status' => '0',
+                'created_at' => date('Y-m-d H:i:s', time()),
 
-        $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
+                //'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
+                //'money_tax' => isset($request->money_tax)?$request->money_tax:0,
+            ];
 
-       /* if(isset($purchase_order_id)){
-            PurchaseOrderWarehouse::create([
-                'purchase_order_id'=>$purchase_order_id,
-                'purchase_warehouse_id'=>$lastId
-            ]);
-            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'3']);
-            $this->purchaseOrderLog($purchase_order_id,'入库订单已生成！');
-        }*/
+            $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
 
-        if(isset($request->table)) {
-            foreach ($request->table['dataTable'] as $key => $value) {
-                //采购入库
-                $infoArr[$key]['purchase_warehouse_id'] = $lastId;
-                $infoArr[$key]['goods_id'] = $value['id'];
-                $infoArr[$key]['goods_sku'] = $value['goods_sku'];
-                $infoArr[$key]['goods_name'] = $value['sku_name'];
-                $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
-                $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
-                //$infoArr[$key]['goods_price'] = $value['goods_price'];
-                $infoArr[$key]['goods_num'] = $value['goods_num'];
-                $infoArr[$key]['balance_num'] = $value['goods_num'];
-                //$infoArr[$key]['order_num'] = $value['order_num'];
-                $infoArr[$key]['plan_num'] = $value['goods_num'];
-                $infoArr[$key]['balance_plan_num'] = $value['goods_num'];
-                $infoArr[$key]['goods_money'] = $value['goods_money'];
-                $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
+            /* if(isset($purchase_order_id)){
+                 PurchaseOrderWarehouse::create([
+                     'purchase_order_id'=>$purchase_order_id,
+                     'purchase_warehouse_id'=>$lastId
+                 ]);
+                 PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'3']);
+                 $this->purchaseOrderLog($purchase_order_id,'入库订单已生成！');
+             }*/
+
+            if(isset($request->table)) {
+                foreach ($request->table['dataTable'] as $key => $value) {
+                    //采购入库
+                    $infoArr[$key]['purchase_warehouse_id'] = $lastId;
+                    $infoArr[$key]['goods_id'] = $value['id'];
+                    $infoArr[$key]['goods_sku'] = $value['goods_sku'];
+                    $infoArr[$key]['goods_name'] = $value['sku_name'];
+                    $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
+                    $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
+                    //$infoArr[$key]['goods_price'] = $value['goods_price'];
+                    $infoArr[$key]['goods_num'] = $value['goods_num'];
+                    $infoArr[$key]['balance_num'] = $value['goods_num'];
+                    //$infoArr[$key]['order_num'] = $value['order_num'];
+                    $infoArr[$key]['plan_num'] = $value['goods_num'];
+                    $infoArr[$key]['balance_plan_num'] = $value['goods_num'];
+                    $infoArr[$key]['goods_money'] = $value['goods_money'];
+                    $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
 //                $infoArr[$key]['tax_rate'] = $value['tax_rate'];
 //                $infoArr[$key]['tax'] = $tax;
 //                $infoArr[$key]['money_tax'] = $goods_money+$tax;
 
-                //库存
-                $inventoryArr['goods_id'] = $value['id'];
-                $inventoryArr['goods_sku'] = $value['goods_sku'];
-                $inventoryArr['afloat_num'] = $value['goods_num'];
-                //$inventoryArr['order_num'] = $value['order_num'];
-                $inventoryArr['plan_num'] = $value['goods_num'];
-                $inventoryArr['plan_unused_num'] = $value['goods_num'];
-                $inventoryArr['warehouse_id'] = $request->warehouse_id;
-                $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
+                    //库存
+                    $inventoryArr['goods_id'] = $value['id'];
+                    $inventoryArr['goods_sku'] = $value['goods_sku'];
+                    $inventoryArr['afloat_num'] = $value['goods_num'];
+                    //$inventoryArr['order_num'] = $value['order_num'];
+                    $inventoryArr['plan_num'] = $value['goods_num'];
+                    $inventoryArr['plan_unused_num'] = $value['goods_num'];
+                    $inventoryArr['warehouse_id'] = $request->warehouse_id;
+                    $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
 
-                //$inventoryArr['afloat_price'] = $value['goods_price'];
-                //['afloat_money'] = $goods_money;
+                    //$inventoryArr['afloat_price'] = $value['goods_price'];
+                    //['afloat_money'] = $goods_money;
 
-                $inventory = Inventory::where(['goods_sku'=>$value['goods_sku'],'warehouse_id'=>$request->warehouse_id])->first();
-                if($inventory){
-                    $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
-                    //$inventory->order_num = $inventory->order_num + $value['order_num'];
-                    $inventory->plan_num = $inventory->plan_num + $value['goods_num'];
-                    $inventory->plan_unused_num = $inventory->plan_unused_num + $value['goods_num'];
-                    $inventory->save();
-                }else{
-                    Inventory::insert($inventoryArr);
+                    $inventory = Inventory::where(['goods_sku'=>$value['goods_sku'],'warehouse_id'=>$request->warehouse_id])->first();
+                    if($inventory){
+                        $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
+                        //$inventory->order_num = $inventory->order_num + $value['order_num'];
+                        $inventory->plan_num = $inventory->plan_num + $value['goods_num'];
+                        $inventory->plan_unused_num = $inventory->plan_unused_num + $value['goods_num'];
+                        $inventory->save();
+                    }else{
+                        Inventory::insert($inventoryArr);
+                    }
+
                 }
-
             }
-        }
 
 
-        $result = PurchaseWarehouseInfo::insert($infoArr);
-        return $result ? '0' : '1';
+            PurchaseWarehouseInfo::insert($infoArr);
+
+        });
+
+        return is_null($exception) ? '0' : '1';
     }
 
     /**
@@ -206,91 +211,96 @@ class PurchaseWarehouseController extends CommonController
      */
     public function add(PurchaseWarehouseRequest $request)
     {
-        //dd($request->table);
-        //存储表单信息
-        $purchase_warehouse_code = $this->createPurchaseWarehouseCode('R');
-        $purchase_order_id = $request->purchase_order_id;
-        $arr = [
-            'purchase_warehouse_code' => $purchase_warehouse_code,
-            'payment_type' => $request->payment_type,
-            'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
-            'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
-            'supplier_id' => $request->supplier_id,
-            'warehouse_id' => $request->warehouse_id,
-            'user_id' => Auth::guard('admin')->user()->id,
-            'warehouse_text' => $request->warehouse_text,
-            'stored_at' => $request->stored_at,
-            'purchase_warehouse_status' => '0',
-            'created_at' => date('Y-m-d H:i:s', time()),
+        $exception = DB::transaction(function () use ($request){
 
-            //'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
-            //'money_tax' => isset($request->money_tax)?$request->money_tax:0,
-        ];
+            //dd($request->table);
+            //存储表单信息
+            $purchase_warehouse_code = $this->createPurchaseWarehouseCode('R');
+            $purchase_order_id = $request->purchase_order_id;
+            $arr = [
+                'purchase_warehouse_code' => $purchase_warehouse_code,
+                'payment_type' => $request->payment_type,
+                'purchase_num' => isset($request->purchase_num)?$request->purchase_num:0,
+                'purchase_money' => isset($request->purchase_money)?$request->purchase_money:0,
+                'supplier_id' => $request->supplier_id,
+                'warehouse_id' => $request->warehouse_id,
+                'user_id' => Auth::guard('admin')->user()->id,
+                'warehouse_text' => $request->warehouse_text,
+                'stored_at' => $request->stored_at,
+                'purchase_warehouse_status' => '0',
+                'created_at' => date('Y-m-d H:i:s', time()),
 
-        $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
+                //'purchase_tax' => isset($request->purchase_tax)?$request->purchase_tax:0,
+                //'money_tax' => isset($request->money_tax)?$request->money_tax:0,
+            ];
 
-        if(isset($purchase_order_id)){
-            PurchaseOrderWarehouse::create([
-                'purchase_order_id'=>$purchase_order_id,
-                'purchase_warehouse_id'=>$lastId
-            ]);
-            PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'2']);
-            $this->purchaseOrderLog($purchase_order_id,'验货单已生成！');
-        }
+            $lastId = DB::table('purchase_warehouse')->insertGetId($arr);
 
-        if(isset($request->table)) {
-            foreach ($request->table['dataTable'] as $key => $value) {
-                //采购入库
-                $infoArr[$key]['purchase_warehouse_id'] = $lastId;
-                $infoArr[$key]['goods_id'] = $value['goods_id'];
-                $infoArr[$key]['goods_sku'] = $value['goods_sku'];
-                $infoArr[$key]['goods_name'] = $value['goods_name'];
-                $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
-                $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
-                $infoArr[$key]['goods_price'] = $value['goods_price'];
-                $infoArr[$key]['goods_num'] = $value['goods_num'];
-                $infoArr[$key]['order_num'] = $value['order_num'];
-                $infoArr[$key]['plan_num'] = $value['plan_num'];
-                $infoArr[$key]['balance_num'] = $value['goods_num'];
-                $infoArr[$key]['balance_order_num'] = $value['order_num'];
-                $infoArr[$key]['balance_plan_num'] = $value['plan_num'];
-                $infoArr[$key]['goods_money'] = $value['goods_money'];
-                $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
+            if(isset($purchase_order_id)){
+                PurchaseOrderWarehouse::create([
+                    'purchase_order_id'=>$purchase_order_id,
+                    'purchase_warehouse_id'=>$lastId
+                ]);
+                PurchaseOrder::where('id',$purchase_order_id)->update(['purchase_order_status'=>'2']);
+                $this->purchaseOrderLog($purchase_order_id,'验货单已生成！');
+            }
+
+            if(isset($request->table)) {
+                foreach ($request->table['dataTable'] as $key => $value) {
+                    //采购入库
+                    $infoArr[$key]['purchase_warehouse_id'] = $lastId;
+                    $infoArr[$key]['goods_id'] = $value['goods_id'];
+                    $infoArr[$key]['goods_sku'] = $value['goods_sku'];
+                    $infoArr[$key]['goods_name'] = $value['goods_name'];
+                    $infoArr[$key]['goods_attr_name'] = $value['goods_attr_name'];
+                    $infoArr[$key]['goods_attr_value'] = $value['goods_attr_value'];
+                    $infoArr[$key]['goods_price'] = $value['goods_price'];
+                    $infoArr[$key]['goods_num'] = $value['goods_num'];
+                    $infoArr[$key]['order_num'] = $value['order_num'];
+                    $infoArr[$key]['plan_num'] = $value['plan_num'];
+                    $infoArr[$key]['balance_num'] = $value['goods_num'];
+                    $infoArr[$key]['balance_order_num'] = $value['order_num'];
+                    $infoArr[$key]['balance_plan_num'] = $value['plan_num'];
+                    $infoArr[$key]['goods_money'] = $value['goods_money'];
+                    $infoArr[$key]['created_at'] = date('Y-m-d H:i:s', time());
 
 //                $infoArr[$key]['tax_rate'] = $value['tax_rate'];
 //                $infoArr[$key]['tax'] = $tax;
 //                $infoArr[$key]['money_tax'] = $goods_money+$tax;
 
-                //库存
-                $inventoryArr['goods_id'] = $value['goods_id'];
-                $inventoryArr['goods_sku'] = $value['goods_sku'];
-                $inventoryArr['afloat_num'] = $value['goods_num'];
-                $inventoryArr['order_num'] = $value['order_num'];
-                $inventoryArr['plan_num'] = $value['plan_num'];
-                $inventoryArr['plan_unused_num'] = $value['plan_num'];
-                $inventoryArr['warehouse_id'] = $request->warehouse_id;
-                $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
+                    //库存
+                    $inventoryArr['goods_id'] = $value['goods_id'];
+                    $inventoryArr['goods_sku'] = $value['goods_sku'];
+                    $inventoryArr['afloat_num'] = $value['goods_num'];
+                    $inventoryArr['order_num'] = $value['order_num'];
+                    $inventoryArr['plan_num'] = $value['plan_num'];
+                    $inventoryArr['plan_unused_num'] = $value['plan_num'];
+                    $inventoryArr['warehouse_id'] = $request->warehouse_id;
+                    $inventoryArr['created_at'] = date('Y-m-d H:i:s', time());
 
-                //$inventoryArr['afloat_price'] = $value['goods_price'];
-                //['afloat_money'] = $goods_money;
+                    //$inventoryArr['afloat_price'] = $value['goods_price'];
+                    //['afloat_money'] = $goods_money;
 
-                $inventory = Inventory::where(['goods_sku'=>$value['goods_sku'],'warehouse_id'=>$request->warehouse_id])->first();
-                if($inventory){
-                    $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
-                    $inventory->order_num = $inventory->order_num + $value['order_num'];
-                    $inventory->plan_num = $inventory->plan_num + $value['plan_num'];
-                    $inventory->plan_unused_num = $inventory->plan_unused_num + $value['plan_num'];
-                    $inventory->save();
-                }else{
-                    Inventory::insert($inventoryArr);
+                    $inventory = Inventory::where(['goods_sku'=>$value['goods_sku'],'warehouse_id'=>$request->warehouse_id])->first();
+                    if($inventory){
+                        $inventory->afloat_num = $inventory->afloat_num + $value['goods_num'];
+                        $inventory->order_num = $inventory->order_num + $value['order_num'];
+                        $inventory->plan_num = $inventory->plan_num + $value['plan_num'];
+                        $inventory->plan_unused_num = $inventory->plan_unused_num + $value['plan_num'];
+                        $inventory->save();
+                    }else{
+                        Inventory::insert($inventoryArr);
+                    }
+
                 }
-
             }
-        }
 
 
-        $result = PurchaseWarehouseInfo::insert($infoArr);
-        return $result ? '0' : '1';
+            PurchaseWarehouseInfo::insert($infoArr);
+
+        });
+
+        return is_null($exception) ? '0' : '1';
     }
 
 
