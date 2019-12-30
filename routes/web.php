@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 Route::get('/admins/login','Erp\LoginController@index')->name('login');
 Route::post('/admins/login','Erp\LoginController@store');
-Route::group(['prefix'=>'admins','middleware'=>'auth:admin','namespace'=>'Erp'],function (){
+Route::group(['prefix'=>'admins','middleware'=>['auth:admin','SsoMiddleware'],'namespace'=>'Erp'],function (){
     Route::get('logout','LoginController@logout')->name('logout');
     Route::get('index','IndexController@index');
     Route::get('home_page','IndexController@homePage');

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends CommonController
@@ -72,12 +74,18 @@ class LoginController extends CommonController
                 Cookie::forever('l_time','初次登陆');
                 Cookie::forever('l_num','初次登陆');
             }
+            // 制作 token
+            $time = time();
+            $singleToken = md5($ip . $admin->id . $time);
+            Redis::set("STRING_SINGLE_TOKEN_" . $admin->id, $time);
+            Session::put('user_login', $admin);
+
             $admin->admin_ip=$ip;
             $admin->admin_num=$admin->admin_num+1;
             $admin->save();
             $this->admin_log($request->input('username'),'',1,$ip,'Login_success','登录成功！');
             Log::notice($admin->username.'账号登录！IP:'.$ip.'!时间:'.$time);
-            return response()->json(['code'=>'0','msg'=>'登录成功']);
+            return response()->json(['code'=>'0','msg'=>'登录成功'])->withCookie('SINGLE_TOKEN', $singleToken);
         }else{
             $this->admin_log($request->input('username'),$request->input('password'),2,$ip,'Login_fail','用户名或密码错误');
             return response()->json(['code'=>'1','msg'=>'用户名或密码错误']);
